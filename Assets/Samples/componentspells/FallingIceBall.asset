@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ff2cde13067f914fa1d7e71ef6218d8, type: 3}
+  m_Name: FallingIceBall
+  m_EditorClassIdentifier: 
+  id: FallingManaBall3
+  spellClass: FallingBall
+  targetRequirement: 0
+  parameters:
+    level: 3
+    element: 1
+    shape: 2
+    obj: {fileID: 0}
+    statusEffect: 0
+    integer: 0
+    real: 0
+  displayName: Falling Mana Ball
+  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  visible: 1
