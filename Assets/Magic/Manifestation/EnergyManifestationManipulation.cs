@@ -42,7 +42,7 @@ public partial class EnergyManifestation
         var summonedBody = summonedObj.GetComponent<Rigidbody>();
         if (summonedBody != null)
         {
-            summonedBody.AddForce(momentum, ForceMode.Impulse);
+            summonedBody.AddForce(rigidbody.velocity, ForceMode.VelocityChange);
         }
 
         Dispose();

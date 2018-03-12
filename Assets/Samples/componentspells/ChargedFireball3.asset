@@ -16,7 +16,7 @@ MonoBehaviour:
   targetType: 1
   targetRequired: 0
   parameters:
-    level: 3
+    level: 2
     element: 2
     shape: 0
     obj: {fileID: 0}

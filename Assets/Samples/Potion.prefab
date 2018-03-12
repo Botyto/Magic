@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4028192970800912}
   - component: {fileID: 54942307734732880}
   - component: {fileID: 136876038339262756}
+  - component: {fileID: 114827429226207870}
   m_Layer: 0
   m_Name: Potion
   m_TagString: Untagged
@@ -38,7 +39,6 @@ GameObject:
   - component: {fileID: 4466996174970960}
   - component: {fileID: 33893570540456926}
   - component: {fileID: 23656358772962970}
-  - component: {fileID: 114784232003059348}
   m_Layer: 0
   m_Name: Grenade_Sulfur
   m_TagString: Untagged
@@ -129,19 +129,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!114 &114784232003059348
+--- !u!114 &114827429226207870
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1419446297595912}
+  m_GameObject: {fileID: 1400471079796922}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47f0843761ef62447acd7d594ef7020a, type: 3}
+  m_Script: {fileID: 11500000, guid: fea2e37bca01d4a418ad95b0617c6f40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 0.1
-  speed: 3
 --- !u!136 &136876038339262756
 CapsuleCollider:
   m_ObjectHideFlags: 1
