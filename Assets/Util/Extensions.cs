@@ -3,6 +3,8 @@ using UnityEngine;
 
 public static class Extensions
 {
+    #region Vectors
+
     public static float DistanceTo(this Vector3 self, Vector3 other)
     {
         return Vector3.Distance(self, other);
@@ -37,6 +39,10 @@ public static class Extensions
             (self.z * m.z) / d.z);
     }
 
+    #endregion
+
+    #region Collections
+
     public static TValue TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
     {
         TValue result = default(TValue);
@@ -47,4 +53,6 @@ public static class Extensions
 
         return defaultValue;
     }
+
+    #endregion
 }
