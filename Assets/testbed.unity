@@ -1429,6 +1429,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8986a69d8ddddee49bdefd836019f912, type: 2}
   - {fileID: 11400000, guid: c0f098e2597e0104e855ccfb16f387a5, type: 2}
   - {fileID: 11400000, guid: d3a735ceba27b014fab813fc6f809d53, type: 2}
+  - {fileID: 11400000, guid: b6a11f9a1f613a94980e2812519cc5c6, type: 2}
   spellOrdering: 
   holder: {fileID: 0}
 --- !u!114 &1040189976

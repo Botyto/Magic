@@ -6,6 +6,7 @@ public class Wizard : MonoBehaviour
 
     public SpellDescriptor[] spells;
 
+    [HideInInspector]
     public int[] spellOrdering;
     
     [HideInInspector]

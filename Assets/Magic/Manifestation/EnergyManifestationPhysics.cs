@@ -126,7 +126,7 @@ public partial class EnergyManifestation
         }
         
         const float DeformationTolerance = 0.01f;
-        if (holder.ResolveOwner().GetComponent<Unit>() != null &&
+        if (holder.ResolveOwner().GetComponent<Unit>() != null && //TODO: this should happen instantly, as the manipulation happens
             (m_DeformationAccumulator != Vector3.zero ||
             Mathf.Abs(deformation.x - 1) > DeformationTolerance ||
             Mathf.Abs(deformation.y - 1) > DeformationTolerance ||
