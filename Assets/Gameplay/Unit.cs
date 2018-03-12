@@ -8,6 +8,16 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     /// <summary>
+    /// Minimum impulse the unit has to receive to take damage
+    /// </summary>
+    public const float MinDamageImpulse = 5.0f;
+
+    /// <summary>
+    /// Damage dealt per impulse unit
+    /// </summary>
+    public const float DamagePerImpulseUnit = 1.0f;
+
+    /// <summary>
     /// Current health
     /// </summary>
     public int health;
@@ -186,6 +196,18 @@ public class Unit : MonoBehaviour
         else
         {
             GetComponent<Rigidbody>().AddForce(force, mode);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Try take damage if the impulse is too high
+        var sqrImpulseSize = collision.impulse.sqrMagnitude;
+        if (sqrImpulseSize > MinDamageImpulse * MinDamageImpulse)
+        {
+            var impulseSize = Mathf.Sqrt(sqrImpulseSize);
+            var damage = (impulseSize - MinDamageImpulse) * DamagePerImpulseUnit;
+            DealDamage((int)damage, collision.gameObject);
         }
     }
 }
