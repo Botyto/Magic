@@ -74,8 +74,9 @@ public abstract class ToggleSpellComponent : SpellComponent
     protected override void OnDestroy()
     {
         try
-        { 
+        {
             OnToggle(false);
+            base.OnDestroy();
         }
         catch (Exception e)
         {

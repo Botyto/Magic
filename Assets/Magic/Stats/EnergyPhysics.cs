@@ -21,7 +21,7 @@ public static class EnergyPhysics
     /// <summary>
     /// If collider of manifestation should be a trigger or not (solid or transparent/pass-through)
     /// </summary>
-    public static bool ColliderIsTrigger(Energy.Element element)
+    public static bool ElementIsPassThrough(Energy.Element element)
     {
         switch (element)
         {

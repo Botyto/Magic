@@ -175,7 +175,10 @@ public class SpellComponentBase : MonoBehaviour
     {
         foreach (var manif in m_Focus)
         {
-            manif.holder.SetOwner(null, true);
+            if (manif != null && manif.gameObject != null) //Check validity
+            {
+                manif.holder.SetOwner(null, true);
+            }
         }
 
         m_ActiveFocusNum = 0;

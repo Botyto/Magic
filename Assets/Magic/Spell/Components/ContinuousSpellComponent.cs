@@ -58,6 +58,7 @@ public abstract class ContinuousSpellComponent : SpellComponent
         try
         {
             OnFinish();
+            base.OnDestroy();
         }
         catch (Exception e)
         {

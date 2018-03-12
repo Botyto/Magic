@@ -131,6 +131,7 @@ public partial class EnergyManifestation
     public void ChangeElementLater(Energy.Element newElement)
     {
         futureElement = newElement;
+        ChangeElementNow(newElement);
     }
 
     /// <summary>
@@ -147,7 +148,16 @@ public partial class EnergyManifestation
         @sealed = Energy.IsSealingElement(element);
         _Visuals_SetVisualsDirty();
 
-        //TODO recalculate velocity with new mass (conserve momentum)
+        //Conserve momentum
+        if (rigidbody.velocity.sqrMagnitude > float.Epsilon * float.Epsilon)
+        {
+            _Physics_UpdatePhysicalProperties();
+            rigidbody.velocity = momentum / rigidbody.mass;
+        }
+        else
+        {
+            _Physics_UpdatePhysicalProperties();
+        }
 
         SendMessage("ElementChanged", SendMessageOptions.DontRequireReceiver);
     }
@@ -166,6 +176,7 @@ public partial class EnergyManifestation
     public void ChangeShapeLater(Energy.Shape newShape)
     {
         futureShape = newShape;
+        ChangeShapeNow(newShape);
     }
 
     /// <summary>
@@ -200,12 +211,6 @@ public partial class EnergyManifestation
     /// </summary>
     public void ApplyForce(Vector3 force, ForceMode mode)
     {
-        //Adjust force due to collision mechanics
-        if (mode == ForceMode.Force || mode == ForceMode.Impulse)
-        {
-            force *= rigidbody.mass / m_ActualProperties.mass;
-        }
-
         rigidbody.AddForce(force, mode);
     }
 
@@ -217,7 +222,7 @@ public partial class EnergyManifestation
         //Adjust torque due to collision mechanics
         if (mode == ForceMode.Force || mode == ForceMode.Impulse)
         {
-            torque *= rigidbody.mass / m_ActualProperties.mass;
+            torque *= rigidbody.mass / lastFrameProperties.mass;
         }
 
         rigidbody.AddTorque(torque, mode);

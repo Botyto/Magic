@@ -107,22 +107,12 @@ public partial class EnergyManifestation
     {
         //If the other collider is big enough intersecting volume is estimated by simulating a AABB (with the same volume) colliding with AA wall (at the same speed)
         //Otherwise it's the other way around
-
-        float otherVolumeEstimate;
-        if (info.manifestation != null)
-        {
-            otherVolumeEstimate = info.manifestation.actualVolume;
-        }
-        else
-        {
-            var colliderSize = info.collider.bounds.size;
-            otherVolumeEstimate = colliderSize.x * colliderSize.y * colliderSize.z;
-        }
         
-        var smallerVolume = Mathf.Min(actualVolume, otherVolumeEstimate);
+        var myVolume = lastFrameProperties.volume;
+        var smallerVolume = Mathf.Min(myVolume, info.EstimateVolume());
         var intersectionDepth = info.relativeVelocity.magnitude * Time.fixedDeltaTime;
         var newCubeWidth = Mathf.Pow(smallerVolume, 1.0f / 3.0f) - intersectionDepth * 2;
-        return actualVolume - Mathf.Clamp(newCubeWidth * newCubeWidth * newCubeWidth, 0.0f, actualVolume);
+        return myVolume - Mathf.Clamp(newCubeWidth * newCubeWidth * newCubeWidth, 0.0f, myVolume);
     }
 
     /// <summary>
@@ -131,15 +121,16 @@ public partial class EnergyManifestation
     private int __Collision_EstimeIntersectionEnergy(EnergyCollisionInfo info)
     {
         var intersectingVolume = __Collision_EstimateIntersectionVolume(info);
-
-        var intersectingMass = intersectingVolume * density;
+        
+        var lesserDensity = Mathf.Min(lastFrameProperties.density, info.EstimateDensity());
+        var intersectingMass = intersectingVolume * lesserDensity;
         if (float.IsNaN(intersectingMass) || float.IsInfinity(intersectingMass))
         {
             return 0;
         }
         else
         {
-            var intersectingEnergy = (intersectingMass * Energy.Scalef) / (EnergyPhysics.MassPerUnit(element) * lorentzFactor);
+            var intersectingEnergy = (intersectingMass * Energy.Scalef) / (EnergyPhysics.MassPerUnit(lastFrameProperties.element) * lorentzFactor);
             return (int)intersectingEnergy;
         }
     }
@@ -168,7 +159,7 @@ public partial class EnergyManifestation
 
         __Collision_ApplyElementalEffectToUnit(info.unit);
 
-        var passThrough = collider.isTrigger;
+        var passThrough = EnergyPhysics.ElementIsPassThrough(lastFrameProperties.element);
         if (!passThrough)
         {
             //If I am solid - nothing happens
@@ -177,7 +168,7 @@ public partial class EnergyManifestation
 
         //Unfriendly unit - deal damage, lose energy
         var energyLost = __Collision_EstimeIntersectionEnergy(info);
-        var damage = Energy.DamagePerUnit(element) * energyLost / Energy.Scalef;
+        var damage = Energy.DamagePerUnit(lastFrameProperties.element) * energyLost / Energy.Scalef;
         info.unit.DealDamage((int)damage, gameObject);
         DecreaseEnergy(energyLost);
     }
@@ -208,8 +199,8 @@ public partial class EnergyManifestation
         }
 
         //Destructive interaction
-        var passThrough = collider.isTrigger;
-        var otherPassThrough = info.collider.isTrigger;
+        var passThrough = EnergyPhysics.ElementIsPassThrough(lastFrameProperties.element);
+        var otherPassThrough = info.IsPassThrough();
 
         if (passThrough)
         {
@@ -220,9 +211,9 @@ public partial class EnergyManifestation
         else if (otherPassThrough) //&& !passThrough)
         {
             //I am solid & other is pass though - apply force by the interaction
-            var newVelocity = __Collision_CalculateNewVelocity(info.rigidbody);
-            var impulseReceived = rigidbody.mass * (newVelocity - rigidbody.velocity);
-            var smashImpulse = EnergyPhysics.SmashImpulse(element) * rigidbody.mass;
+            var newVelocity = __Collision_CalculateNewVelocity(info);
+            var impulseReceived = lastFrameProperties.mass * (newVelocity - rigidbody.velocity);
+            var smashImpulse = EnergyPhysics.SmashImpulse(element) * lastFrameProperties.mass;
             if (impulseReceived.sqrMagnitude > smashImpulse * smashImpulse)
             {
                 Smash();
@@ -254,7 +245,7 @@ public partial class EnergyManifestation
         //If I am pass-through:
         //Calculate volume lost & lose that energy instantly
 
-        var passThrough = collider.isTrigger;
+        var passThrough = EnergyPhysics.ElementIsPassThrough(lastFrameProperties.element);
         if (!passThrough)
         {
             return;
@@ -271,9 +262,24 @@ public partial class EnergyManifestation
     /// <summary>
     /// Calculate the velocity after the collision has been resolved
     /// </summary>
-    private Vector3 __Collision_CalculateNewVelocity(Rigidbody otherBody)
+    private Vector3 __Collision_CalculateNewVelocity(EnergyCollisionInfo info)
     {
-        return (rigidbody.velocity * (rigidbody.mass - otherBody.mass) + (2 * otherBody.mass * otherBody.velocity)) / (rigidbody.mass + otherBody.mass);
+        if (info.manifestation != null)
+        {
+            var otherBody = info.rigidbody;
+            var otherMass = info.manifestation.lastFrameProperties.mass;
+            return (rigidbody.velocity * (rigidbody.mass - otherMass) + (2 * otherMass * otherBody.velocity)) / (rigidbody.mass + otherMass);
+        }
+        else if (info.rigidbody != null)
+        {
+            var otherBody = info.rigidbody;
+            var otherMass = otherBody.mass;
+            return (rigidbody.velocity * (rigidbody.mass - otherMass) + (2 * otherMass * otherBody.velocity)) / (rigidbody.mass + otherMass);
+        }
+        else
+        {
+            return Vector3.zero;
+        }
     }
 
     /// <summary>
@@ -291,7 +297,7 @@ public partial class EnergyManifestation
         //Check smashing conditions
         if (!collider.isTrigger && !info.collider.isTrigger && info.rigidbody != null)
         {
-            var newVelocity = __Collision_CalculateNewVelocity(info.rigidbody);
+            var newVelocity = __Collision_CalculateNewVelocity(info);
             var impulseReceived = rigidbody.mass * (newVelocity - rigidbody.velocity);
             var smashImpulse = EnergyPhysics.SmashImpulse(element) * rigidbody.mass;
             if (impulseReceived.sqrMagnitude > smashImpulse * smashImpulse)
@@ -318,17 +324,15 @@ public partial class EnergyManifestation
     /// </summary>
     private void __Collision_HandleCollisionStay(EnergyCollisionInfo info)
     {
-        var otherUnit = info.collider.GetComponent<Unit>();
-        var otherManifestation = info.collider.GetComponent<EnergyManifestation>();
-        if (otherUnit != null)
+        if (info.unit != null)
         {
             __Collision_CollideWithUnit(info);
         }
-        else if (otherManifestation != null)
+        else if (info.manifestation != null)
         {
             __Collision_CollideWithManifestation(info);
         }
-        else if (!info.collider.isTrigger)
+        else if (!info.IsPassThrough())
         {
             if (info.rigidbody != null)
             {
@@ -425,7 +429,7 @@ public partial class EnergyManifestation
                 break;
         }
 
-        collider.isTrigger = EnergyPhysics.ColliderIsTrigger(element);
+        collider.isTrigger = EnergyPhysics.ElementIsPassThrough(element);
         rigidbody.useGravity = EnergyPhysics.BodyUsesGravity(element);
         rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; //TODO decide if this is needed
     }
@@ -469,6 +473,55 @@ class EnergyCollisionInfo
     {
         FetchComponents(collider);
         this.relativeVelocity = relativeVelocity;
+    }
+
+    public float EstimateVolume()
+    {
+        if (manifestation != null)
+        {
+            return manifestation.lastFrameProperties.volume;
+        }
+        else if (collider != null)
+        {
+            var colliderSize = collider.bounds.size;
+            return colliderSize.x * colliderSize.y * colliderSize.z;
+        }
+        else
+        {
+            return 0.0f;
+        }
+    }
+
+    public float EstimateDensity()
+    {
+        if (manifestation != null)
+        {
+            return manifestation.lastFrameProperties.density;
+        }
+        else if (rigidbody != null)
+        {
+            return rigidbody.mass / EstimateVolume();
+        }
+        else
+        {
+            return float.PositiveInfinity;
+        }
+    }
+
+    public bool IsPassThrough()
+    {
+        if (manifestation != null)
+        {
+            return EnergyPhysics.ElementIsPassThrough(manifestation.lastFrameProperties.element);
+        }
+        else if (collider != null)
+        {
+            return collider.isTrigger;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     private void FetchComponents(Collider collider)

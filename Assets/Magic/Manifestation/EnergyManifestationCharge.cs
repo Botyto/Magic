@@ -32,7 +32,7 @@ public partial class EnergyManifestation
     /// Manifestation physical properties cache.
     /// They are updated each time energy changes and are actually applied at the end of each frame.
     /// </summary>
-    private ManifestationPhysicalProperties m_ActualProperties;
+    public ManifestationPhysicalProperties lastFrameProperties;
 
     /// <summary>
     /// Element to which to switch at end of this frame (LateUpdate)
@@ -47,15 +47,7 @@ public partial class EnergyManifestation
     #endregion
 
     #region Unity interface & internals
-
-    /// <summary>
-    /// Callback for when energy held has changed
-    /// </summary>
-    private void EnergyChanged(int delta)
-    {
-        m_ActualProperties = new ManifestationPhysicalProperties(this);
-    }
-
+    
     /// <summary>
     /// Callback for when energy held has been depleted
     /// </summary>
@@ -63,10 +55,15 @@ public partial class EnergyManifestation
     {
         Util.Destroy(gameObject, "energy depleted");
     }
-    
+
+    private void EnergyChanged(int delta)
+    {
+        _Physics_UpdatePhysicalProperties();
+    }
+
     private void _Charge_OnEnable()
     {
-        m_ActualProperties = new ManifestationPhysicalProperties(this);
+        lastFrameProperties = new ManifestationPhysicalProperties(this);
     }
 
     private void _Charge_Start()
@@ -78,7 +75,7 @@ public partial class EnergyManifestation
         //Energies without an owner lose charge over time
         if (holder.owner == null)
         {
-            DecreaseEnergy(Mathf.Max(1, GetEnergy() / 6000));
+            DecreaseEnergy(Mathf.Max(1, GetEnergy() / (60 * Energy.Scale)));
         }
 #endif
 
@@ -90,9 +87,8 @@ public partial class EnergyManifestation
         {
             ChangeShapeNow(futureShape);
         }
-        
-        bool success = m_ActualProperties.ApplyTo(this);
-        Debug.Assert(success, "Failed applying actual physical properties to manifestation: " + this);
+
+        lastFrameProperties.Update(this);
     }
 
 #endregion

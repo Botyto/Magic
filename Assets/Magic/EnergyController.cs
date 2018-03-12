@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// This component is used to manipulate on a physically manifested energy
-/// For adding new manipulation procedures see commends in IEnergyCost
+/// For adding new manipulation procedures see comments in IEnergyCost
 /// </summary>
 public class EnergyController : EnergyUser
 {

@@ -42,7 +42,7 @@ public partial class EnergyManifestation
     /// If orientation is locked to velocity or the body can rotate freely.
     /// Orientation can be unlocked by applying torque to the manifestation.
     /// </summary>
-    private bool m_OrientationLocked = true;
+    private bool m_OrientationLocked = false;
 
     /// <summary>
     /// Lorentz factor for calculating the relativistic mass of this manifestation
@@ -60,7 +60,7 @@ public partial class EnergyManifestation
     /// <summary>
     /// Physical momentum
     /// </summary>
-    public Vector3 momentum { get { return rigidbody.velocity * m_ActualProperties.mass; } }
+    public Vector3 momentum { get { return rigidbody.velocity * lastFrameProperties.mass; } }
 
     #endregion
 
@@ -103,15 +103,20 @@ public partial class EnergyManifestation
         return 1.0f;
     }
 
+    private void _Physics_UpdatePhysicalProperties()
+    {
+        rigidbody.mass = EnergyPhysics.MassPerUnit(futureElement) * GetEnergyScaledf() * lorentzFactor;
+        originalVolume = EnergyPhysics.BaseVolume(futureElement) + EnergyPhysics.VolumePerUnit(futureElement) * GetEnergyScaledf();
+        transform.localScale = deformation * originalVolume;
+    }
+
     private void _Physics_OnEnable()
     {
         rigidbody = GetComponent<Rigidbody>();
     }
 
     private void _Physics_Start()
-    {
-        
-    }
+    { }
 
     private void _Physics_FixedUpdate()
     {

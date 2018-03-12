@@ -12,7 +12,7 @@ public class FallingBall : ContinuousSpellComponent
             return;
         }
 
-        if (!Try(ManifestEnergyAndFocus(500 * param.level, 3 * Vector3.forward + 3 * Vector3.up, out handle)))
+        if (!Try(ManifestEnergyAndFocus(100 * param.level, 3 * Vector3.forward + 3 * Vector3.up, out handle)))
         {
             Cancel();
             return;
@@ -21,7 +21,7 @@ public class FallingBall : ContinuousSpellComponent
 
     public override void Activate(float dt)
     {
-        if (!Try(ApplyForce(handle, -Physics.gravity * 0.5f, ForceMode.Acceleration)))
+        if (!Try(ApplyForce(handle, -Physics.gravity * 0.8f, ForceMode.Acceleration)))
         {
             Finish();
             return;

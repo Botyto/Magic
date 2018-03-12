@@ -45,17 +45,8 @@ public static class Util
         if (obj != null)
         {
 #if DEBUG //TODO test if this works in release
-            const int maxLen = 15;
-            if (obj.name.Length > maxLen)
-            {
-                obj.name = string.Format("{0}..[{1}]", obj.name.Substring(0, maxLen - 2), note);
-            }
-            else
-            {
-                obj.name = string.Format("{0}[{1}]", obj.name, note);
-            }
+            RenameDestroyedObject(obj, note);
 #endif
-        
             UnityEngine.Object.Destroy(obj);
         }
     }
@@ -69,17 +60,25 @@ public static class Util
         if (obj != null)
         {
 #if DEBUG
-            const int maxLen = 15;
-            if (obj.name.Length > maxLen)
-            {
-                obj.name = string.Format("{0}..[{1}]", obj.name.Substring(0, maxLen - 2), note);
-            }
-            else
-            {
-                obj.name = string.Format("{0}[{1}]", obj.name, note);
-            }
+            RenameDestroyedObject(obj, note);
 #endif
             UnityEngine.Object.Destroy(obj, delay);
+        }
+    }
+
+    /// <summary>
+    /// Internal fn. used for renaming objects destroyed using the debug destory funcs above.
+    /// </summary>
+    private static void RenameDestroyedObject(UnityEngine.Object obj, string note)
+    {
+        const int maxLen = 15;
+        if (obj.name.Length > maxLen)
+        {
+            obj.name = string.Format("{0}..[{1}]", obj.name.Substring(0, maxLen - 2), note);
+        }
+        else
+        {
+            obj.name = string.Format("{0}[{1}]", obj.name, note);
         }
     }
 

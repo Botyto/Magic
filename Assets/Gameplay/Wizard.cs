@@ -2,6 +2,8 @@
 
 public class Wizard : MonoBehaviour
 {
+    public const float TargetSearchDistance = 20.0f;
+
     public SpellDescriptor[] spells;
 
     public int[] spellOrdering;

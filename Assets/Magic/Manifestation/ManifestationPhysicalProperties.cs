@@ -1,26 +1,32 @@
 ﻿using UnityEngine;
 
-public struct ManifestationPhysicalProperties
+public class ManifestationPhysicalProperties
 {
     //Fields that encode this state (must match with the manifestation)
-    public readonly int energy;
-    public readonly Energy.Element element;
-    public readonly Energy.Shape shape;
-    
+    public int energy;
+    public Energy.Element element;
+    public Energy.Shape shape;
+
     public float mass;
     public float volume;
     public int temperature;
 
+    public float density { get { return mass / volume; } }
+
     public ManifestationPhysicalProperties(EnergyManifestation manifestation)
     {
-        energy = manifestation.GetEnergy();
-        element = manifestation.futureElement;
-        shape = manifestation.futureShape;
-        var energyScaled = manifestation.GetEnergyScaledf();
+        ExtractProperties(manifestation);
+    }
 
-        mass = EnergyPhysics.MassPerUnit(manifestation.futureElement) * energyScaled * manifestation.lorentzFactor;
-        volume = EnergyPhysics.BaseVolume(manifestation.futureElement) + EnergyPhysics.VolumePerUnit(manifestation.futureElement) * energyScaled;
-        temperature = 0; //TODO calculate
+    public bool Update(EnergyManifestation manifestation)
+    {
+        if (energy == manifestation.GetEnergy() && element == manifestation.element && shape == manifestation.shape)
+        {
+            return false;
+        }
+
+        ExtractProperties(manifestation);
+        return true;
     }
 
     public bool ApplyTo(EnergyManifestation manifestation)
@@ -38,5 +44,17 @@ public struct ManifestationPhysicalProperties
         manifestation.transform.localScale = manifestation.deformation * Mathf.Pow(volume, 1.0f / 3.0f);
 
         return true;
+    }
+
+    private void ExtractProperties(EnergyManifestation manifestation)
+    {
+        energy = manifestation.GetEnergy();
+        element = manifestation.futureElement;
+        shape = manifestation.futureShape;
+        var energyScaled = manifestation.GetEnergyScaledf();
+
+        mass = EnergyPhysics.MassPerUnit(manifestation.futureElement) * energyScaled * manifestation.lorentzFactor;
+        volume = EnergyPhysics.BaseVolume(manifestation.futureElement) + EnergyPhysics.VolumePerUnit(manifestation.futureElement) * energyScaled;
+        temperature = 0; //TODO calculate or get?
     }
 }

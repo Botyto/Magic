@@ -30,7 +30,7 @@ public class RainCompSpell : ContinuousSpellComponent
                 var len = Random.Range(5.0f, 15.0f);
                 var spawnPos = center + new Vector3(Mathf.Sin(angle) * len, 0, Mathf.Cos(angle) * len);
                 int handle;
-                var result = ManifestEnergyAndFocus(10 + 5 * param.level, wizard.transform.InverseTransformPoint(spawnPos), out handle);
+                var result = ManifestEnergyAndFocus(50 + 50 * param.level, wizard.transform.InverseTransformPoint(spawnPos), out handle);
                 if (!Try(result))
                 {
                     if (result == EnergyActionResult.NotEnoughEnergy)
@@ -44,7 +44,7 @@ public class RainCompSpell : ContinuousSpellComponent
                     OrientTowards(handle, target);
 
                     var forceDirection = GetTargetPosition() - GetFocusPosition(handle);
-                    if (!Try(ApplyForce(handle, forceDirection.SetLength(300 + 50 * param.level), ForceMode.Impulse)))
+                    if (!Try(ApplyForce(handle, forceDirection.SetLength(30 + 15 * param.level), ForceMode.Impulse)))
                     {
                         Finish();
                         return;
