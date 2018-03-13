@@ -812,6 +812,7 @@ GameObject:
   - component: {fileID: 741776493}
   - component: {fileID: 741776491}
   - component: {fileID: 741776492}
+  - component: {fileID: 741776495}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -924,7 +925,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!114 &741776491
 MonoBehaviour:
@@ -980,6 +981,18 @@ MonoBehaviour:
   energy: 20000
   owner: {fileID: 0}
   ownedEnergies: []
+--- !u!114 &741776495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 741776483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f8c581d05cce0e459080c92408d41a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1040189964}
 --- !u!1 &755301551
 GameObject:
   m_ObjectHideFlags: 0
