@@ -205,7 +205,7 @@ public partial class EnergyManifestation
         if (passThrough)
         {
             //I am pass through - lose energy
-            var energyLost = __Collision_EstimeIntersectionEnergy(info);
+            var energyLost = __Collision_EstimeIntersectionEnergy(info); //TODO: check why this isn't balanced
             DecreaseEnergy(energyLost);
         }
         else if (otherPassThrough) //&& !passThrough)

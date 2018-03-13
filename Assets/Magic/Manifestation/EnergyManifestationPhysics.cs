@@ -42,7 +42,7 @@ public partial class EnergyManifestation
     /// If orientation is locked to velocity or the body can rotate freely.
     /// Orientation can be unlocked by applying torque to the manifestation.
     /// </summary>
-    private bool m_OrientationLocked = false;
+    private bool m_OrientationLocked = true;
 
     /// <summary>
     /// Lorentz factor for calculating the relativistic mass of this manifestation

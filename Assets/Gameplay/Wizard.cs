@@ -2,13 +2,37 @@
 
 public class Wizard : MonoBehaviour
 {
+    /// <summary>
+    /// Maximum distance for finding a spell target
+    /// </summary>
     public const float TargetSearchDistance = 20.0f;
 
+    /// <summary>
+    /// List of spells this wizard knows
+    /// </summary>
     public SpellDescriptor[] spells;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public float energyRegenerationPerFrame = 0.5f;
+
+    /// <summary>
+    /// In case 'energyRegenerationSpeed' is too small to add at least 1 energy per frame, this accumulator fixes that case
+    /// </summary>
+    [SerializeField]
+    [HideInInspector]
+    private float m_EnergyRegenerationAccumulator = 0.0f;
+
+    /// <summary>
+    /// UI ordering of the spells
+    /// </summary>
     [HideInInspector]
     public int[] spellOrdering;
     
+    /// <summary>
+    /// Wizard's energy holder
+    /// </summary>
     [HideInInspector]
     public EnergyHolder holder;
 
@@ -47,6 +71,17 @@ public class Wizard : MonoBehaviour
         for (; idx < 9; ++idx)
         {
             spellOrdering[idx] = -1;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        m_EnergyRegenerationAccumulator += energyRegenerationPerFrame;
+        if (m_EnergyRegenerationAccumulator > 1.0f)
+        {
+            var energyAdded = Mathf.FloorToInt(m_EnergyRegenerationAccumulator);
+            holder.Increase(energyAdded);
+            m_EnergyRegenerationAccumulator -= energyAdded;
         }
     }
 

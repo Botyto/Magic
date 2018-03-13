@@ -159,6 +159,9 @@ public partial class EnergyManifestation
             _Physics_UpdatePhysicalProperties();
         }
 
+        //Possibly unlock rotation
+        m_OrientationLocked = m_OrientationLocked && EnergyPhysics.ElementIsPassThrough(futureElement);
+
         SendMessage("ElementChanged", SendMessageOptions.DontRequireReceiver);
     }
 
