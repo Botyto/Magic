@@ -440,13 +440,7 @@ public partial class EnergyManifestation
     private void OnCollisionEnter(Collision collision) { __Collision_HandleCollisionEnter(new EnergyCollisionInfo(this, collision.collider, collision.relativeVelocity)); }
     private void OnCollisionStay(Collision collision) { __Collision_HandleCollisionStay(new EnergyCollisionInfo(this, collision.collider, collision.relativeVelocity)); }
     private void OnCollisionExit(Collision collision) { __Collision_HandleCollisionExit(new EnergyCollisionInfo(this, collision.collider, collision.relativeVelocity)); }
-
-    void _Collision_Start()
-    { }
-	
-	void _Collision_FixedUpdate()
-    { }
-
+    
     #endregion
 }
 

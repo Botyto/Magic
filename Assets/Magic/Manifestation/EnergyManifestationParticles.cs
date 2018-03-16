@@ -126,13 +126,7 @@ public partial class EnergyManifestation
             __Particles_UpdateParticlesShapes();
         }
     }
-
-    private void _Particles_Start()
-    { }
-
-    private void _Particles_FixedUpdate()
-    { }
-
+    
     #endregion
 
     #region Particle prefab getters

@@ -23,16 +23,6 @@ public partial class EnergyManifestation : EnergyUser
 
     #endregion
 
-    #region Unity initialization
-
-    private void _Unity_Start()
-    { }
-
-    private void _Unity_FixedUpdate()
-    { }
-
-    #endregion
-
     #region Unity interface
 
     protected void OnEnable()
@@ -50,27 +40,27 @@ public partial class EnergyManifestation : EnergyUser
 
     protected void Start()
     {
-        _Unity_Start();
+        //_Unity_Start();
 
-        _Physics_Start();
-        _Manipulation_Start();
-        _Charge_Start();
-        _Collision_Start();
+        //_Physics_Start();
+        //_Manipulation_Start();
+        //_Charge_Start();
+        //_Collision_Start();
 
-        _Particles_Start();
+        //_Particles_Start();
         _Visuals_Start();
     }
 
     protected void FixedUpdate()
     {
-        _Unity_FixedUpdate();
+        //_Unity_FixedUpdate();
 
         _Physics_FixedUpdate();
-        _Manipulation_FixedUpdate();
+        //_Manipulation_FixedUpdate();
         _Charge_FixedUpdate();
-        _Collision_FixedUpdate();
+        //_Collision_FixedUpdate();
 
-        _Particles_FixedUpdate();
+        //_Particles_FixedUpdate();
         _Visuals_FixedUpdate();
     }
 

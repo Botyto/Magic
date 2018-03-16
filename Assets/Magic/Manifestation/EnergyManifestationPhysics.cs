@@ -115,10 +115,7 @@ public partial class EnergyManifestation
     {
         rigidbody = GetComponent<Rigidbody>();
     }
-
-    private void _Physics_Start()
-    { }
-
+    
     private void _Physics_FixedUpdate()
     {
         if (m_OrientationLocked && rigidbody.velocity != Vector3.zero)

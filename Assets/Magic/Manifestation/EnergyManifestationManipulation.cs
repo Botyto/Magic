@@ -350,14 +350,4 @@ public partial class EnergyManifestation
     }
 
     #endregion
-
-    #region Unity interface
-
-    private void _Manipulation_Start()
-    { }
-
-    private void _Manipulation_FixedUpdate()
-    { }
-
-    #endregion
 }

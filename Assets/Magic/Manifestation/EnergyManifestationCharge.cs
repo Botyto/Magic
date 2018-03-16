@@ -65,10 +65,7 @@ public partial class EnergyManifestation
     {
         lastFrameProperties = new ManifestationPhysicalProperties(this);
     }
-
-    private void _Charge_Start()
-    { }
-
+    
     private void _Charge_FixedUpdate()
     {
 #if DISOWNED_DISAPPEAR
