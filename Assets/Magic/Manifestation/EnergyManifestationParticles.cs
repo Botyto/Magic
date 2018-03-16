@@ -19,7 +19,7 @@ public partial class EnergyManifestation
     /// </summary>
     private void _Particles_TriggerSmashParticles()
     {
-        __Particles_ChangeParticlePrefab(EnergyParticles.SmashParticles, false);
+        __Particles_ChangeParticlePrefab(SmashParticlesGetter, false);
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public partial class EnergyManifestation
     /// </summary>
     private void _Particles_TriggerDisposeParticles()
     {
-        __Particles_ChangeParticlePrefab(EnergyParticles.SmashParticles, false);
+        __Particles_ChangeParticlePrefab(DisposeParticlesGetter, false);
     }
     
     #endregion
@@ -59,7 +59,7 @@ public partial class EnergyManifestation
             var shapeObj = ps.shape;
             if (shapeObj.enabled)
             {
-                shapeObj.shapeType = EnergyParticles.ResolveEmitterShape(shape);
+                shapeObj.shapeType = Energy.GetShape(shape).particlesShape;
                 shapeObj.scale = transform.localScale;
             }
         }
@@ -119,7 +119,7 @@ public partial class EnergyManifestation
     /// </summary>
     private void _Particles_UpdateParticles()
     {
-        var newParticlesCreated = __Particles_ChangeParticlePrefab(EnergyParticles.IdleParticles, true);
+        var newParticlesCreated = __Particles_ChangeParticlePrefab(IdleParticlesGetter, true);
         if (!newParticlesCreated)
         {
             //New particles would have already had their shapes set
@@ -132,6 +132,25 @@ public partial class EnergyManifestation
 
     private void _Particles_FixedUpdate()
     { }
+
+    #endregion
+
+    #region Particle prefab getters
+
+    private static GameObject SmashParticlesGetter(Energy.Element element)
+    {
+        return Energy.GetElement(element).smashParticles.prefab;
+    }
+
+    private static GameObject DisposeParticlesGetter(Energy.Element element)
+    {
+        return Energy.GetElement(element).disposeParticles.prefab;
+    }
+
+    private static GameObject IdleParticlesGetter(Energy.Element element)
+    {
+        return Energy.GetElement(element).idleParticles.prefab;
+    }
 
     #endregion
 }

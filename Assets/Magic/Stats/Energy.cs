@@ -29,13 +29,13 @@ public static class Energy //TODO organize/spearate into classes
         /// </summary>
         Water,
         /// <summary>
-        /// Wind element
+        /// Air element
         /// </summary>
-        Wind,
+        Air,
         /// <summary>
         /// Dirt (natural) energy
         /// </summary>
-        Dirt,
+        Earth,
         /// <summary>
         /// Wood (natural) energy
         /// </summary>
@@ -72,7 +72,7 @@ public static class Energy //TODO organize/spearate into classes
         /// Origin is at canter of base.
         /// Uses specialized collider.
         /// </summary>
-        HemiSphere,
+        Hemisphere,
         /// <summary>
         /// Cube.
         /// Origin is at center.
@@ -96,12 +96,12 @@ public static class Energy //TODO organize/spearate into classes
     /// <summary>
     /// Default element, wherever needed
     /// </summary>
-    public const Element DefaultElement = Element.Raw;
+    public static Element DefaultElement { get { return EnergyGlobals.instance.DefaultElement; } }
 
     /// <summary>
     /// Default shape, wherever needed
     /// </summary>
-    public const Shape DefaultShape = Shape.Sphere;
+    public static Shape DefaultShape { get { return EnergyGlobals.instance.DefaultShape; } }
 
     /// <summary>
     /// Energy scale (for display purposes)
@@ -129,58 +129,18 @@ public static class Energy //TODO organize/spearate into classes
     public const float SqrSpeedLimit = SpeedLimit * SpeedLimit;
 
     /// <summary>
-    /// How much damage a single (scaled) enery unit deals (TODO redesign)
+    /// Returns the definition of the specified energy element
     /// </summary>
-    public static float DamagePerUnit(Element element)
+    public static EnergyElement GetElement(Element element)
     {
-        return 10.0f;
+        return EnergyGlobals.instance.GetElement(element);
     }
 
     /// <summary>
-    /// Get physical elasticity of an element.
-    /// Elasticity dictates how easily it is to deform a manifestation.
+    /// Returns the defintion of the specified energy shape
     /// </summary>
-    public static float ElementElasticity(Element element)
+    public static EnergyShape GetShape(Shape shape)
     {
-        return 1f;
-    }
-
-    /// <summary>
-    /// If this element seals the manifestation.
-    /// Most manipulations cannot be done on sealed energies.
-    /// </summary>
-    public static bool IsSealingElement(Element element)
-    {
-        return element == Element.Ritual;
-    }
-
-    /// <summary>
-    /// Temperature of element in non-deformed state.
-    /// Density changes temperature.
-    /// </summary>
-    public static int NormalTemperature(Element element)
-    {
-        switch (element)
-        {
-            case Element.Mana:
-            case Element.Raw:
-                return 25;
-
-            case Element.Fire: return 500;
-            case Element.Electricity: return 800;
-            case Element.Ice: return -5;
-
-            case Element.Wind: return 15;
-
-            default: return 25;
-        }
-    }
-
-    /// <summary>
-    /// Constant that affects the relation between density change and temperature change
-    /// </summary>
-    public static float TemperatureConstant(Element element) //TODO: rename me
-    {
-        return 1.0f;
+        return EnergyGlobals.instance.GetShape(shape);
     }
 }

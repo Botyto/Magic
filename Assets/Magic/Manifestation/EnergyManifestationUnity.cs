@@ -15,8 +15,14 @@ public partial class EnergyManifestation : EnergyUser
     //Methods like _Unity_Start() are accessible through other manifestation modules
     //Methods like __Collision_EstimateIntersectionVolume() are only accessible through the same module
 
+#if DEBUG
+
+    public ManifestationDebugOverview __dbgOverview { get { return new ManifestationDebugOverview(this); } }
+
+#endif
+
     #endregion
-    
+
     #region Unity initialization
 
     private void _Unity_Start()
@@ -70,3 +76,22 @@ public partial class EnergyManifestation : EnergyUser
 
     #endregion
 }
+
+#if DEBUG
+public struct ManifestationDebugOverview
+{
+    public int energy;
+    public Energy.Element element;
+    public Energy.Shape shape;
+    public EnergyHolder owner;
+
+    public ManifestationDebugOverview(EnergyManifestation manif)
+    {
+        energy = manif.GetEnergy();
+        element = manif.element;
+        shape = manif.shape;
+        owner = manif.holder.ResolveOwner();
+    }
+}
+
+#endif

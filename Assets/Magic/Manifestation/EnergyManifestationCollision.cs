@@ -130,7 +130,7 @@ public partial class EnergyManifestation
         }
         else
         {
-            var intersectingEnergy = (intersectingMass * Energy.Scalef) / (EnergyPhysics.MassPerUnit(lastFrameProperties.element) * lorentzFactor);
+            var intersectingEnergy = (intersectingMass * Energy.Scalef) / (Energy.GetElement(lastFrameProperties.element).mass * lorentzFactor);
             return (int)intersectingEnergy;
         }
     }
@@ -159,7 +159,7 @@ public partial class EnergyManifestation
 
         __Collision_ApplyElementalEffectToUnit(info.unit);
 
-        var passThrough = EnergyPhysics.ElementIsPassThrough(lastFrameProperties.element);
+        var passThrough = Energy.GetElement(lastFrameProperties.element).passThrough;
         if (!passThrough)
         {
             //If I am solid - nothing happens
@@ -168,7 +168,7 @@ public partial class EnergyManifestation
 
         //Unfriendly unit - deal damage, lose energy
         var energyLost = __Collision_EstimeIntersectionEnergy(info);
-        var damage = Energy.DamagePerUnit(lastFrameProperties.element) * energyLost / Energy.Scalef;
+        var damage = Energy.GetElement(lastFrameProperties.element).damage * energyLost / Energy.Scalef;
         info.unit.DealDamage((int)damage, gameObject);
         DecreaseEnergy(energyLost);
     }
@@ -199,7 +199,7 @@ public partial class EnergyManifestation
         }
 
         //Destructive interaction
-        var passThrough = EnergyPhysics.ElementIsPassThrough(lastFrameProperties.element);
+        var passThrough = Energy.GetElement(lastFrameProperties.element).passThrough;
         var otherPassThrough = info.IsPassThrough();
 
         if (passThrough)
@@ -213,7 +213,7 @@ public partial class EnergyManifestation
             //I am solid & other is pass though - apply force by the interaction
             var newVelocity = __Collision_CalculateNewVelocity(info);
             var impulseReceived = lastFrameProperties.mass * (newVelocity - rigidbody.velocity);
-            var smashImpulse = EnergyPhysics.SmashImpulse(element) * lastFrameProperties.mass;
+            var smashImpulse = Energy.GetElement(element).smashImpulse * lastFrameProperties.mass;
             if (impulseReceived.sqrMagnitude > smashImpulse * smashImpulse)
             {
                 Smash();
@@ -245,7 +245,7 @@ public partial class EnergyManifestation
         //If I am pass-through:
         //Calculate volume lost & lose that energy instantly
 
-        var passThrough = EnergyPhysics.ElementIsPassThrough(lastFrameProperties.element);
+        var passThrough = Energy.GetElement(lastFrameProperties.element).passThrough;
         if (!passThrough)
         {
             return;
@@ -299,7 +299,7 @@ public partial class EnergyManifestation
         {
             var newVelocity = __Collision_CalculateNewVelocity(info);
             var impulseReceived = rigidbody.mass * (newVelocity - rigidbody.velocity);
-            var smashImpulse = EnergyPhysics.SmashImpulse(element) * rigidbody.mass;
+            var smashImpulse = Energy.GetElement(element).smashImpulse * rigidbody.mass;
             if (impulseReceived.sqrMagnitude > smashImpulse * smashImpulse)
             {
                 Smash();
@@ -415,22 +415,22 @@ public partial class EnergyManifestation
                 if (collider is MeshCollider)
                 {
                     //Already has correct collider
-                    (collider as MeshCollider).sharedMesh = EnergyVisuals.FindCollider(shape);
+                    (collider as MeshCollider).sharedMesh = Energy.GetShape(shape).collider;
                     break;
                 }
                 if (collider != null) Util.Destroy(collider); //Destroy incorrect collider
 
                 { //Attach & setup correct collider
                     var meshc = gameObject.AddComponent<MeshCollider>();
-                    meshc.sharedMesh = EnergyVisuals.FindCollider(shape);
+                    meshc.sharedMesh = Energy.GetShape(shape).collider;
                     meshc.convex = true;
                     collider = meshc;
                 }
                 break;
         }
 
-        collider.isTrigger = EnergyPhysics.ElementIsPassThrough(element);
-        rigidbody.useGravity = EnergyPhysics.BodyUsesGravity(element);
+        collider.isTrigger = Energy.GetElement(element).passThrough;
+        rigidbody.useGravity = Energy.GetElement(element).usesGravity;
         rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; //TODO decide if this is needed
     }
 
@@ -512,7 +512,7 @@ class EnergyCollisionInfo
     {
         if (manifestation != null)
         {
-            return EnergyPhysics.ElementIsPassThrough(manifestation.lastFrameProperties.element);
+            return Energy.GetElement(manifestation.lastFrameProperties.element).passThrough;
         }
         else if (collider != null)
         {

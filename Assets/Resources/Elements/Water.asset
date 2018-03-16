@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a84ff55e338634d478ac53e566ab818b, type: 3}
+  m_Name: Water
+  m_EditorClassIdentifier: 
+  displayName: Water
+  material: {fileID: 2100000, guid: 14e3c04616f76ca478fddb694ad8e15f, type: 2}
+  mass: 1
+  baseVolume: 0
+  volume: 1
+  usesGravity: 1
+  passThrough: 1
+  smashImpulse: 10
+  temperature: 25
+  temperatureConstant: 1
+  elasticity: 1
+  damage: 50
+  sealing: 0
+  idleParticles:
+    prefab: {fileID: 0}
+    attached: 1
+    scaled: 1
+    rotated: 1
+  smashParticles:
+    prefab: {fileID: 0}
+    attached: 1
+    scaled: 1
+    rotated: 1
+  disposeParticles:
+    prefab: {fileID: 0}
+    attached: 1
+    scaled: 1
+    rotated: 1

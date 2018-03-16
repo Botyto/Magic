@@ -6,7 +6,7 @@ public class FallingBall : ContinuousSpellComponent
 
     public override void OnBegin()
     {
-        if (!EnergyPhysics.BodyUsesGravity(param.element))
+        if (!Energy.GetElement(param.element).usesGravity)
         {
             Cancel();
             return;

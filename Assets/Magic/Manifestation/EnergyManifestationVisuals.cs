@@ -26,8 +26,8 @@ public partial class EnergyManifestation
     /// </summary>
     private void __Visuals_UpdateRenderingSettings()
     {
-        GetComponent<MeshFilter>().sharedMesh = EnergyVisuals.FindMesh(shape);
-        GetComponent<MeshRenderer>().sharedMaterial = EnergyVisuals.FindMaterial(element);
+        GetComponent<MeshFilter>().sharedMesh = Energy.GetShape(shape).mesh;
+        GetComponent<MeshRenderer>().sharedMaterial = Energy.GetElement(element).material;
     }
 
     /// <summary>

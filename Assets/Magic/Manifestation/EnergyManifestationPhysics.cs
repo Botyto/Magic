@@ -68,7 +68,7 @@ public partial class EnergyManifestation
     
     private Vector3 __Physics_ResolveDeformation(Vector3 stress)
     {
-        var elasticity_coef = Energy.ElementElasticity(element);
+        var elasticity_coef = Energy.GetElement(element).elasticity;
         return new Vector3(
             __Physics_ResolveDeformation(elasticity_coef, stress.x),
             __Physics_ResolveDeformation(elasticity_coef, stress.y),
@@ -105,8 +105,9 @@ public partial class EnergyManifestation
 
     private void _Physics_UpdatePhysicalProperties()
     {
-        rigidbody.mass = EnergyPhysics.MassPerUnit(futureElement) * GetEnergyScaledf() * lorentzFactor;
-        originalVolume = EnergyPhysics.BaseVolume(futureElement) + EnergyPhysics.VolumePerUnit(futureElement) * GetEnergyScaledf();
+        var elementDef = Energy.GetElement(futureElement);
+        rigidbody.mass = elementDef.mass * GetEnergyScaledf() * lorentzFactor;
+        originalVolume = elementDef.baseVolume + elementDef.volume * GetEnergyScaledf();
         transform.localScale = deformation * originalVolume;
     }
 

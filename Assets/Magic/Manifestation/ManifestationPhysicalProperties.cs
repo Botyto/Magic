@@ -53,8 +53,9 @@ public class ManifestationPhysicalProperties
         shape = manifestation.futureShape;
         var energyScaled = manifestation.GetEnergyScaledf();
 
-        mass = EnergyPhysics.MassPerUnit(manifestation.futureElement) * energyScaled * manifestation.lorentzFactor;
-        volume = EnergyPhysics.BaseVolume(manifestation.futureElement) + EnergyPhysics.VolumePerUnit(manifestation.futureElement) * energyScaled;
+        var elementDef = Energy.GetElement(manifestation.futureElement);
+        mass = elementDef.mass * energyScaled * manifestation.lorentzFactor;
+        volume = elementDef.baseVolume + elementDef.volume * energyScaled;
         temperature = 0; //TODO calculate or get?
     }
 }

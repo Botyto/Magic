@@ -145,7 +145,7 @@ public partial class EnergyManifestation
         }
 
         element = newElement;
-        @sealed = Energy.IsSealingElement(element);
+        @sealed = Energy.GetElement(futureElement).sealing;
         _Visuals_SetVisualsDirty();
 
         //Conserve momentum
@@ -160,7 +160,7 @@ public partial class EnergyManifestation
         }
 
         //Possibly unlock rotation
-        m_OrientationLocked = m_OrientationLocked && EnergyPhysics.ElementIsPassThrough(futureElement);
+        m_OrientationLocked = m_OrientationLocked && Energy.GetElement(futureElement).passThrough;
 
         SendMessage("ElementChanged", SendMessageOptions.DontRequireReceiver);
     }
