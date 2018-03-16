@@ -148,6 +148,12 @@ public partial class EnergyManifestation
         @sealed = Energy.GetElement(futureElement).sealing;
         _Visuals_SetVisualsDirty();
 
+        //Sealed manifestations are selectable
+        if (@sealed)
+        {
+            gameObject.AddComponent<Selectable>();
+        }
+
         //Conserve momentum
         if (rigidbody.velocity.sqrMagnitude > float.Epsilon * float.Epsilon)
         {
@@ -158,7 +164,7 @@ public partial class EnergyManifestation
         {
             _Physics_UpdatePhysicalProperties();
         }
-
+        
         //Possibly unlock rotation
         m_OrientationLocked = m_OrientationLocked && Energy.GetElement(futureElement).passThrough;
 
