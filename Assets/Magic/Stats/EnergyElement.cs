@@ -1,6 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// Data descriptor for an energy element.
+/// </summary>
 [Serializable]
 [CreateAssetMenu(fileName = "New Element", menuName = "Magic/Energy Element")]
 public class EnergyElement : ScriptableObject

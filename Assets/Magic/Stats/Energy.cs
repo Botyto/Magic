@@ -92,16 +92,8 @@ public static class Energy //TODO organize/spearate into classes
         /// </summary>
         Capsule,
     }
-
-    /// <summary>
-    /// Default element, wherever needed
-    /// </summary>
-    public static Element DefaultElement { get { return EnergyGlobals.instance.DefaultElement; } }
-
-    /// <summary>
-    /// Default shape, wherever needed
-    /// </summary>
-    public static Shape DefaultShape { get { return EnergyGlobals.instance.DefaultShape; } }
+    
+    #region Universal constants
 
     /// <summary>
     /// Energy scale (for display purposes)
@@ -128,6 +120,20 @@ public static class Energy //TODO organize/spearate into classes
     /// </summary>
     public const float SqrSpeedLimit = SpeedLimit * SpeedLimit;
 
+    #endregion
+
+    #region Global getters
+
+    /// <summary>
+    /// Default element, wherever needed
+    /// </summary>
+    public static Element DefaultElement { get { return EnergyGlobals.instance.DefaultElement; } }
+
+    /// <summary>
+    /// Default shape, wherever needed
+    /// </summary>
+    public static Shape DefaultShape { get { return EnergyGlobals.instance.DefaultShape; } }
+
     /// <summary>
     /// Returns the definition of the specified energy element
     /// </summary>
@@ -143,4 +149,6 @@ public static class Energy //TODO organize/spearate into classes
     {
         return EnergyGlobals.instance.GetShape(shape);
     }
+
+    #endregion
 }

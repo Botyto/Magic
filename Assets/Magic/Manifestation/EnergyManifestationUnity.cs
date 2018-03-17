@@ -15,12 +15,6 @@ public partial class EnergyManifestation : EnergyUser
     //Methods like _Unity_Start() are accessible through other manifestation modules
     //Methods like __Collision_EstimateIntersectionVolume() are only accessible through the same module
 
-#if DEBUG
-
-    public ManifestationDebugOverview __dbgOverview { get { return new ManifestationDebugOverview(this); } }
-
-#endif
-
     #endregion
 
     #region Unity interface
@@ -65,6 +59,12 @@ public partial class EnergyManifestation : EnergyUser
     }
 
     #endregion
+
+#if DEBUG
+
+    public ManifestationDebugOverview __dbgOverview { get { return new ManifestationDebugOverview(this); } }
+
+#endif
 }
 
 #if DEBUG

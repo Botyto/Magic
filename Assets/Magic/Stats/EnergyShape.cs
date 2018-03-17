@@ -1,6 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// Data descriptor for an energy shape.
+/// </summary>
 [Serializable]
 [CreateAssetMenu(fileName = "New Shape", menuName = "Magic/Energy Shape")]
 public class EnergyShape : ScriptableObject
