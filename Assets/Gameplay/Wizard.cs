@@ -57,14 +57,11 @@ public class Wizard : MonoBehaviour
         int idx = 0;
         for (int i = 0; i < spells.Length; ++i)
         {
+            if (idx >= 9) { break; }
             if (spells[i].visible)
             {
                 spellOrdering[idx] = i;
                 ++idx;
-                if (idx > 9)
-                {
-                    break;
-                }
             }
         }
 

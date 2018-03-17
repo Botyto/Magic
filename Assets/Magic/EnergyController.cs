@@ -499,13 +499,54 @@ public class EnergyController : EnergyUser
     }
 
     /// <summary>
+    /// Create an elastic joint between this and another manifestation.
+    /// </summary>
+    public EnergyActionResult CreateElasticConnection(EnergyManifestation target, EnergyManifestation other, int connectionCharge)
+    {
+        //Check validity.
+        if (target == null || other == null)
+        {
+            return EnergyActionResult.InvalidManifestation;
+        }
+
+        //If there is a joint already, it's either a redundant or a forbidden action (Only one joint is allowed per manifestation).
+        var joint = target.GetComponent<SpringJoint>();
+        if (joint != null)
+        {
+            return (joint.connectedBody == other.rigidbody) ? EnergyActionResult.RedundantAction : EnergyActionResult.ForbiddenAction;
+        }
+
+        //Check range.
+        if (!IsWithinRange(target) || !IsWithinRange(other))
+        {
+            return EnergyActionResult.OutsideRange;
+        }
+
+        //Check energy cost
+        var totalCost = connectionCharge + cost.CreateElasticConnection(this, target, other, connectionCharge);
+        if (totalCost > GetEnergy())
+        {
+            return EnergyActionResult.NotEnoughEnergy;
+        }
+
+        //Actual implementation.
+        target.CreateElasticConnection(other, connectionCharge);
+
+        //Consume energy.
+        DecreaseEnergy(totalCost);
+
+        //Success.
+        return EnergyActionResult.Success;
+    }
+
+    /// <summary>
     /// Apply physical force to manifestation (at center of mass). Force vector is relaive to the controller's transform.
     /// </summary>
     public EnergyActionResult ApplyForceRelative(EnergyManifestation target, Vector3 relativeForce, ForceMode mode)
     {
         return ApplyForce(target, transform.TransformDirection(relativeForce), mode);
     }
-
+    
     /// <summary>
     /// Apply physical force to manifestation (at center of mass)
     /// </summary>

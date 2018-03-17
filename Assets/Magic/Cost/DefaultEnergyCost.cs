@@ -47,6 +47,11 @@ public class DefaultEnergyCost : IEnergyCost
         return (int)Mathf.Abs(stress.magnitude);
     }
 
+    public int CreateElasticConnection(EnergyController user, EnergyManifestation target, EnergyManifestation other, int connectionCharge)
+    {
+        return (int)(Mathf.Sqrt(connectionCharge) + target.transform.position.DistanceTo(other.transform.position));
+    }
+
     public int ApplyForce(EnergyController user, EnergyManifestation target, Vector3 force, ForceMode mode)
     {
         var velocityChange = 0.0f;

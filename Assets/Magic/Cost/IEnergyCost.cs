@@ -12,6 +12,7 @@ public interface IEnergyCost
     int ChangeElement(EnergyController user, EnergyManifestation target, Energy.Element newElement);
     int ChangeShape(EnergyController user, EnergyManifestation target, Energy.Shape newShape);
     int Deform(EnergyController user, EnergyManifestation target, Vector3 stress);
+    int CreateElasticConnection(EnergyController user, EnergyManifestation target, EnergyManifestation other, int connectionCharge);
     int ApplyForce(EnergyController user, EnergyManifestation target, Vector3 force, ForceMode mode);
     int ApplyTorque(EnergyController user, EnergyManifestation target, Vector3 torque, ForceMode mode);
     int OrientTowards(EnergyController user, EnergyManifestation target, Vector3 lookat);
@@ -30,5 +31,5 @@ public interface IEnergyCost
     //2.4) Implement the actual implementation of the manipulation
     //2.5) Consume the energy from the controller's holder
     //3) Add a function here that returns int, takes EnergyController and all arguments the function in step 2 takes
-    //4) Add an interface for the controller function in ManifestedSpellBase.cs
+    //4) Add an interface for the controller function in SpellComponent.cs
 }

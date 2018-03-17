@@ -216,6 +216,23 @@ public partial class EnergyManifestation
     #region Physical forces
 
     /// <summary>
+    /// Create an elastic joint between this and another manifestation.
+    /// </summary>
+    public void CreateElasticConnection(EnergyManifestation other, int connectionCharge)
+    {
+        var distance = transform.position.DistanceTo(other.transform.position);
+
+        var joint = gameObject.AddComponent<SpringJoint>();
+        joint.connectedBody = other.rigidbody;
+
+        //TODO properly setup spring joint
+        joint.minDistance = 1.0f;
+        joint.maxDistance = distance;
+        joint.spring = 5 * connectionCharge / Energy.Scalef;
+        joint.breakForce = 100 * connectionCharge / Energy.Scalef;
+    }
+
+    /// <summary>
     /// Apply physical force (at center of mass)
     /// </summary>
     public void ApplyForce(Vector3 force, ForceMode mode)
