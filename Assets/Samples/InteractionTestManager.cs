@@ -165,8 +165,8 @@ public class InteractionTestManager : MonoBehaviour
 
         direction.Normalize();
 
-        first.position = middle + direction * distance;
-        second.position = middle - direction * distance;
+        first.position = middle - direction * distance;
+        second.position = middle + direction * distance;
     }
 
     private int CalculateCharge(Energy.Element element, ManifestationProperty prop, float amount)
