@@ -16,7 +16,7 @@
 		Tags{ "RenderType" = "Opaque" }
 
 		CGPROGRAM
-		#pragma surface surf Standard vertex:vert
+		#pragma surface surf Standard vertex:vert addshadow
 
 		struct Input
 		{
