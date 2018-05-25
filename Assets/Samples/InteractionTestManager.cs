@@ -76,6 +76,19 @@ public class InteractionTestManager : MonoBehaviour
         outSecond = CreateManifestation(second, name + "__second");
     }
 
+    public TextMesh CreateNotation(Vector3 position, string text, int size = 25)
+    {
+        var notation = new GameObject("TestNotation");
+        notation.transform.SetParent(transform);
+        notation.transform.position = position;
+        notation.transform.localRotation = Camera.main.transform.rotation;
+        var textMesh = notation.AddComponent<TextMesh>();
+        textMesh.text = text;
+        textMesh.fontSize = size;
+
+        return textMesh;
+    }
+
     public void CreateAllElementPairs(float value, Energy.Shape shape, float force, ForceMode forceMode)
     {
         var first = new ManifestationParams();
@@ -125,6 +138,9 @@ public class InteractionTestManager : MonoBehaviour
                 ++z;
             }
 
+            CreateNotation(new Vector3(spacing * x, 15.0f, -25.0f) + transform.position, elem1.ToString(), 50);
+            CreateNotation(new Vector3(-25.0f, 15.0f, spacing * x) + transform.position, elem1.ToString(), 50);
+
             ++x;
         }
     }
@@ -166,13 +182,19 @@ public class InteractionTestManager : MonoBehaviour
         }
     }
 
-    private void DestroyAllChildren()
+    public void DestroyAllChildren()
     {
-        var n = transform.childCount;
-        for (int i = 0; i < n; ++i)
+        while (transform.childCount > 0)
         {
-            var child = transform.GetChild(i);
-            Util.Destroy(child.gameObject);
+            var child = transform.GetChild(0);
+            if (Application.isPlaying)
+            {
+                Util.Destroy(child.gameObject);
+            }
+            else
+            {
+                DestroyImmediate(child.gameObject);
+            }
         }
     }
 
@@ -190,6 +212,11 @@ public class InteractionTestManager : MonoBehaviour
 
     #region Unity interface
 
+    public void RunTest()
+    {
+        TestElements();
+    }
+
     private void Start()
     {
         if (autoPause && Application.isEditor)
@@ -197,7 +224,7 @@ public class InteractionTestManager : MonoBehaviour
             EditorApplication.isPaused = true;
         }
 
-        TestElements();
+        RunTest();
     }
 
     private void Reset()

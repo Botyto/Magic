@@ -19,11 +19,26 @@ public partial class EnergyManifestation : EnergyUser
 
     #region Unity interface
 
-    protected void OnEnable()
+    protected override void Awake()
+    {
+        base.Awake();
+
+        //_Unity_Awake();
+
+        _Physics_Awake();
+        //_Manipulation_Awake();
+        //_Charge_Awake();
+        //_Collision_Awake();
+
+        //_Particles_Awake();
+        //_Visuals_Awake();
+    }
+
+    protected virtual void OnEnable()
     {
         //_Unity_OnEnable();
 
-        _Physics_OnEnable();
+        //_Physics_OnEnable();
         //_Manipulation_OnEnable();
         _Charge_OnEnable();
         //_Collision_OnEnable();
@@ -32,7 +47,7 @@ public partial class EnergyManifestation : EnergyUser
         //_Visuals_OnEnable();
     }
 
-    protected void Start()
+    protected virtual void Start()
     {
         //_Unity_Start();
 
@@ -45,7 +60,7 @@ public partial class EnergyManifestation : EnergyUser
         _Visuals_Start();
     }
 
-    protected void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         //_Unity_FixedUpdate();
 

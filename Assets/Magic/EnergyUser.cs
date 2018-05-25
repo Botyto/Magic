@@ -64,7 +64,7 @@ public class EnergyUser : MonoBehaviour
 
     #region Unity internals
 
-    virtual protected void Awake()
+    protected virtual void Awake()
     {
         holder = GetComponent<EnergyHolder>();
     }

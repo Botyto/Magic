@@ -111,7 +111,7 @@ public partial class EnergyManifestation
         transform.localScale = deformation * originalVolume;
     }
 
-    private void _Physics_OnEnable()
+    private void _Physics_Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
     }

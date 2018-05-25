@@ -325,8 +325,8 @@ public partial class EnergyManifestation
         }
 
         //Massless object
-        var rigidbody = obj.GetComponent<Rigidbody>();
-        if (rigidbody == null || rigidbody.mass <= 0.0f)
+        var objRigidbody = obj.GetComponent<Rigidbody>();
+        if (objRigidbody == null || objRigidbody.mass <= 0.0f)
         {
             return false;
         }

@@ -19,35 +19,65 @@ public static class Energy //TODO organize/spearate into classes
         /// </summary>
         Mana,
 
-        //Elemental
+        //Primary elements
         /// <summary>
-        /// Fire energy
+        /// Fire energy (beats air, loses to water)
         /// </summary>
         Fire,
         /// <summary>
-        /// Water energy
-        /// </summary>
-        Water,
-        /// <summary>
-        /// Air element
+        /// Air element (beats electricity, loses to fire)
         /// </summary>
         Air,
         /// <summary>
-        /// Dirt (natural) energy
-        /// </summary>
-        Earth,
-        /// <summary>
-        /// Wood (natural) energy
-        /// </summary>
-        Wood,
-        /// <summary>
-        /// Electrical element
+        /// Electrical element (beats earth, loses to air)
         /// </summary>
         Electricity,
         /// <summary>
-        /// Ice energy (frozen water)
+        /// Dirt (natural) energy (beats water, loses to electricity)
+        /// </summary>
+        Earth,
+        /// <summary>
+        /// Water energy (beats fire, loses to earth)
+        /// </summary>
+        Water,
+
+        //Secondary elements
+        /// <summary>
+        /// Ice energy (water + air)
         /// </summary>
         Ice,
+        /// <summary>
+        /// Wood energy (earth + water)
+        /// </summary>
+        Wood,
+        /// <summary>
+        /// Lava energy (fire + earth)
+        /// </summary>
+        //Lava,
+        /// <summary>
+        /// Storm energy (electricity + water)
+        /// </summary>
+        //Storm,
+        /// <summary>
+        /// Boil energy (fire + water)
+        /// </summary>
+        //Boil,
+        /// <summary>
+        /// Dust energy (fire + earth + air)
+        /// </summary>
+        //Dust,
+        /// <summary>
+        /// Explosion energy (fire + electricity)
+        /// </summary>
+        //Explosion,
+        /// <summary>
+        /// Scorch energy (fire + wind)
+        /// </summary>
+        //Scorch,
+        /// <summary>
+        /// Magnetic energy (earth + air)
+        /// </summary>
+        //Magnetic,
         
         //Special
         /// <summary>
