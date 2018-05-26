@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc0bff690f5e6e4ba0198fcda48b19d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoPause: 1
+  autoPause: 0
   amount: 300
   property: 0
   shape: 0
@@ -410,6 +410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd46354d6aea1ed4fab82c53e7bcf10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  history: []
 --- !u!1 &766113522
 GameObject:
   m_ObjectHideFlags: 0

@@ -128,27 +128,27 @@ public static class Energy //TODO organize/spearate into classes
     /// <summary>
     /// Energy scale (for display purposes)
     /// </summary>
-    public const int Scale = 100;
+    public const int scale = 100;
 
     /// <summary>
     /// Energy scale as floating point number (for display purposes)
     /// </summary>
-    public const float Scalef = Scale;
+    public const float scalef = scale;
 
     /// <summary>
     /// Minimum temperature any material can reach
     /// </summary>
-    public const int MinTemperature = -273;
+    public const int minTemperature = -273;
 
     /// <summary>
     /// Global speed limit
     /// </summary>
-    public const float SpeedLimit = 1000.0f;
+    public const float speedLimit = 1000.0f;
 
     /// <summary>
     /// Global speed limit squared
     /// </summary>
-    public const float SqrSpeedLimit = SpeedLimit * SpeedLimit;
+    public const float sqrSpeedLimit = speedLimit * speedLimit;
 
     #endregion
 
@@ -157,12 +157,12 @@ public static class Energy //TODO organize/spearate into classes
     /// <summary>
     /// Default element, wherever needed
     /// </summary>
-    public static Element DefaultElement { get { return EnergyGlobals.instance.DefaultElement; } }
+    public static Element defaultElement { get { return EnergyGlobals.instance.DefaultElement; } }
 
     /// <summary>
     /// Default shape, wherever needed
     /// </summary>
-    public static Shape DefaultShape { get { return EnergyGlobals.instance.DefaultShape; } }
+    public static Shape defaultShape { get { return EnergyGlobals.instance.DefaultShape; } }
 
     /// <summary>
     /// Returns the definition of the specified energy element

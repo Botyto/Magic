@@ -130,7 +130,7 @@ public partial class EnergyManifestation
         }
         else
         {
-            var intersectingEnergy = (intersectingMass * Energy.Scalef) / (Energy.GetElement(lastFrameProperties.element).mass * lorentzFactor);
+            var intersectingEnergy = (intersectingMass * Energy.scalef) / (Energy.GetElement(lastFrameProperties.element).mass * lorentzFactor);
             return (int)intersectingEnergy;
         }
     }
@@ -168,7 +168,7 @@ public partial class EnergyManifestation
 
         //Unfriendly unit - deal damage, lose energy
         var energyLost = __Collision_EstimeIntersectionEnergy(info);
-        var damage = Energy.GetElement(lastFrameProperties.element).damage * energyLost / Energy.Scalef;
+        var damage = Energy.GetElement(lastFrameProperties.element).damage * energyLost / Energy.scalef;
         info.unit.DealDamage((int)damage, gameObject);
         DecreaseEnergy(energyLost);
     }

@@ -850,7 +850,6 @@ public class EnergyController : EnergyUser
         cost = new DefaultEnergyCost();
     }
 
-
     #endregion
 }
 

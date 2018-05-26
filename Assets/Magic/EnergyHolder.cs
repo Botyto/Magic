@@ -119,7 +119,7 @@ public class EnergyHolder : MonoBehaviour
     /// </summary>
     public int GetEnergyScaled()
     {
-        return energy / Energy.Scale;
+        return energy / Energy.scale;
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ public class EnergyHolder : MonoBehaviour
     /// </summary>
     public float GetEnergyScaledf()
     {
-        return energy / Energy.Scalef;
+        return energy / Energy.scalef;
     }
 
     /// <summary>

@@ -1,31 +1,148 @@
 ﻿using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Interop;
 using UnityEngine;
+using UnityEditor;
 
 public static class UnityScriptLibrary
 {
+    #region Bind
+    
     public static void Bind(Script L)
     {
-        UserData.RegisterType<GameObject>();
-
-        var tGameObject = new Table(L);
-        L.Globals["GameObject"] = tGameObject;
-        tGameObject["Find"] = new CallbackFunction(GameObjectFind);
+        BindUtils(L); //Vectors, etc..
+        BindGameplay(L);
 
         var tDebug = new Table(L);
         L.Globals["Debug"] = tDebug;
         tDebug["Log"] = new CallbackFunction(DebugLog);
+
+        var tApplication = new Table(L);
+        L.Globals["Application"] = tApplication;
+        tApplication["Pause"] = new CallbackFunction(ApplicationPause);
 
         var tResources = new Table(L);
         L.Globals["Resources"] = tResources;
         tResources["ListAll"] = new CallbackFunction(ResourcesListAll);
     }
 
+    public static void BindGameplay(Script L)
+    {
+        var tGameObject = ScriptLibrary.BindClass<GameObject>(L);
+        tGameObject["Find"] = new CallbackFunction(GameObjectFind);
+        tGameObject["Destroy"] = new CallbackFunction(GameObjectDestroy);
+        L.Globals["GO"] = tGameObject["Find"];
+        
+        var tTransform = ScriptLibrary.BindClass<Transform>(L);
+        tTransform["ListChildren"] = new CallbackFunction(TransformListChildren);
+    }
+
+    public static void BindUtils(Script L)
+    {
+        var tVector3 = ScriptLibrary.BindClass<Vector3>(L);
+        tVector3["new"] = new CallbackFunction(Vector3New);
+        tVector3["one"] = DynValue.FromObject(L, Vector3.one);
+        tVector3["zero"] = DynValue.FromObject(L, Vector3.zero);
+
+        var tQuaternion = ScriptLibrary.BindClass<Quaternion>(L);
+        tQuaternion["Euler"] = new CallbackFunction(QuaternionEuler);
+        tQuaternion["identity"] = DynValue.FromObject(L, Quaternion.identity);
+
+        var tInput = ScriptLibrary.BindClass<Input>(L);
+        tInput["GetKey"] = new CallbackFunction(InputGetKey);
+    }
+    
+    #endregion
+
+    #region Utils
+
+    public static DynValue Vector3New(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var x = args.AsType(0, "Vector3.new", DataType.Number, false);
+        var y = args.AsType(1, "Vector3.new", DataType.Number, false);
+        var z = args.AsType(2, "Vector3.new", DataType.Number, false);
+
+        return DynValue.FromObject(ctx.OwnerScript, new Vector3((float)x.Number, (float)y.Number, (float)z.Number));
+    }
+
+    public static DynValue QuaternionEuler(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        Vector3 eulerAngles;
+        if (args.Count == 1)
+        {
+            eulerAngles = args.AsUserData<Vector3>(0, "Quaternion.Euler", false);
+        }
+        else
+        {
+            var x = args.AsType(0, "Quaternion.Euler", DataType.Number, false);
+            var y = args.AsType(1, "Quaternion.Euler", DataType.Number, false);
+            var z = args.AsType(2, "Quaternion.Euler", DataType.Number, false);
+            eulerAngles = new Vector3((float)x.Number, (float)y.Number, (float)z.Number);
+        }
+        
+        return DynValue.FromObject(ctx.OwnerScript, Quaternion.Euler(eulerAngles));
+    }
+
+    public static DynValue InputGetKey(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        return DynValue.Nil;
+    }
+
+    #endregion
+
     #region GameObject
+
+    public static DynValue GameObjectDestroy(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var obj = args.AsUserData<GameObject>(0, "GameObject.Destroy", true);
+        if (obj == null)
+        {
+            return DynValue.Nil;
+        }
+
+        float delay = 0.0f;
+        string note = null;
+        if (args.Count == 3)
+        {
+            delay = (float)args.AsType(1, "GameObject.Destroy", DataType.Number, false).Number;
+            note = args.AsStringUsingMeta(ctx, 2, "GameObject.Destroy");
+        }
+        else if (args.Count == 2)
+        {
+            var arg1 = args.RawGet(1, true);
+            if (arg1.Type == DataType.String)
+            {
+                note = arg1.ToPrintString();
+            }
+            else
+            {
+                delay = (float)arg1.CastToNumber();
+            }
+        }
+
+        Util.Destroy(obj, delay, note);
+        
+        return DynValue.FromObject(ctx.OwnerScript, obj);
+    }
 
     public static DynValue GameObjectFind(ScriptExecutionContext ctx, CallbackArguments args)
     {
         var name = args.AsStringUsingMeta(ctx, 0, "GameObject.Find");
         return DynValue.FromObject(ctx.OwnerScript, GameObject.Find(name));
+    }
+
+    public static DynValue TransformListChildren(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var transform = args.AsUserData<Transform>(0, "Transform.ListChildren", false);
+
+        var n = transform.childCount;
+        var childrenValue = DynValue.NewTable(ctx.OwnerScript);
+        var children = childrenValue.Table;
+        for (int i = 0; i < n; ++i)
+        {
+            children[i] = DynValue.FromObject(ctx.OwnerScript, transform.GetChild(i));
+        }
+
+        return childrenValue;
     }
 
     #endregion
@@ -52,6 +169,17 @@ public static class UnityScriptLibrary
         return DynValue.Nil;
     }
 
+    public static DynValue ApplicationPause(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        if (Application.isEditor)
+        {
+            var paused = args.AsType(0, "Application.Pause", DataType.Boolean, false).Boolean;
+            EditorApplication.isPaused = paused;
+        }
+
+        return DynValue.Nil;
+    }
+
     #endregion
 
     #region Resources
@@ -72,3 +200,4 @@ public static class UnityScriptLibrary
 
     #endregion
 }
+;

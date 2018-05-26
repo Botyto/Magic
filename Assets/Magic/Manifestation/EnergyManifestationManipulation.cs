@@ -228,8 +228,8 @@ public partial class EnergyManifestation
         //TODO properly setup spring joint
         joint.minDistance = 1.0f;
         joint.maxDistance = distance;
-        joint.spring = 5 * connectionCharge / Energy.Scalef;
-        joint.breakForce = 100 * connectionCharge / Energy.Scalef;
+        joint.spring = 5 * connectionCharge / Energy.scalef;
+        joint.breakForce = 100 * connectionCharge / Energy.scalef;
     }
 
     /// <summary>

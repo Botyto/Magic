@@ -53,7 +53,7 @@ public partial class EnergyManifestation
         {
             //https://en.wikipedia.org/wiki/Lorentz_factor
             var sqrSpeed = rigidbody.velocity.sqrMagnitude;
-            return 1.0f / Mathf.Sqrt(1 - sqrSpeed / Energy.SqrSpeedLimit);
+            return 1.0f / Mathf.Sqrt(1 - sqrSpeed / Energy.sqrSpeedLimit);
         }
     }
 

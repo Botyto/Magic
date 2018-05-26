@@ -16,12 +16,12 @@ public partial class EnergyManifestation
     /// <summary>
     /// Manifestation element
     /// </summary>
-    public Energy.Element element = Energy.DefaultElement;
+    public Energy.Element element = Energy.defaultElement;
 
     /// <summary>
     /// Manifestation shape
     /// </summary>
-    public Energy.Shape shape = Energy.DefaultShape;
+    public Energy.Shape shape = Energy.defaultShape;
 
     /// <summary>
     /// Manifestation temperature (°C)
@@ -37,12 +37,12 @@ public partial class EnergyManifestation
     /// <summary>
     /// Element to which to switch at end of this frame (LateUpdate)
     /// </summary>
-    public Energy.Element futureElement = Energy.DefaultElement;
+    public Energy.Element futureElement = Energy.defaultElement;
 
     /// <summary>
     /// Shape to which to switch at end of this frame (LateUpdate)
     /// </summary>
-    public Energy.Shape futureShape = Energy.DefaultShape;
+    public Energy.Shape futureShape = Energy.defaultShape;
 
     #endregion
 
@@ -72,7 +72,7 @@ public partial class EnergyManifestation
         //Energies without an owner lose charge over time
         if (holder.owner == null)
         {
-            DecreaseEnergy(Mathf.Max(1, GetEnergy() / (60 * Energy.Scale)));
+            DecreaseEnergy(Mathf.Max(1, GetEnergy() / (60 * Energy.scale)));
         }
 #endif
 

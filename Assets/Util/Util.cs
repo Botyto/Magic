@@ -71,6 +71,11 @@ public static class Util
     /// </summary>
     private static void RenameDestroyedObject(UnityEngine.Object obj, string note)
     {
+        if (string.IsNullOrEmpty(note))
+        {
+            return;
+        }
+
         const int maxLen = 15;
         if (obj.name.Length > maxLen)
         {

@@ -196,15 +196,22 @@ namespace MoonSharp.Interpreter.Interop.BasicDescriptors
 			}
 			else
 			{
-				if (members.ContainsKey(name))
+                /*if (members.ContainsKey(name)) TODO - figure out a workaround
 				{
 					throw new ArgumentException(string.Format("Multiple members named {0} are being added to type {1} and one or more of these members do not support overloads.", name, this.Type.FullName));
 				}
 				else
 				{
 					members.Add(name, desc);
-				}
-			}
+				}*/
+                
+                if (members.ContainsKey(name))
+                {
+                    members.Remove(name);
+                }
+
+                members.Add(name, desc);
+            }
 		}
 
 		/// <summary>
