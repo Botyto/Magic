@@ -9,27 +9,10 @@ public class ScriptEnvironment
     {
         UserData.RegisterAssembly();
         L = new Script(CoreModules.Preset_Complete);
-
-        L.Globals["print"] = (System.Action<string>)Print;
+        
+        ScriptLibrary.Bind(L);
     }
-
-    public void Print(string text)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            return;
-        }
-
-        if (text[0] == '[')
-        {
-            Debug.LogFormat("[Script]{0}", text);
-        }
-        else
-        {
-            Debug.LogFormat("[Script] {0}", text);
-        }
-    }
-
+    
     public DynValue DoString(string code, string name = "c#string")
     {
         try
@@ -40,6 +23,33 @@ public class ScriptEnvironment
         {
             Debug.LogErrorFormat("[Script][Error] {0}", ex.DecoratedMessage);
             return null;
+        }
+    }
+
+    public void DoFile(string filePath)
+    {
+        var script = Resources.Load("Scripts/" + filePath);
+        if (script == null)
+        {
+            Debug.LogErrorFormat("[Script][Error] Cannot find file {0}", filePath);
+            return;
+        }
+
+        L.DoFile(script.name);
+    }
+
+    public void DoFolder(string folderPath)
+    {
+        if (!string.IsNullOrEmpty(folderPath) && !folderPath.EndsWith("/"))
+        {
+            folderPath += "/";
+        }
+        folderPath = "Scripts/" + folderPath;
+
+        var scripts = Resources.LoadAll("Scripts");
+        foreach (var script in scripts)
+        {
+            L.DoFile(folderPath + script.name);
         }
     }
 }
