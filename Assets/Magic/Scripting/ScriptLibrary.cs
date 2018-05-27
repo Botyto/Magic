@@ -26,7 +26,8 @@ public static class ScriptLibrary
             set
             {
                 table.Set(key, DynValue.FromObject(table.OwnerScript, value));
-                //userData.AddMember(key as string, ) TODO - bind methods to userdata as well
+                //var memberDescriptor = new FieldMemberDescriptor(value.GetType().GetField(key as string), InteropAccessMode.LazyOptimized);
+                //userData.AddMember(key as string, memberDescriptor);
             }
         }
     }

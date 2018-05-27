@@ -96,6 +96,7 @@ public class ScriptConsole : MonoBehaviour
 
     public void SetCode(string code)
     {
+        m_Input.ActivateInputField();
         m_Input.text = code;
         m_Input.caretPosition = code.Length;
     }
@@ -140,18 +141,39 @@ public class ScriptConsole : MonoBehaviour
         m_PredictionsContainer.sizeDelta = new Vector2(0.0f, (height + spacing) * predictions.Count);
         foreach (var prediction in predictions)
         {
+            //create main element
             var predictionElement = new GameObject("ConsolePrediction:" + prediction);
             predictionElement.transform.SetParent(m_PredictionsContainer);
+            
+            //create button
+            var btn = predictionElement.AddComponent<Button>();
+            btn.onClick.AddListener(new UnityEngine.Events.UnityAction(() => { SetCode(prediction); ClearPredictions(); }));
+            var img = predictionElement.AddComponent<Image>();
+            img.enabled = false;
+            btn.targetGraphic = img;
+            //create button text
+            var txt = new GameObject("ConsolePredictionText:" + prediction);
+            var uiText = txt.AddComponent<Text>();
+            uiText.text = prediction;
+            uiText.color = Color.black;
+            uiText.font = font;
+            txt.transform.SetParent(btn.transform);
+            var txtTransform = txt.transform as RectTransform;
+            txtTransform.sizeDelta = new Vector2(width, height);
+            txtTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            txtTransform.anchorMax = new Vector2(0.0f, 0.0f);
+            txtTransform.pivot = new Vector2(0.0f, 0.0f);
+            //txtTransform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
-            var text = predictionElement.AddComponent<Text>();
-            text.text = prediction;
-            text.color = Color.black;
-            text.font = font;
-
+            //align element properly
             var rectTransform = predictionElement.transform as RectTransform;
             rectTransform.pivot = new Vector2(0.0f, 0.0f);
             rectTransform.localPosition = new Vector3(10.0f, -dy, 0.0f);
             rectTransform.sizeDelta = new Vector2(width, height);
+
+            //Fix text alignment
+            txtTransform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+
             dy += height + spacing;
         }
     }
