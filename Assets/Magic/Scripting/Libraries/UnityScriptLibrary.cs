@@ -27,6 +27,9 @@ public static class UnityScriptLibrary
 
     public static void BindGameplay(Script L)
     {
+        var tCamera = ScriptLibrary.BindClass<Camera>(L);
+        tCamera["Main"] = new CallbackFunction(CameraMain);
+
         var tGameObject = ScriptLibrary.BindClass<GameObject>(L);
         tGameObject["Find"] = new CallbackFunction(GameObjectFind);
         tGameObject["Destroy"] = new CallbackFunction(GameObjectDestroy);
@@ -47,6 +50,7 @@ public static class UnityScriptLibrary
         tQuaternion["Euler"] = new CallbackFunction(QuaternionEuler);
         tQuaternion["identity"] = DynValue.FromObject(L, Quaternion.identity);
 
+        ScriptLibrary.BindEnum<KeyCode>(L.Globals);
         var tInput = ScriptLibrary.BindClass<Input>(L);
         tInput["GetKey"] = new CallbackFunction(InputGetKey);
     }
@@ -84,12 +88,18 @@ public static class UnityScriptLibrary
 
     public static DynValue InputGetKey(ScriptExecutionContext ctx, CallbackArguments args)
     {
-        return DynValue.Nil;
+        var keyCode = args.AsUserData<KeyCode>(0, "Input.GetKey", false);
+        return DynValue.FromObject(ctx.OwnerScript, Input.GetKey(keyCode));
     }
 
     #endregion
 
     #region GameObject
+
+    public static DynValue CameraMain(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        return DynValue.FromObject(ctx.OwnerScript, Camera.main);
+    }
 
     public static DynValue GameObjectDestroy(ScriptExecutionContext ctx, CallbackArguments args)
     {
