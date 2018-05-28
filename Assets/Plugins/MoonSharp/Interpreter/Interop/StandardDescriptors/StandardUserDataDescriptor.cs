@@ -77,6 +77,7 @@ namespace MoonSharp.Interpreter.Interop
 			foreach (MethodInfo mi in Framework.Do.GetMethods(type))
 			{
 				if (membersToIgnore.Contains(mi.Name)) continue;
+                if (mi.IsSpecialName) continue;
 
 				MethodMemberDescriptor md = MethodMemberDescriptor.TryCreateIfVisible(mi, this.AccessMode);
 

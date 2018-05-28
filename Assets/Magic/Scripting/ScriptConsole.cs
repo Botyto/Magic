@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
@@ -409,7 +410,7 @@ public class ScriptConsole : MonoBehaviour
 
     public List<string> GeneratePredictions(string code)
     {
-        var result = new List<string>();
+        var result = new HashSet<string>();
 
         var partsLastPeriod = code.LastIndexOf('.');
         var basePart = partsLastPeriod != -1 ? code.Substring(0, partsLastPeriod) : "";
@@ -439,10 +440,15 @@ public class ScriptConsole : MonoBehaviour
             }
             else if (resolution == PredictionResolveResult.Keys)
             {
-                result.AddRange(predictedKeys);
+                foreach (var prediction in predictedKeys)
+                {
+                    result.Add(prediction);
+                }
             }
         }
 
-        return result;
+        var list = result.ToList();
+        list.Sort();
+        return list;
     }
 }
