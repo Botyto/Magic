@@ -33,7 +33,6 @@ public class ScriptConsole : MonoBehaviour
 
         m_Input = GetComponent<InputField>();
         m_Image = GetComponent<Image>();
-        m_Input.onEndEdit.AddListener(ExecuteInput);
         m_PredictionsControl = transform.Find("Predictions") as RectTransform;
         if (m_PredictionsControl != null)
         {
@@ -175,13 +174,18 @@ public class ScriptConsole : MonoBehaviour
         m_PredictionsContainer.sizeDelta = new Vector2(0.0f, (height + spacing) * predictions.Count);
         foreach (var prediction in predictions)
         {
+            //resolve predicted line
+            var parts = m_Input.text.Split('.');
+            parts[parts.Length - 1] = predictions[0];
+            var predictedLine = string.Join(".", parts);
+
             //create main element
             var predictionElement = new GameObject("ConsolePrediction:" + prediction);
             predictionElement.transform.SetParent(m_PredictionsContainer);
             
             //create button
             var btn = predictionElement.AddComponent<Button>();
-            btn.onClick.AddListener(new UnityEngine.Events.UnityAction(() => { SetCode(prediction); ClearPredictions(); }));
+            btn.onClick.AddListener(new UnityEngine.Events.UnityAction(() => { SetCode(predictedLine); ClearPredictions(); }));
             var img = predictionElement.AddComponent<Image>();
             img.enabled = false;
             btn.targetGraphic = img;
@@ -408,8 +412,8 @@ public class ScriptConsole : MonoBehaviour
         var result = new List<string>();
 
         var partsLastPeriod = code.LastIndexOf('.');
-        var basePart = code.Substring(0, partsLastPeriod);
-        var lastPart = code.Substring(partsLastPeriod + 1);
+        var basePart = partsLastPeriod != -1 ? code.Substring(0, partsLastPeriod) : "";
+        var lastPart = partsLastPeriod != -1 ? code.Substring(partsLastPeriod + 1) : code;
 
         var baseValues = new List<DynValue>();
         try { baseValues.Add(environment.L.DoString("return " + basePart)); } catch (InterpreterException) { }
