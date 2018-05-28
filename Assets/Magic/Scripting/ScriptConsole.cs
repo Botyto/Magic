@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Interop;
-using UnityEngine.EventSystems;
+using MoonSharp.Interpreter.Interop.BasicDescriptors;
 
 [RequireComponent(typeof(InputField))]
 [RequireComponent(typeof(Image))]
@@ -367,13 +365,16 @@ public class ScriptConsole : MonoBehaviour
                     }
                     else if (current.Type == DataType.UserData)
                     {
-                        var descriptor = UserData.GetDescriptorForObject(current.UserData.Object) as StandardUserDataDescriptor;
-                        var members = descriptor.MemberNames;
-                        foreach (var k in members)
+                        var descriptor = UserData.GetDescriptorForObject(current.UserData.Object) as DispatchingUserDataDescriptor;
+                        if (descriptor != null)
                         {
-                            if (k.StartsWith(key))
+                            var members = descriptor.MemberNames;
+                            foreach (var k in members)
                             {
-                                predictions.Add(k);
+                                if (k.StartsWith(key))
+                                {
+                                    predictions.Add(k);
+                                }
                             }
                         }
                     }
