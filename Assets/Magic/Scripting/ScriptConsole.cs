@@ -341,7 +341,7 @@ public class ScriptConsole : MonoBehaviour
     private enum PredictionResolveResult
     {
         None,
-        Table,
+        Value,
         Keys,
     }
 
@@ -392,7 +392,7 @@ public class ScriptConsole : MonoBehaviour
                 {
                     next = nextValue;
                     keys = null;
-                    return PredictionResolveResult.Table;
+                    return PredictionResolveResult.Value;
                 }
             }
         }
@@ -405,28 +405,36 @@ public class ScriptConsole : MonoBehaviour
     public List<string> GeneratePredictions(string code)
     {
         var result = new List<string>();
-        
-        DynValue currentValue = DynValue.FromObject(environment.L, environment.L.Globals);
-        var parts = code.Split('.');
-        for (int i = 0; i < parts.Length; ++i)
+
+        var partsLastPeriod = code.LastIndexOf('.');
+        var basePart = code.Substring(0, partsLastPeriod);
+        var lastPart = code.Substring(partsLastPeriod + 1);
+
+        var baseValues = new List<DynValue>();
+        try { baseValues.Add(environment.L.DoString("return " + basePart)); } catch (InterpreterException) { }
+        try { baseValues.Add(environment.L.DoString("return _G." + basePart)); } catch (InterpreterException) { }
+
+        for (int i = 0; i < baseValues.Count; ++i)
         {
-            var part = parts[i];
-            var isLast = i == parts.Length - 1;
-            DynValue nextValue = null;
-            List<string> predictedKeys = null;
-            var resolution = TryResolve(currentValue, part, isLast, out nextValue, out predictedKeys);
-            if (resolution == PredictionResolveResult.Table)
+            var baseValue = baseValues[i];
+            DynValue nextValue;
+            List<string> predictedKeys;
+            var resolution = TryResolve(baseValue, lastPart, true, out nextValue, out predictedKeys);
+            if (resolution == PredictionResolveResult.Value)
             {
-                currentValue = nextValue;
+                baseValues.Add(nextValue);
+                if (nextValue.Type == DataType.Table && nextValue.Table.MetaTable != null)
+                {
+                    var __index = nextValue.Table.MetaTable.RawGet("__index");
+                    if (__index != null && !__index.IsNil())
+                    {
+                        baseValues.Add(DynValue.FromObject(environment.L, __index));
+                    }
+                }
             }
-            else if (resolution == PredictionResolveResult.Keys && isLast)
+            else if (resolution == PredictionResolveResult.Keys)
             {
-                result = predictedKeys;
-                break;
-            }
-            else
-            {
-                break;
+                result.AddRange(predictedKeys);
             }
         }
 
