@@ -176,7 +176,7 @@ public class ScriptConsole : MonoBehaviour
         {
             //resolve predicted line
             var parts = m_Input.text.Split('.');
-            parts[parts.Length - 1] = predictions[0];
+            parts[parts.Length - 1] = prediction;
             var predictedLine = string.Join(".", parts);
 
             //create main element
