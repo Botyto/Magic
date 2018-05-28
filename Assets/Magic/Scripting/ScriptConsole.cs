@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using MoonSharp.Interpreter;
 
 [RequireComponent(typeof(InputField))]
+[RequireComponent(typeof(Image))]
 public class ScriptConsole : MonoBehaviour
 {
     public KeyCode activationKey = KeyCode.Return;
@@ -31,8 +32,18 @@ public class ScriptConsole : MonoBehaviour
         m_Image = GetComponent<Image>();
         m_Input.onEndEdit.AddListener(ExecuteInput);
         m_PredictionsControl = transform.Find("Predictions") as RectTransform;
-        m_PredictionsContainer = m_PredictionsControl.Find("Viewport").Find("Content") as RectTransform;
-        m_Log = transform.parent.Find("Log").GetComponent<Text>();
+        if (m_PredictionsControl != null)
+        {
+            m_PredictionsContainer = m_PredictionsControl.Find("Viewport").Find("Content") as RectTransform;
+        }
+        if (transform.parent != null)
+        {
+            var logObject = transform.parent.Find("Log");
+            if (logObject != null)
+            {
+                m_Log = logObject.GetComponent<Text>();
+            }
+        }
 
         SetActive(false);
     }
@@ -60,7 +71,7 @@ public class ScriptConsole : MonoBehaviour
         }
         else if (Input.GetKeyDown(clearKey))
         {
-            m_Log.text = "";
+            if (m_Log != null) { m_Log.text = ""; }
         }
         else if (m_Input.enabled)
         {
@@ -118,6 +129,11 @@ public class ScriptConsole : MonoBehaviour
 
     public void ClearPredictions()
     {
+        if (m_PredictionsControl == null)
+        {
+            return;
+        }
+
         for (int i = 0; i < m_PredictionsContainer.childCount; ++i)
         {
             Util.Destroy(m_PredictionsContainer.GetChild(i).gameObject);
@@ -127,6 +143,11 @@ public class ScriptConsole : MonoBehaviour
 
     public void FillPredictions(List<string> predictions)
     {
+        if (m_PredictionsControl == null)
+        {
+            return;
+        }
+
         m_PredictionsControl.gameObject.SetActive(true);
         for (int i = 0; i < m_PredictionsContainer.childCount; ++i)
         {
@@ -200,31 +221,46 @@ public class ScriptConsole : MonoBehaviour
 
     public void Execute(string code)
     {
+        //no code to execute?
         if (string.IsNullOrEmpty(code))
         {
             return;
         }
 
+        //deal with history
         if (history.Count == 0 || history[history.Count - 1] != code)
         {
             history.Add(code);
         }
         m_HistoryIdx = -1;
 
+        //execute the code
         var result = environment.DoString("return " + code, "ConsoleCode");
         if (result == null)
         {
             return;
         }
 
+        //format the result
+        string resultText;
         if (result.IsNil())
         {
-            m_Log.text += "> " + code + "\n";
+            resultText = "> " + code;
         }
         else
         {
             var resultStr = FormatValue(result);
-            m_Log.text += "> " + code + "\n" + resultStr + "\n";
+            resultText = "> " + code + "\n" + resultStr;
+        }
+
+        //print the result
+        if (m_Log != null)
+        {
+            m_Log.text += resultText + "\n";
+        }
+        else
+        {
+            Debug.LogFormat("[Script] {0}", resultText);
         }
     }
 

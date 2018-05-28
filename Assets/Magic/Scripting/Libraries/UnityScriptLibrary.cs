@@ -9,8 +9,8 @@ public static class UnityScriptLibrary
     
     public static void Bind(Script L)
     {
-        BindUtils(L); //Vectors, etc..
-        BindGameplay(L);
+        BindUtils(L); //Vector, Quaternion, ..
+        BindGameplay(L); //GameObject, Transform, ...
 
         var tDebug = new Table(L);
         L.Globals["Debug"] = tDebug;
@@ -23,6 +23,12 @@ public static class UnityScriptLibrary
         var tResources = new Table(L);
         L.Globals["Resources"] = tResources;
         tResources["ListAll"] = new CallbackFunction(ResourcesListAll);
+
+        var tScript = new Table(L);
+        L.Globals["Script"] = tScript;
+        tScript["DoFile"] = new CallbackFunction(ScriptDoFile);
+        tScript["DoFolder"] = new CallbackFunction(ScriptDoFolder);
+        tScript["Reload"] = new CallbackFunction(ScriptReload);
     }
 
     public static void BindGameplay(Script L)
@@ -187,6 +193,27 @@ public static class UnityScriptLibrary
             EditorApplication.isPaused = paused;
         }
 
+        return DynValue.Nil;
+    }
+
+    public static DynValue ScriptDoFile(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var path = args.AsStringUsingMeta(ctx, 0, "Script.DoFile");
+        var env = ScriptEnvironment.FetchEnvironment(ctx.OwnerScript);
+        return DynValue.FromObject(ctx.OwnerScript, env.DoFile(path));
+    }
+
+    public static DynValue ScriptDoFolder(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var path = args.AsStringUsingMeta(ctx, 0, "Script.DoFile");
+        var env = ScriptEnvironment.FetchEnvironment(ctx.OwnerScript);
+        return DynValue.FromObject(ctx.OwnerScript, env.DoFolder(path));
+    }
+
+    public static DynValue ScriptReload(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var env = ScriptEnvironment.FetchEnvironment(ctx.OwnerScript);
+        env.ReloadScripts();
         return DynValue.Nil;
     }
 

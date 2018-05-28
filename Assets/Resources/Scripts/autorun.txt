@@ -1,0 +1,4 @@
+print = Debug.Log
+print("autorun...")
+
+

@@ -1,16 +1,32 @@
 ﻿using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Loaders;
 using UnityEngine;
 
 public class ScriptEnvironment
 {
     public Script L;
-    
+
+    public static ScriptEnvironment FetchEnvironment(Script L)
+    {
+        return L.Globals.RawGet("__SCRIPT_ENVIRONMENT").ToObject<ScriptEnvironment>();
+    }
+
     public ScriptEnvironment()
     {
         UserData.RegisterAssembly();
+        UserData.RegisterType<ScriptEnvironment>();
+
         L = new Script(CoreModules.Preset_Complete);
-        
+        L.Options.ScriptLoader = new UnityAssetsScriptLoader("Scripts");
+        L.Globals["__SCRIPT_ENVIRONMENT"] = DynValue.FromObject(L, this);
+
+        ReloadScripts();
+    }
+
+    public void ReloadScripts()
+    {
         ScriptLibrary.Bind(L);
+        DoFile("Scripts/autorun");
     }
     
     public DynValue DoString(string code, string name = "c#string")
@@ -26,30 +42,32 @@ public class ScriptEnvironment
         }
     }
 
-    public void DoFile(string filePath)
+    public int DoFile(string filePath)
     {
-        var script = Resources.Load("Scripts/" + filePath);
+        var script = Resources.Load(filePath);
         if (script == null)
         {
             Debug.LogErrorFormat("[Script][Error] Cannot find file {0}", filePath);
-            return;
+            return 0;
         }
 
         L.DoFile(script.name);
+        return 1;
     }
 
-    public void DoFolder(string folderPath)
+    public int DoFolder(string folderPath)
     {
         if (!string.IsNullOrEmpty(folderPath) && !folderPath.EndsWith("/"))
         {
             folderPath += "/";
         }
-        folderPath = "Scripts/" + folderPath;
 
         var scripts = Resources.LoadAll("Scripts");
         foreach (var script in scripts)
         {
             L.DoFile(folderPath + script.name);
         }
+
+        return scripts.Length;
     }
 }
