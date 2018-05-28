@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Interop;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(InputField))]
 [RequireComponent(typeof(Image))]
@@ -11,6 +13,7 @@ public class ScriptConsole : MonoBehaviour
 {
     public KeyCode activationKey = KeyCode.Return;
     public KeyCode clearKey = KeyCode.F9;
+    public KeyCode repeatKey = KeyCode.Period;
     [HideInInspector]
     [SerializeField]
     public List<string> history = new List<string>();
@@ -103,6 +106,16 @@ public class ScriptConsole : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
                 SetCode(HistoryForward());
+            }
+        }
+        else //if m_Input.enabled is false
+        {
+            if (Input.GetKeyDown(repeatKey))
+            {
+                if (history.Count > 0)
+                {
+                    Execute(history[history.Count - 1]);
+                }
             }
         }
     }
@@ -332,34 +345,52 @@ public class ScriptConsole : MonoBehaviour
         Keys,
     }
 
-    private PredictionResolveResult TryResolve(Table current, string key, bool canListKeys, out Table next, out List<string> keys)
+    private PredictionResolveResult TryResolve(DynValue current, string key, bool canListKeys, out DynValue next, out List<string> keys)
     {
         if (current != null)
         {
-            var nextValue = current.RawGet(key);
-            if (nextValue == null && canListKeys)
+            var nextValue = current.Type == DataType.Table ? current.Table.RawGet(key) : null;
+            if (nextValue == null)
             {
-                var predictions = new List<string>();
-                foreach (var k in current.Keys)
+                if (canListKeys)
                 {
-                    if (k.Type == DataType.String && k.String.StartsWith(key))
+                    var predictions = new List<string>();
+                    if (current.Type == DataType.Table)
                     {
-                        predictions.Add(k.String);
+                        foreach (var k in current.Table.Keys)
+                        {
+                            if (k.Type == DataType.String && k.String.StartsWith(key))
+                            {
+                                predictions.Add(k.String);
+                            }
+                        }
                     }
-                }
-
-                if (predictions.Count > 0)
-                {
-                    next = null;
-                    keys = predictions;
-                    return PredictionResolveResult.Keys;
+                    else if (current.Type == DataType.UserData)
+                    {
+                        var descriptor = UserData.GetDescriptorForObject(current.UserData.Object) as StandardUserDataDescriptor;
+                        var members = descriptor.MemberNames;
+                        foreach (var k in members)
+                        {
+                            if (k.StartsWith(key))
+                            {
+                                predictions.Add(k);
+                            }
+                        }
+                    }
+                    
+                    if (predictions.Count > 0)
+                    {
+                        next = null;
+                        keys = predictions;
+                        return PredictionResolveResult.Keys;
+                    }
                 }
             }
             else
             {
-                if (nextValue.Type == DataType.Table)
+                if (nextValue.Type == DataType.Table || nextValue.Type == DataType.UserData)
                 {
-                    next = nextValue.Table;
+                    next = nextValue;
                     keys = null;
                     return PredictionResolveResult.Table;
                 }
@@ -375,18 +406,18 @@ public class ScriptConsole : MonoBehaviour
     {
         var result = new List<string>();
         
-        Table currentTable = environment.L.Globals;
+        DynValue currentValue = DynValue.FromObject(environment.L, environment.L.Globals);
         var parts = code.Split('.');
         for (int i = 0; i < parts.Length; ++i)
         {
             var part = parts[i];
             var isLast = i == parts.Length - 1;
-            Table nextTable = null;
+            DynValue nextValue = null;
             List<string> predictedKeys = null;
-            var resolution = TryResolve(currentTable, part, isLast, out nextTable, out predictedKeys);
+            var resolution = TryResolve(currentValue, part, isLast, out nextValue, out predictedKeys);
             if (resolution == PredictionResolveResult.Table)
             {
-                currentTable = nextTable;
+                currentValue = nextValue;
             }
             else if (resolution == PredictionResolveResult.Keys && isLast)
             {

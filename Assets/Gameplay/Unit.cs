@@ -25,6 +25,7 @@ public class Unit : MonoBehaviour
     /// <summary>
     /// Status effects applied to this unit
     /// </summary>
+    [SerializeField]
     public Dictionary<StatusEffect.Type, StatusEffect> effects; //TODO redesign (make serializable)
 
     private void Awake()

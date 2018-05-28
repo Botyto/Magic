@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMovement()
     {   
-        Vector3 targetVelocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector3 targetVelocity = new Vector3(Gameplay.GetAxis("Horizontal"), 0, Gameplay.GetAxis("Vertical"));
         targetVelocity = transform.TransformDirection(targetVelocity);
         targetVelocity *= maxSpeed;
 
@@ -93,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleJump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Gameplay.GetKeyDown(KeyCode.Space))
         {
             body.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
@@ -106,7 +106,7 @@ public class PlayerMovement : MonoBehaviour
     void HandleMouseOrbit()
     {
         //Vertical look
-        var mouseY = Input.GetAxis("Mouse Y");
+        var mouseY = Gameplay.GetAxis("Mouse Y");
         var pivotRot = cameraPivot.localRotation.eulerAngles;
         var pivotRotX = pivotRot.x;
         if (pivotRotX > 180.0f) pivotRotX -= 360.0f;
@@ -114,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
         cameraPivot.localRotation = Quaternion.Euler(pivotRotX, 0.0f, 0.0f);
 
         //Horizontal look
-        var mouseX = Input.GetAxis("Mouse X");
+        var mouseX = Gameplay.GetAxis("Mouse X");
         var charRot = transform.localRotation.eulerAngles;
         var charRotY = charRot.y;
         charRotY += mouseX * mouseSensitivity;
@@ -125,7 +125,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMouseZoom()
     {
-        var mouseScroll = Input.GetAxis("Mouse ScrollWheel");
+        var mouseScroll = Gameplay.GetAxis("Mouse ScrollWheel");
         cameraDistance -= mouseScroll * zoomSpeed;
     }
 
@@ -135,7 +135,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleToggleMouseLock()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Gameplay.GetKeyDown(KeyCode.Escape))
         {
             ToggleMouseLock();
         }

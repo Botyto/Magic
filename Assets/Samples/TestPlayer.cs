@@ -10,7 +10,7 @@ public class TestPlayer : MonoBehaviour
     {
         for (var k = KeyCode.Alpha1; k <= KeyCode.Alpha9; ++k)
         {
-            if (Input.GetKeyDown(k))
+            if (Gameplay.GetKeyDown(k))
             {
                 var spellIdx = wizard.spellOrdering[k - KeyCode.Alpha1];
                 if (spellIdx >= 0)

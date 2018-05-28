@@ -9,6 +9,7 @@ public static class MagicScriptLibrary
     {
         ScriptLibrary.BindClass<Unit>(L);
         ScriptLibrary.BindClass<Selectable>(L);
+        ScriptLibrary.BindClass<PlayerMovement>(L);
 
         var tEnergyHolder = ScriptLibrary.BindClass<EnergyHolder>(L);
         tEnergyHolder["ResolveOwner"] = new CallbackFunction(EnergyHolderResolveOwner);

@@ -16,7 +16,7 @@ public class SimulationSpeed : MonoBehaviour
 
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.KeypadMultiply))
+		if (Gameplay.GetKeyDown(KeyCode.KeypadMultiply))
 		{
 			if (timeScale > 1.0f)
 			{
@@ -28,17 +28,17 @@ public class SimulationSpeed : MonoBehaviour
 			}
 		}
 
-		if (Input.GetKeyDown(KeyCode.KeypadPlus))
+		if (Gameplay.GetKeyDown(KeyCode.KeypadPlus))
 		{
 			timeScale = Mathf.Min(15.0f, timeScale + 0.5f);
 		}
 
-		if (Input.GetKeyDown(KeyCode.KeypadMinus))
+		if (Gameplay.GetKeyDown(KeyCode.KeypadMinus))
 		{
 			timeScale = Mathf.Max(0.1f, Time.timeScale - 0.5f);
 		}
 
-        if (Input.GetKeyDown(KeyCode.Pause) && Application.isEditor)
+        if (Gameplay.GetKeyDown(KeyCode.Pause) && Application.isEditor)
         {
             EditorApplication.isPaused = true;
         }

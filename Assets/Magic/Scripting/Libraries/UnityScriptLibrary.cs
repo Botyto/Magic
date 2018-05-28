@@ -1,5 +1,4 @@
 ﻿using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Interop;
 using UnityEngine;
 using UnityEditor;
 
