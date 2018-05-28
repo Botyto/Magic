@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using MoonSharp.Interpreter;
@@ -235,11 +237,13 @@ public class ScriptConsole : MonoBehaviour
         m_HistoryIdx = -1;
 
         //execute the code
-        var result = environment.DoString("return " + code, "ConsoleCode");
-        if (result == null)
+        var loadedCode = LoadCode(code);
+        if (loadedCode.IsNil())
         {
+            Debug.LogErrorFormat("Couldn't understand `{0}`", code);
             return;
         }
+        var result = loadedCode.Function.Call();
 
         //format the result
         string resultText;
@@ -262,6 +266,43 @@ public class ScriptConsole : MonoBehaviour
         {
             Debug.LogFormat("[Script] {0}", resultText);
         }
+    }
+
+    private DynValue LoadCode(string code)
+    {
+        var formats = new KeyValuePair<Regex, string>[]
+        {
+            new KeyValuePair<Regex, string>(new Regex(@"(.*)"), "return {0}" ),
+            new KeyValuePair<Regex, string>(new Regex(@"(.*)"), "{0}" ),
+        };
+
+        foreach (var format in formats)
+        {
+            var match = format.Key.Match(code);
+            if (match.Success)
+            {
+                //copy captures
+                var captures = new string[match.Captures.Count];
+                for (int i = 0; i < match.Captures.Count; ++i)
+                {
+                    captures[i] = match.Captures[i].Value;
+                }
+
+                //try loading the code
+                var formattedCode = string.Format(format.Value, captures);
+                try
+                {
+                    var loaded = environment.L.LoadString(formattedCode, null, "ConsoleExecute");
+                    return loaded;
+                }
+                catch (InterpreterException)
+                {
+                    continue;
+                }
+            }
+        }
+
+        return DynValue.Nil;
     }
 
     public string FormatValue(DynValue value)

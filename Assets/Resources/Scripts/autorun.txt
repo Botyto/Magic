@@ -1,4 +1,18 @@
 print = Debug.Log
 print("autorun...")
 
+local _G_meta = {
+	__index = function(t, k)
+		local obj = GameObject.Find(k)
+		if obj then
+			return obj
+		end
 
+		error("Reading non-existing global variable " .. k)
+	end,
+
+	__newindex = function(t, k, v)
+		error("Cannot create new global variable " .. k)
+	end,
+}
+setmetatable(_G, _G_meta)
