@@ -92,7 +92,7 @@ public static class MoonsharpExtensions
             var index = table.MetaTable.Get("__index");
             if (index.Table != null)
             {
-                get = index.Table.Get(key);
+                get = index.Table.GetField(key);
             }
             else if (index.Function != null)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using MoonSharp.Interpreter;
+using MoonSharp.VsCodeDebugger;
 
 [Serializable]
 [CreateAssetMenu(fileName = "New Script Spell", menuName = "Magic/Script Spell Descriptor")]
@@ -11,6 +12,9 @@ public class ScriptSpellDescriptor : SpellDescriptor
     public override SpellCastResult Cast(Wizard wizard, GameObject target, out SpellComponent spell)
     {
         var env = new ScriptEnvironment();
+        var server = new MoonSharpVsCodeDebugServer();
+        server.AttachToScript(env.L, "Magic:" + scriptSpellName);
+
         var scriptSpellDef = env.L.Globals.Get(scriptSpellName);
         if (scriptSpellDef == null || scriptSpellDef.Type != DataType.Table)
         {
@@ -36,17 +40,24 @@ public class ScriptSpellDescriptor : SpellDescriptor
             }
 
             //TODO: Move type check before creation
-            //if (scriptSpell.SpellType != scriptSpellDef.Table.GetField("SpellType").String)
-            //{
-            //    Util.Destroy(spell);
-            //    Debug.LogErrorFormat("Casting spell '{0}' failed! Different Spell class type from the script spell type!", id);
-            //    return SpellCastResult.InvalidDescriptor;
-            //}
+            if (scriptSpell.SpellType != scriptSpellDef.Table.GetField("SpellType").String)
+            {
+                Util.Destroy(spell);
+                Debug.LogErrorFormat("Casting spell '{0}' failed! Different Spell class type from the script spell type!", id);
+                return SpellCastResult.InvalidDescriptor;
+            }
 
-            var newFunction = scriptSpellDef.Table.GetField("new").Function;
+            var newFunction = scriptSpellDef.Table.GetField("new");
+            if (newFunction == null || (newFunction.Type != DataType.Function && newFunction.Type != DataType.ClrFunction))
+            {
+                Util.Destroy(spell);
+                Debug.LogErrorFormat("Casting spell '{0}' failed! No script constructor found!", id);
+                return SpellCastResult.InvalidDescriptor;
+            }
+
             var obj = new Table(env.L);
             obj[true] = spell;
-            var scriptComponent = newFunction.Call(obj);
+            var scriptComponent = newFunction.Function.Call(scriptSpellDef, obj);
             scriptSpell.Bind(env.L, scriptComponent);
         }
 

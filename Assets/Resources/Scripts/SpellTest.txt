@@ -1,36 +1,53 @@
-
-Class.SpellMeta = {
+Class.Spell = {
 	SpellType = "None",
-
-	__index = function(self, key)
-		local result = self[true] and self[true][key]
-		if result then return result end
-		error("Reading non-existing member " .. key)
-	end,
-	__newindex = function(self, key, value)
-		if self[true] then
-			self[true][key] = value
-			return
-		end
-		error("Writing non-existing member " .. key)
-	end,
 }
 
-Class.InstantSpellMeta = {
+function Spell.__index(self, key)
+	--print(debug.traceback())
+	print("__index of " .. tostring(self) .. " in class " .. tostring(Spell))
+	print("no member to read " .. tostring(key))
+	local unityObject = rawget(self, true)
+	if unityObject then
+		print("found unity objet " .. tostring(unityObject))
+		local result = unityObject[key]
+		if result ~= nil then
+			return result
+		end
+	end
+	error("Reading non-existing member " .. key)
+	return nil
+end
+
+function Spell.__newindex(self, key, value)
+	print("no member to write " .. key .. " in " .. self.class)
+	local unityObject = rawget(self, true)
+	if unityObject ~= nil then
+		unityObject[key] = value
+		return
+	end
+	error("Writing non-existing member " .. key)
+end
+
+Class.InstantSpell = {
+	__inherit = "Spell",
+
 	SpellType = "Instant",
 
-	Cast = function(self) end,
+	Cast = function(self) print("std cast fn") end,
 	OnTargetLost = function(self) end,
     OnFocusLost = function(self, handle) end,
 }
 
 
 Class.SpellTest = {
-	__index = InstantSpellMeta,
+	__inherit = "InstantSpell",
 }
 
 function SpellTest:Cast()
 	print("SpellTest Cast() " .. tostring(self))
-	local handle = self:ManifestEnergyAndFocus(100, Vector3.new(10, 0, 0))
-	print("energy handle is " .. handle)
+	local a = self.wizard
+	print(tostring(a))
+
+	--local handle = self:ManifestEnergyAndFocus(100, Vector3.new(10,0,0))
+	--print("energy handle is " .. handle)
 end

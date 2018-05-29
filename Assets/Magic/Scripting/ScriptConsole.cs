@@ -76,7 +76,7 @@ public class ScriptConsole : MonoBehaviour
         {
             if (m_Log != null) { m_Log.text = ""; }
         }
-        else if (m_Input.enabled)
+        else if (m_Input != null && m_Input.enabled)
         {
             if (Input.GetKeyDown(KeyCode.Tab))
             {
