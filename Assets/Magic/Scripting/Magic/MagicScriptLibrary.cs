@@ -43,5 +43,38 @@ public static class MagicScriptLibrary
         return DynValue.FromObject(ctx.OwnerScript, EnergyHolder.ResolveOwner(target));
     }
 
+    private static T GetSpell<T>(CallbackArguments args)
+    {
+        var sciprtComponent = args.RawGet(0, true);
+        if (sciprtComponent.Type != DataType.Table)
+        {
+            return default(T);
+        }
+
+        var trueValue = sciprtComponent.Table.RawGet(true);
+        if (trueValue.Type != DataType.UserData)
+        {
+            return default(T);
+        }
+
+        var unityComponent = trueValue.CheckUserDataType<T>("GetSpellComponent", 0);
+        return unityComponent;
+    }
+
+    public static DynValue Spell_GetWizard(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        return DynValue.FromObject(ctx.OwnerScript, GetSpell<SpellComponent>(args).wizard);
+    }
+
+    public static DynValue Spell_GetController(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        return DynValue.FromObject(ctx.OwnerScript, GetSpell<SpellComponent>(args).controller);
+    }
+
+    public static DynValue Spell_GetUnit(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        return DynValue.FromObject(ctx.OwnerScript, GetSpell<SpellComponent>(args).unit);
+    }
+
     #endregion
 }

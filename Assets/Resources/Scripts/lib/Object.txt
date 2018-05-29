@@ -1,0 +1,88 @@
+AllObjects = { }
+
+local function CallInheritedMethod(obj, method, order, ...)
+	--collect list of all inherited methods
+	local methods_list = { }
+	local class = obj.class
+
+	while class do
+		local class_def = FinalClasses[class]
+		local class_method = rawget(class_def, method)
+		if not class_method then
+			break
+		end
+
+		table.insert(methods_list, class_method)
+		class = class_def.__inherit
+	end
+
+	--execute in correct order
+	if next(methods_list) then
+		if order == "root-first" then
+			for i=#methods_list,1,-1 do
+				methods_list[i](obj, ...)
+			end
+		elseif order == "leaf-first" then
+			for i=1,#methods_list do
+				methods_list[i](obj, ...)
+			end
+		end
+	end
+end
+
+function CreateObject(classname, t, ...)
+	local classdef = FinalClasses[classname]
+	if not classdef then
+		error(string.format("Placing undefined class '%s'", tostring(classname)))
+		return
+	end
+
+	local obj = classdef:new(t)
+	AllObjects[obj] = true
+	CallInheritedMethod(obj, "__ctor", "root-first", ...)
+	return obj
+end
+
+function DestroyObject(obj)
+	if not AllObjects[obj] then
+		error(string.format("Destroying non-existing object '%s'", tostring(obj)))
+		return
+	end
+
+	CallInheritedMethod(obj, "__dtor", "left-first")
+	AllObjects[obj] = nil
+end
+
+function IsValid(obj)
+	return obj and AllObjects[obj]
+end
+
+function GetObjects(class)
+	local list = { }
+	for obj in pairs(AllObjects) do
+		if IsKindOf(obj, class) then
+			table.insert(list, obj)
+		end
+	end
+	return list
+end
+
+--Class definition
+
+Class.Object = {
+	__inherit = false,
+}
+
+function Object:__index(key)
+	error(string.format("Reading from undefined member '%s.%s'", self.class, key))
+end
+
+function Object:__newindex(key, value)
+	error(string.format("Writing to undefined member '%s.%s'", self.class, key))
+end
+
+function Object:__ctor(...)
+end
+
+function Object:__dtor()
+end

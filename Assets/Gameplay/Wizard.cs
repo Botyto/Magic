@@ -53,11 +53,20 @@ public class Wizard : MonoBehaviour
     {
         holder = GetComponent<EnergyHolder>();
 
-        spellOrdering = new int[9];
+        var visibleCount = 0;
+        foreach (var spell in spells)
+        {
+            if (spell.visible)
+            {
+                ++visibleCount;
+            }
+        }
+
+        spellOrdering = new int[visibleCount];
         int idx = 0;
         for (int i = 0; i < spells.Length; ++i)
         {
-            if (idx >= 9) { break; }
+            if (idx >= visibleCount) { break; }
             if (spells[i].visible)
             {
                 spellOrdering[idx] = i;
@@ -65,7 +74,7 @@ public class Wizard : MonoBehaviour
             }
         }
 
-        for (; idx < 9; ++idx)
+        for (; idx < visibleCount; ++idx)
         {
             spellOrdering[idx] = -1;
         }

@@ -883,7 +883,7 @@ public enum EnergyActionResult
     // Specific case errors
 
     /// <summary>
-    /// Example: manifestation is already fire element
+    /// Example: transform into fire a manifestation that is already a fire element
     /// </summary>
     RedundantAction,
     /// <summary>

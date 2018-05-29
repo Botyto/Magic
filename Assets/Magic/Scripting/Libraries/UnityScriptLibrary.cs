@@ -18,7 +18,7 @@ public static class UnityScriptLibrary
         var tEditor = new Table(L);
         L.Globals["Editor"] = tEditor;
         tEditor["Pause"] = new CallbackFunction(EditorPause);
-        tEditor["SelectedObject"] = new CallbackFunction(ApplicationSelectedObject);
+        tEditor["SelectedObject"] = new CallbackFunction(EditorSelectedObject);
 
         var tResources = new Table(L);
         L.Globals["Resources"] = tResources;
@@ -240,10 +240,14 @@ public static class UnityScriptLibrary
         var path = args.AsStringUsingMeta(ctx, 0, "Resources.ListAll");
         var resources = Resources.LoadAll(path);
         var names = new string[resources.Length];
-
+        
         for (int i = 0; i < resources.Length; ++i)
         {
-            names[i] = resources[i].name;
+            var fullPath = AssetDatabase.GetAssetPath(resources[i]);
+            var pathWithExtension = fullPath.Substring(17); //17 == #"Assets/Resources/"
+            var periodIdx = pathWithExtension.LastIndexOf('.');
+            var finalPath = pathWithExtension.Substring(0, periodIdx);
+            names[i] = finalPath;
         }
 
         return DynValue.FromObject(ctx.OwnerScript, names);

@@ -1,0 +1,45 @@
+if FirstLoad then
+	g_GlobalVars = { }
+end
+
+function GlobalVar(name, value)
+	if rawget(_G, name) == nil then
+		rawset(_G, name, value)
+	end
+end
+
+----------------------------------------------
+
+RegisteredEventHandlers = { }
+
+function RaiseEvent(msg, ...)
+	local handlers = RegisteredEventHandlers[msg]
+	if not handlers then return end
+
+	for i=1,#handlers do
+		pcall(handlers[i], ...) --problem
+	end
+end
+
+HandleEvent = { }
+setmetatable(HandleEvent, {
+	__newindex = function(t, key, value)
+		if not RegisteredEventHandlers[key] then
+			RegisteredEventHandlers[key] = { }
+		end
+		table.insert(RegisteredEventHandlers[key], value)
+	end,
+})
+
+----------------------------------------------
+
+function CreateThread(fn, ...)
+	local params = { ... }
+	local function thread_fn()
+		fn(table.unpack(params))
+	end
+
+	local thread = coroutine.create(thread_fn)
+	--Awake(thread) --problem
+	return thread
+end

@@ -314,7 +314,7 @@ public class SpellComponent : SpellComponentBase
     #region Focus extended manipulation
 
     /// <summary>
-    /// Apply a force on a manifestation, such that it will keep the manifestation from falling down.
+    /// Apply a force on a manifestation, such that it will keep the manifestation from falling down (gravity + down motion).
     /// </summary>
     public EnergyActionResult CounterFalling(int focusHandle)
     {

@@ -1,0 +1,36 @@
+
+Class.SpellMeta = {
+	SpellType = "None",
+
+	__index = function(self, key)
+		local result = self[true] and self[true][key]
+		if result then return result end
+		error("Reading non-existing member " .. key)
+	end,
+	__newindex = function(self, key, value)
+		if self[true] then
+			self[true][key] = value
+			return
+		end
+		error("Writing non-existing member " .. key)
+	end,
+}
+
+Class.InstantSpellMeta = {
+	SpellType = "Instant",
+
+	Cast = function(self) end,
+	OnTargetLost = function(self) end,
+    OnFocusLost = function(self, handle) end,
+}
+
+
+Class.SpellTest = {
+	__index = InstantSpellMeta,
+}
+
+function SpellTest:Cast()
+	print("SpellTest Cast() " .. tostring(self))
+	local handle = self:ManifestEnergyAndFocus(100, Vector3.new(10, 0, 0))
+	print("energy handle is " .. handle)
+end

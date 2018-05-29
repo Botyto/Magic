@@ -71,3 +71,34 @@ public class ScriptEnvironment
         return scripts.Length;
     }
 }
+
+public static class MoonsharpExtensions
+{
+    public static DynValue GetField(this Table table, object key)
+    {
+        return table.GetField(DynValue.FromObject(table.OwnerScript, key));
+    }
+
+    public static DynValue GetField(this Table table, string key)
+    {
+        return table.GetField(DynValue.NewString(key));
+    }
+
+    public static DynValue GetField(this Table table, DynValue key)
+    {
+        var get = table.Get(key);
+        if (get.IsNil() && table.MetaTable != null && table.MetaTable.Get("__index").IsNotNil())
+        {
+            var index = table.MetaTable.Get("__index");
+            if (index.Table != null)
+            {
+                get = index.Table.Get(key);
+            }
+            else if (index.Function != null)
+            {
+                get = index.Function.Call(key);
+            }
+        }
+        return get;
+    }
+}

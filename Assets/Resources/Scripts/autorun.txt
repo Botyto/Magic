@@ -1,18 +1,35 @@
-print = Debug.Log
-print("autorun...")
+setmetatable(_G, nil)
+if FirstLoad == nil then
+	FirstLoad = true
+end
+local wasFirst = FirstLoad
 
-local _G_meta = {
-	__index = function(t, k)
-		local obj = GameObject.Find(k)
-		if obj then
-			return obj
-		end
+--Load library files
+Script.DoFile("Scripts/lib/lib")
+Script.DoFile("Scripts/lib/core")
+Script.DoFile("Scripts/lib/class")
+Script.DoFile("Scripts/lib/Object")
 
-		error("Reading non-existing global variable " .. k)
+--Load source code
+local files = Resources.ListAll("Scripts/")
+for i,filename in ipairs(files) do
+	if not string.ends_with(filename, "autorun") then
+		--print("dofile("..filename..")")
+		Script.DoFile(filename)
+	end
+end
+
+FirstLoad = false
+setmetatable(_G, {
+	__index = function(t, key)
+		errorf("Undefined global '%s'", tostring(key))
 	end,
-
-	__newindex = function(t, k, v)
-		error("Cannot create new global variable " .. k)
+	__newindex = function(t, key, value)
+		errorf("Assigning undefined global '%s'", tostring(key))
 	end,
-}
-setmetatable(_G, _G_meta)
+})
+
+--Prepare for execution
+BuildClasses()
+
+RaiseEvent("Start", wasFirst)

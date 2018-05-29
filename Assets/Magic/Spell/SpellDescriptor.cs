@@ -104,7 +104,7 @@ public class SpellDescriptor : ScriptableObject
     /// <summary>
     /// Get the class type of the spell to be cast
     /// </summary>
-    public Type spellType { get { return Type.GetType(spellClass); } }
+    public virtual Type spellType { get { return Type.GetType(spellClass); } }
 
     /// <summary>
     /// If this spell is a toggel spell type
@@ -118,7 +118,7 @@ public class SpellDescriptor : ScriptableObject
     /// <summary>
     /// Cast this spell
     /// </summary>
-    public SpellCastResult Cast(Wizard wizard, GameObject target, out SpellComponent spell)
+    public virtual SpellCastResult Cast(Wizard wizard, GameObject target, out SpellComponent spell)
     {
         Debug.AssertFormat(parameters.level >= 1, "Invalid 'Level' parameter of spell '{0}'!", id);
 
@@ -154,7 +154,7 @@ public class SpellDescriptor : ScriptableObject
         return SpellCastResult.Success;
     }
 
-    public bool CheckTargetType(GameObject target)
+    public virtual bool CheckTargetType(GameObject target)
     {
         //Anything goes
         if (targetType == SpellTargetType.None)

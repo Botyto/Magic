@@ -14,6 +14,7 @@ public abstract class ToggleSpellComponent : SpellComponent
     /// <summary>
     /// Interval between two spell activations
     /// </summary>
+    /// [SerializeField]
     public float interval = 1.0f;
 
     /// <summary>

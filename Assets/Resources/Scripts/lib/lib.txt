@@ -1,0 +1,42 @@
+if FirstLoad then
+	rawprint = print
+	print = Debug.Log
+end
+
+getmetatable('').__index = function(str, i)
+	return string.sub(str, i, i)
+end
+
+function string.starts_with(str, substr)
+	for i=1,#substr do
+		if str[i] ~= substr[i] then
+			return false
+		end
+	end
+	return true
+end
+
+function string.ends_with(str, substr)
+	for i=1,#substr do
+		if str[-i] ~= substr[-i] then
+			return false
+		end
+	end
+	return true
+end
+
+function printf(...)
+	print(string.format(...))
+end
+
+function errorf(...)
+	error(string.format(...))
+end
+
+function assertf(condition, ...)
+	assert(condition, string.format(...))
+end
+
+--[[function PCall(f, ...)
+	return xpcall(f, PrintErrorHandler, ...)
+end]]

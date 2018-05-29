@@ -1,0 +1,177 @@
+--Main tables
+if FirstLoad then
+	FinalClasses = { }
+end
+ClassDefs = { }
+
+Class = { }
+setmetatable(Class, {
+	__newindex = function(t, name, def)
+		assertf(rawget(ClassDefs, name) == nil, "Class '%s' already defined.", name)
+		ClassDefs[name] = def
+		rawset(_G, name, def)
+	end,
+})
+
+--Utilty functions
+function IsKindOf(obj, class)
+	return obj and obj.__ancestors[class]
+end
+
+--Building classes
+local NonInheritedMembers = {
+	__inherit = true,
+	__ancestors = true,
+	__index = true,
+	__newindex = true,
+}
+
+local function BuildSingleClass(name)
+	--get class definition
+	local classdef = ClassDefs[name]
+	--if definition is not found - then the class has already been built
+	if not classdef then
+		return FinalClasses[name]
+	end
+	--mark this class as built
+	ClassDefs[name] = nil
+
+	--find the actual class table
+	local class = FinalClasses[name] or { }
+	FinalClasses[name] = class
+	rawset(_G, name, class)
+	--if there was an old table of this class - clear all it's members first'
+	setmetatable(class, nil)
+	for member in pairs(class) do
+		class[member] = nil
+	end
+
+	--resolve inheritance
+	class.__inherit = classdef.__inherit
+	if class.__inherit then
+		local parent = BuildSingleClass(class.__inherit)
+		if parent then
+			--inherit all members of parent
+			for member,value in pairs(parent) do
+				if not NonInheritedMembers[member] then
+					class[member] = value
+				end
+			end
+		else
+			errorf("'%s' inherits non-existing class '%s'", name, class.__inherit)
+		end
+	end
+
+	--fill in the ancestors list
+	class.__ancestors = { [name] = true }
+	local next_ancestor = class.__inherit
+	while next_ancestor do
+		if not class.__ancestors[next_ancestor] then
+			class.__ancestors[next_ancestor] = true
+			next_ancestor = FinalClasses[next_ancestor].__inherit
+		elseif next_ancestor == name then
+			errorf("Cyclic inheritance in class '%s'", name)
+		end
+	end
+
+	--define builtin members
+	class.class = name --class name
+	function class:HasMember(member) --has member check
+		return rawget(class, member) ~= nil
+	end
+	class.IsKindOf = IsKindOf --is kind of check
+	function class:new(obj) --new object method
+		obj = obj or { }
+		setmetatable(obj, self)
+		return obj
+	end	
+	class.__index = class --index metamethod
+	function class.__newindex(obj, member, value) --newindex metamethod
+		if not obj:HasMember(member) then
+			errorf("Writing undefined member '%s.%s'", name, member)
+		end
+		rawset(obj, member, value)
+	end
+
+	--write all classdef fields into class tablee
+	--this order allows overwriting builtin members
+	for member,value in pairs(classdef) do
+		class[member] = value
+	end
+
+	return class
+end
+
+
+local alreadyBuilt = { }
+local function BuildSingleClass_OLD(name)
+	--class already built
+	if alreadyBuilt[name] then
+		return
+	end
+
+	--setup class table
+	local def = ClassDefs[name]
+	local class = FinalClasses[name] or { }
+	FinalClasses[name] = class
+	rawset(_G, name, class)
+	alreadyBuilt[name] = true
+	--remove old members
+	for k,v in pairs(class) do
+		class[k] = nil
+	end
+
+	--resolve inheritance
+	class.__inherit = def.__inherit
+	class.__ancestors = { [name] = true }
+	if class.__inherit then
+		--build parent class first
+		BuildSingleClass(class.__inherit)
+		--fill ancestors list
+		local parent = class.__inherit
+		while parent do
+			assertf(not class.__ancestors[parent], "Class '%s' inherits '%s' in a loop.", name, parent)
+			class.__ancestors[parent] = true
+			parent = FinalClasses[parent].__inherit
+		end
+		--copy inherited members
+		local parent_class = FinalClasses[class.__inherit]
+		for k,v in pairs(parent_class) do
+			class[k] = v
+		end
+		setmetatable(class, { __index = parent_class })
+	end
+	--copy class members
+	for k,v in pairs(def) do
+		class[k] = v
+	end
+	class.class = name
+	class.__index = class
+	class.__newindex = function(obj, key, value)
+		if rawget(class, key) ~= nil then
+			rawset(obj, key, value)
+		end
+	end
+
+	--standard methods
+	function class:new(obj)
+		obj = obj or { }
+		setmetatable(obj, class)
+		return obj
+	end
+end
+
+function BuildClasses()
+	for name in pairs(FinalClasses) do
+		rawset(_G, name, nil)
+		if not ClassDefs[name] then
+			rawset(FinalClasses, name, nil)
+		end
+	end
+
+	RaiseEvent("PreBuildClasses", ClassDefs)
+	for name in pairs(ClassDefs) do
+		BuildSingleClass(name)
+	end
+	RaiseEvent("PostBuildClasses")
+end
