@@ -341,26 +341,26 @@ public class ScriptConsole : MonoBehaviour
         return str;
     }
 
-    private enum PredictionResolveResult
+    private enum PredictionResolution
     {
         None,
         Value,
         Keys,
     }
 
-    private PredictionResolveResult TryResolve(DynValue current, string key, bool canListKeys, out DynValue next, out List<string> keys)
+    private PredictionResolution TryResolve(DynValue value, string key, bool canListKeys, out DynValue next, out List<string> keys)
     {
-        if (current != null)
+        if (value != null)
         {
-            var nextValue = current.Type == DataType.Table ? current.Table.RawGet(key) : null;
+            var nextValue = value.Type == DataType.Table ? value.Table.RawGet(key) : null;
             if (nextValue == null)
             {
                 if (canListKeys)
                 {
                     var predictions = new List<string>();
-                    if (current.Type == DataType.Table)
+                    if (value.Type == DataType.Table)
                     {
-                        foreach (var k in current.Table.Keys)
+                        foreach (var k in value.Table.Keys)
                         {
                             if (k.Type == DataType.String && k.String.StartsWith(key))
                             {
@@ -368,9 +368,9 @@ public class ScriptConsole : MonoBehaviour
                             }
                         }
                     }
-                    else if (current.Type == DataType.UserData)
+                    else if (value.Type == DataType.UserData)
                     {
-                        var descriptor = UserData.GetDescriptorForObject(current.UserData.Object) as DispatchingUserDataDescriptor;
+                        var descriptor = UserData.GetDescriptorForObject(value.UserData.Object) as DispatchingUserDataDescriptor;
                         if (descriptor != null)
                         {
                             var members = descriptor.MemberNames;
@@ -388,7 +388,7 @@ public class ScriptConsole : MonoBehaviour
                     {
                         next = null;
                         keys = predictions;
-                        return PredictionResolveResult.Keys;
+                        return PredictionResolution.Keys;
                     }
                 }
             }
@@ -398,14 +398,14 @@ public class ScriptConsole : MonoBehaviour
                 {
                     next = nextValue;
                     keys = null;
-                    return PredictionResolveResult.Value;
+                    return PredictionResolution.Value;
                 }
             }
         }
 
         next = null;
         keys = null;
-        return PredictionResolveResult.None;
+        return PredictionResolution.None;
     }
 
     public List<string> GeneratePredictions(string code)
@@ -426,7 +426,7 @@ public class ScriptConsole : MonoBehaviour
             DynValue nextValue;
             List<string> predictedKeys;
             var resolution = TryResolve(baseValue, lastPart, true, out nextValue, out predictedKeys);
-            if (resolution == PredictionResolveResult.Value)
+            if (resolution == PredictionResolution.Value)
             {
                 baseValues.Add(nextValue);
                 if (nextValue.Type == DataType.Table && nextValue.Table.MetaTable != null)
@@ -438,7 +438,7 @@ public class ScriptConsole : MonoBehaviour
                     }
                 }
             }
-            else if (resolution == PredictionResolveResult.Keys)
+            else if (resolution == PredictionResolution.Keys)
             {
                 foreach (var prediction in predictedKeys)
                 {

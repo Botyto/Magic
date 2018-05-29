@@ -5,7 +5,7 @@ using UnityEditor;
 public static class UnityScriptLibrary
 {
     #region Bind
-    
+
     public static void Bind(Script L)
     {
         BindUtils(L); //Vector, Quaternion, ..
@@ -15,9 +15,10 @@ public static class UnityScriptLibrary
         L.Globals["Debug"] = tDebug;
         tDebug["Log"] = new CallbackFunction(DebugLog);
 
-        var tApplication = new Table(L);
-        L.Globals["Application"] = tApplication;
-        tApplication["Pause"] = new CallbackFunction(ApplicationPause);
+        var tEditor = new Table(L);
+        L.Globals["Editor"] = tEditor;
+        tEditor["Pause"] = new CallbackFunction(EditorPause);
+        tEditor["SelectedObject"] = new CallbackFunction(ApplicationSelectedObject);
 
         var tResources = new Table(L);
         L.Globals["Resources"] = tResources;
@@ -39,7 +40,7 @@ public static class UnityScriptLibrary
         tGameObject["Find"] = new CallbackFunction(GameObjectFind);
         tGameObject["Destroy"] = new CallbackFunction(GameObjectDestroy);
         L.Globals["GO"] = tGameObject["Find"];
-        
+
         var tTransform = ScriptLibrary.BindClass<Transform>(L);
         tTransform["ListChildren"] = new CallbackFunction(TransformListChildren);
     }
@@ -59,7 +60,7 @@ public static class UnityScriptLibrary
         var tInput = ScriptLibrary.BindClass<Input>(L);
         tInput["GetKey"] = new CallbackFunction(InputGetKey);
     }
-    
+
     #endregion
 
     #region Utils
@@ -87,7 +88,7 @@ public static class UnityScriptLibrary
             var z = args.AsType(2, "Quaternion.Euler", DataType.Number, false);
             eulerAngles = new Vector3((float)x.Number, (float)y.Number, (float)z.Number);
         }
-        
+
         return DynValue.FromObject(ctx.OwnerScript, Quaternion.Euler(eulerAngles));
     }
 
@@ -135,7 +136,7 @@ public static class UnityScriptLibrary
         }
 
         Util.Destroy(obj, delay, note);
-        
+
         return DynValue.FromObject(ctx.OwnerScript, obj);
     }
 
@@ -184,12 +185,26 @@ public static class UnityScriptLibrary
         return DynValue.Nil;
     }
 
-    public static DynValue ApplicationPause(ScriptExecutionContext ctx, CallbackArguments args)
+    public static DynValue EditorPause(ScriptExecutionContext ctx, CallbackArguments args)
     {
         if (Application.isEditor)
         {
             var paused = args.AsType(0, "Application.Pause", DataType.Boolean, false).Boolean;
             EditorApplication.isPaused = paused;
+        }
+
+        return DynValue.Nil;
+    }
+
+    public static DynValue EditorSelectedObject(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        if (Application.isEditor)
+        {
+            var obj = Selection.activeGameObject;
+            if (obj != null)
+            {
+                return DynValue.FromObject(ctx.OwnerScript, obj);
+            }
         }
 
         return DynValue.Nil;

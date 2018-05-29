@@ -76,9 +76,7 @@ public partial class EnergyManifestation : EnergyUser
     #endregion
 
 #if DEBUG
-
     public ManifestationDebugOverview __dbgOverview { get { return new ManifestationDebugOverview(this); } }
-
 #endif
 }
 
@@ -98,5 +96,4 @@ public struct ManifestationDebugOverview
         owner = manif.holder.ResolveOwner();
     }
 }
-
 #endif
