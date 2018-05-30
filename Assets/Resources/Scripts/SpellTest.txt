@@ -2,30 +2,15 @@ Class.Spell = {
 	SpellType = "None",
 }
 
-function Spell.__index(self, key)
-	--print(debug.traceback())
-	print("__index of " .. tostring(self) .. " in class " .. tostring(Spell))
-	print("no member to read " .. tostring(key))
-	local unityObject = rawget(self, true)
-	if unityObject then
-		print("found unity objet " .. tostring(unityObject))
-		local result = unityObject[key]
-		if result ~= nil then
-			return result
-		end
-	end
-	error("Reading non-existing member " .. key)
-	return nil
+for k,v in pairs(__SpellBase) do Spell[k] = v end
+for k,v in pairs(__Spell) do     Spell[k] = v end
+
+function Spell:__index(key)
+	error(string.format("Reading from undefined member `%s.%s`", self.class, key))
 end
 
-function Spell.__newindex(self, key, value)
-	print("no member to write " .. key .. " in " .. self.class)
-	local unityObject = rawget(self, true)
-	if unityObject ~= nil then
-		unityObject[key] = value
-		return
-	end
-	error("Writing non-existing member " .. key)
+function Spell:__newindex(key, value)
+	error(string.format("Writing to undefined member `%s.%s`", self.class, key))
 end
 
 Class.InstantSpell = {
@@ -45,9 +30,6 @@ Class.SpellTest = {
 
 function SpellTest:Cast()
 	print("SpellTest Cast() " .. tostring(self))
-	local a = self.wizard
-	print(tostring(a))
-
-	--local handle = self:ManifestEnergyAndFocus(100, Vector3.new(10,0,0))
-	--print("energy handle is " .. handle)
+	local handle = self:ManifestEnergyAndFocus(100, Vector3.new(0,0,5), Energy.Element.Fire, Energy.Shape.Cube)
+	print("energy handle is " .. handle)
 end

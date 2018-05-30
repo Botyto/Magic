@@ -47,7 +47,7 @@ public static class ScriptLibrary
     public static Table BindEnum<T>(Table ownerTable)
     {
         var tEnum = new Table(ownerTable.OwnerScript);
-        ownerTable["Shape"] = tEnum;
+        ownerTable[typeof(T).Name] = tEnum;
         foreach (var value in Enum.GetValues(typeof(T)))
         {
             tEnum[value.ToString()] = (int)value;

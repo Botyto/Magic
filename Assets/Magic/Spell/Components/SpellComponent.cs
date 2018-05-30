@@ -14,14 +14,17 @@ public class SpellComponent : SpellComponentBase
     /// Get spell target position
     /// If no target, the cursor position will be returned.
     /// </summary>
-    public Vector3 GetTargetPosition()
+    public Vector3 TargetPosition
     {
-        if (target == null)
+        get
         {
-            return CursorPosition;
-        }
+            if (target == null)
+            {
+                return CursorPosition;
+            }
 
-        return target.transform.position;
+            return target.transform.position;
+        }
     }
 
     /// <summary>

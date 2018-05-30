@@ -25,7 +25,7 @@ public class RainCompSpell : ContinuousSpellComponent
             m_lastSpawn = Time.time;
             if (CanFocusMore())
             {
-                var center = GetTargetPosition() + Vector3.up * 30;
+                var center = TargetPosition + Vector3.up * 30;
                 var angle = Random.Range(0, 360);
                 var len = Random.Range(5.0f, 15.0f);
                 var spawnPos = center + new Vector3(Mathf.Sin(angle) * len, 0, Mathf.Cos(angle) * len);
@@ -43,7 +43,7 @@ public class RainCompSpell : ContinuousSpellComponent
                 {
                     OrientTowards(handle, target);
 
-                    var forceDirection = GetTargetPosition() - GetFocusPosition(handle);
+                    var forceDirection = TargetPosition - GetFocusPosition(handle);
                     if (!Try(ApplyForce(handle, forceDirection.SetLength(30 + 15 * param.level), ForceMode.Impulse)))
                     {
                         Finish();

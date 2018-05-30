@@ -31,7 +31,7 @@ public class StatusBallCompSpell : ContinuousSpellComponent
 
         OrientTowards(ballHandle, target);
 
-        var forceDirection = GetTargetPosition() - GetFocusPosition(ballHandle);
+        var forceDirection = TargetPosition - GetFocusPosition(ballHandle);
         if (!Try(ApplyForce(ballHandle, forceDirection.SetLength(10), ForceMode.Impulse)))
         {
             Cancel();

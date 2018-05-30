@@ -17,9 +17,9 @@ public class InstantBallCompSpell : InstantSpellComponent
             return;
         }
 
-        OrientTowards(handle, GetTargetPosition());
+        OrientTowards(handle, TargetPosition);
 
-        var forceDirection = GetTargetPosition() - GetFocusPosition(handle);
+        var forceDirection = TargetPosition - GetFocusPosition(handle);
         ApplyForce(handle, forceDirection.SetLength(5 * param.level), ForceMode.Impulse);
     }
 }

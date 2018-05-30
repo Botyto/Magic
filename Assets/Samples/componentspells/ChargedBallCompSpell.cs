@@ -27,14 +27,14 @@ public class ChargedBallCompSpell : StagedSpellComponent
             return;
         }
 
-        OrientTowards(handle, GetTargetPosition());
+        OrientTowards(handle, TargetPosition);
     }
     
     public override void Cast(float dt)
     {
         if (!Try(Charge(handle, param.level * 5)) || GetFocus(handle).GetEnergy() >= param.level * 50)
         {
-            var forceDirection = GetTargetPosition() - GetFocusPosition(handle);
+            var forceDirection = TargetPosition - GetFocusPosition(handle);
             ApplyForce(handle, forceDirection.SetLength(5 * param.level), ForceMode.Impulse);
             Finish();
             return;
