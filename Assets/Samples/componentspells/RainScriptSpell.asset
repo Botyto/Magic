@@ -9,21 +9,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70e3e5fcc6935aa42bec45ae719bbefe, type: 3}
-  m_Name: SpellTest
+  m_Name: RainScriptSpell
   m_EditorClassIdentifier: 
-  id: SpellTest
-  spellClass: ScriptInstantSpell
-  targetType: 0
-  targetRequired: 0
+  id: RainScriptSpell
+  spellClass: ScriptContinuousSpell
+  targetType: 1
+  targetRequired: 1
   parameters:
     level: 1
-    element: 0
-    shape: 0
+    element: 7
+    shape: 3
     obj: {fileID: 0}
     statusEffect: 0
     integer: 0
     real: 0
-  displayName: Script Spell Test
-  icon: {fileID: 21300016, guid: 91c6ddd978cbffa48ae2a1dc32fe3368, type: 3}
+  displayName: RainScriptSpell
+  icon: {fileID: 21300004, guid: 91c6ddd978cbffa48ae2a1dc32fe3368, type: 3}
   visible: 1
-  spellScriptClass: SpellTest
+  spellScriptClass: RainScriptSpell

@@ -29,6 +29,8 @@ public static class UnityScriptLibrary
         tScript["DoFile"] = new CallbackFunction(ScriptDoFile);
         tScript["DoFolder"] = new CallbackFunction(ScriptDoFolder);
         tScript["Reload"] = new CallbackFunction(ScriptReload);
+
+        L.Globals["GetTime"] = new CallbackFunction(GlobalGetTime);
     }
 
     public static void BindGameplay(Script L)
@@ -68,6 +70,9 @@ public static class UnityScriptLibrary
         ScriptLibrary.BindEnum<KeyCode>(L.Globals);
         var tInput = ScriptLibrary.BindClass<Input>(L);
         tInput["GetKey"] = new CallbackFunction(InputGetKey);
+
+        var tRandom = ScriptLibrary.BindClass<Random>(L);
+        tRandom["new"] = new CallbackFunction(RandomNew);
     }
 
     #endregion
@@ -105,6 +110,16 @@ public static class UnityScriptLibrary
     {
         var keyCode = args.AsUserData<KeyCode>(0, "Input.GetKey", false);
         return DynValue.FromObject(ctx.OwnerScript, Input.GetKey(keyCode));
+    }
+
+    public static DynValue GlobalGetTime(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        return DynValue.NewNumber(Time.time);
+    }
+
+    public static DynValue RandomNew(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        return DynValue.FromObject(ctx.OwnerScript, new Random());
     }
 
     #endregion

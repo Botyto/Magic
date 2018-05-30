@@ -46,9 +46,14 @@ local function BuildSingleClass(name)
 
 	--define builtin members
 	class.class = name --class name
-	--[=[function class:HasMember(member) --has member check
-		return rawget(class, member) ~= nil
-	end]=]
+	function class:HasMember(member) --has member check
+		for ancestor in pairs(self.__ancestors) do --TODO optimize
+			if rawget(FinalClasses[ancestor], member) ~= nil then
+				return true
+			end
+		end
+		return false
+	end
 	class.IsKindOf = IsKindOf --is kind of check
 	function class:new(obj) --new object method
 		obj = obj or { }
@@ -61,6 +66,12 @@ local function BuildSingleClass(name)
 			errorf("Writing undefined member '%s.%s'", name, member)
 		end
 		rawset(obj, member, value)
+	end
+
+	--build parent class
+	class.__inherit = classdef.__inherit or false
+	if class.__inherit then
+		BuildSingleClass(class.__inherit)
 	end
 
 	--fill in the ancestors list
@@ -82,9 +93,8 @@ local function BuildSingleClass(name)
 	end
 
 	--resolve inheritance
-	class.__inherit = classdef.__inherit
 	if class.__inherit then
-		local parent = BuildSingleClass(class.__inherit)
+		local parent = FinalClasses[class.__inherit]
 		if parent then
 			setmetatable(class, { __index = parent })
 		else

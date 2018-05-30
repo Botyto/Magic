@@ -135,8 +135,7 @@ public class SpellDescriptor : ScriptableObject
         //Try find target, if required
         if (!CheckTargetType(target))
         {
-            var tryFindTargetMethod = type.GetMethod("TryFindTarget", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
-            target = tryFindTargetMethod != null ? tryFindTargetMethod.Invoke(null, new[] { wizard }) as GameObject : null;
+            target = TryFindTarget(wizard);
 
             //Can't find target
             if (!CheckTargetType(target) && targetRequired)
@@ -152,6 +151,19 @@ public class SpellDescriptor : ScriptableObject
         spell.param = parameters;
         spell.target = target;
         return SpellCastResult.Success;
+    }
+
+    public virtual GameObject TryFindTarget(Wizard wizard)
+    {
+        var type = spellType;
+        if (type == null)
+        {
+            return null;
+        }
+
+        var tryFindTargetMethod = type.GetMethod("TryFindTarget", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+        var target = tryFindTargetMethod != null ? (tryFindTargetMethod.Invoke(null, new[] { wizard }) as GameObject) : null;
+        return target;
     }
 
     public virtual bool CheckTargetType(GameObject target)

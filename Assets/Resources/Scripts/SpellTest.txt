@@ -6,3 +6,60 @@ function SpellTest:Cast()
 	local handle = self:ManifestEnergyAndFocus(500, Vector3.new(0,0,5), Energy.Element.Fire, Energy.Shape.Cube)
 	self:ApplyForce(handle, Vector3.new(5*self:GetParam().level, 0, 0), ForceMode.Impulse)
 end
+
+
+Class.RainScriptSpell = {
+	__inherit = "ContinuousSpell",
+	lastSpawn = 0,
+	random = false,
+	hits = 0,
+
+	interval = 0.3,
+	baseHits = 6,
+	hitsPerLevel = 2,
+}
+
+function RainScriptSpell:OnBegin()
+	self.random = Random.new()
+end
+
+function RainScriptSpell.TryFindTarget(wizard)
+	return SpellUtilities.FindClosestEnemy(wizard, 20.0);
+end
+
+function RainScriptSpell:OnTargetLost()
+	self:Cancel()
+end
+
+function RainScriptSpell:Activate(deltaTime)
+	if GetTime() - self.lastSpawn > self.interval then
+		self.lastSpawn = GetTime()
+		if self:CanFocusMore() then
+			local center = self:GetTargetPosition() + Vector3.up*30
+			local angle = self.random:Range(0, 360)
+			local len = self.random:Range(5.0, 15.0)
+			local spawnPos = center + Vector3.new(math.sin(angle) * len, 0, math.cos(angle) * len)
+			local result, handle = self:ManifestEnergyAndFocus(50 + 50 * self:GetParam().level, self:GetWizard().transform.InverseTransformPoint(spawnPos))
+			if Try(result) then
+				self:OrientTowards(handle, self:GetTargetPosition())
+				local forceDirection = self:GetTargetPosition() - self:GetFocusPosition(handle)
+				local result = self:ApplyForce(handle, forceDirection:SetLength(30 + 15*self:GetParam().level), ForceMode.Impulse)
+				if not Try(result) then
+					self:Finish()
+					return
+				end
+
+				self.hits = self.hits + 1
+				if self.hits > self.baseHits + self.hitsPerLevel * self:GetParam().level then
+					self:Finish()
+					return
+				end
+			else
+				if result == EnergyActionResult.NotEnoughEnergy then
+					self:Cancel()
+					return
+				end
+			end
+		end
+	end
+end

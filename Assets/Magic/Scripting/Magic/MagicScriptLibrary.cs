@@ -28,6 +28,14 @@ public static class MagicScriptLibrary
         ScriptLibrary.BindEnum<Energy.Element>(tEnergy);
         ScriptLibrary.BindEnum<Energy.Shape>(tEnergy);
 
+        L.Globals["TryStrict"] = new CallbackFunction(GlobalTryStrict);
+        L.Globals["Try"] = new CallbackFunction(GlobalTry);
+
+        var tSpellUtilities = new Table(L);
+        L.Globals["SpellUtilities"] = tSpellUtilities;
+        tSpellUtilities["FindClosestEnemy"] = new CallbackFunction(SpellUtilities_FindClosestEnemy);
+        tSpellUtilities["FindClosestFriend"] = new CallbackFunction(SpellUtilities_FindClosestFriend);
+
         BindSpellComponent(L);
     }
 
@@ -122,6 +130,42 @@ public static class MagicScriptLibrary
 
         var unityComponent = trueValue.CheckUserDataType<T>("GetSpellComponent", 0);
         return unityComponent;
+    }
+
+    public static DynValue GlobalTryStrict(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var actionResult = args.AsInt(0, "TryStrict");
+        return DynValue.NewBoolean(EnergyController.TryStrict((EnergyActionResult)actionResult));
+    }
+
+    public static DynValue GlobalTry(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var actionResult = args.AsInt(0, "Try");
+        return DynValue.NewBoolean(EnergyController.Try((EnergyActionResult)actionResult));
+    }
+
+    public static DynValue SpellUtilities_FindClosestEnemy(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var wizard = args.AsUserData<Wizard>(0, "SpellUtilities.FindClosestEnemy", false);
+        var maxDistance = float.PositiveInfinity;
+        if (args.Count == 2)
+        {
+            maxDistance = (float)args.RawGet(1, true).Number;
+        }
+
+        return DynValue.FromObject(ctx.OwnerScript, SpellUtilities.FindClosestEnemy(wizard, maxDistance));
+    }
+
+    public static DynValue SpellUtilities_FindClosestFriend(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var wizard = args.AsUserData<Wizard>(0, "SpellUtilities.FindClosestFriend", false);
+        var maxDistance = float.PositiveInfinity;
+        if (args.Count == 2)
+        {
+            maxDistance = (float)args.RawGet(1, true).Number;
+        }
+
+        return DynValue.FromObject(ctx.OwnerScript, SpellUtilities.FindClosestFriend(wizard, maxDistance));
     }
 
     #endregion

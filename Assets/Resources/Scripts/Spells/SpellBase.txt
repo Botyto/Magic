@@ -9,6 +9,9 @@ Class.SpellBase = {
 }
 GetMembers(SpellBase, __SpellBase)
 
+function SpellBase.TryFindTarget(wizard)
+end
+
 function SpellBase:__index(key)
 	error(string.format("Reading from undefined member `%s.%s`", self.class, key))
 end

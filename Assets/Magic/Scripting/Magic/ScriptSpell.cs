@@ -20,17 +20,6 @@ public class ScriptInstantSpell : InstantSpellComponent, IScriptSpell
     public void Bind(Script L, DynValue component) { this.L = L; this.component = component; }
     public DynValue CallScript(string method) { return L.Call(component.Table.GetField(method), component); }
     public DynValue CallScript(string method, params object[] args) { return L.Call(component.Table.GetField(method), component, args); }
-
-    public override void Cast() { CallScript("Cast"); }
-    
-    public override void OnTargetLost() { CallScript("OnTargetLost"); }
-    public override void OnFocusLost(int handle) { CallScript("OnFocusLost", handle); }
-
-    /// <summary>
-    /// Handles exceptions in a uniform fashion.
-    /// The calling function should assume the spell was cancelled here and should return immediately after.
-    /// In all base classes, when running spell-specific code it must be wrapped in a try/catch construct
-    /// </summary>
     protected override void HandleException(Exception exception)
     {
         var scriptException = exception as InterpreterException;
@@ -63,6 +52,12 @@ public class ScriptInstantSpell : InstantSpellComponent, IScriptSpell
         MagicLog.LogException(exception);
         Cancel();
     }
+
+    public override void Cast() { CallScript("Cast"); }
+    
+    public override void OnTargetLost() { CallScript("OnTargetLost"); }
+    public override void OnFocusLost(int handle) { CallScript("OnFocusLost", handle); }
+    
 }
 
 [MoonSharpUserData]
@@ -74,6 +69,38 @@ public class ScriptContinuousSpell : ContinuousSpellComponent, IScriptSpell
     public void Bind(Script L, DynValue component) { this.L = L; this.component = component; }
     public DynValue CallScript(string method) { return L.Call(component.Table.GetField(method), component); }
     public DynValue CallScript(string method, params object[] args) { return L.Call(component.Table.GetField(method), component, args); }
+    protected override void HandleException(Exception exception)
+    {
+        var scriptException = exception as InterpreterException;
+        if (scriptException != null)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("[Script][Error] {0}\n", exception.Message);
+            sb.AppendLine("Lua stacktrace (most recent call on top):");
+
+            foreach (var wi in scriptException.CallStack)
+            {
+                string name;
+
+                if (wi.Name == null)
+                    if (wi.RetAddress < 0)
+                        name = "main chunk";
+                    else
+                        name = "?";
+                else
+                    name = "function '" + wi.Name + "'";
+
+                string loc = wi.Location != null ? wi.Location.FormatLocation(L) : "[clr]";
+                sb.AppendFormat("\t{0}: in {1}\n", loc, name);
+            }
+
+            MagicLog.LogError(sb.ToString());
+        }
+
+        MagicLog.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
+        MagicLog.LogException(exception);
+        Cancel();
+    }
 
     public override void OnBegin() { CallScript("OnBegin"); }
     public override void Activate(float dt) { CallScript("Activate", dt); }
@@ -81,6 +108,7 @@ public class ScriptContinuousSpell : ContinuousSpellComponent, IScriptSpell
 
     public override void OnTargetLost() { CallScript("OnTargetLost"); }
     public override void OnFocusLost(int handle) { CallScript("OnFocusLost", handle); }
+
 }
 
 [MoonSharpUserData]
@@ -92,12 +120,45 @@ public class ScriptToggleSpell : ToggleSpellComponent, IScriptSpell
     public void Bind(Script L, DynValue component) { this.L = L; this.component = component; }
     public DynValue CallScript(string method) { return L.Call(component.Table.GetField(method), component); }
     public DynValue CallScript(string method, params object[] args) { return L.Call(component.Table.GetField(method), component, args); }
+    protected override void HandleException(Exception exception)
+    {
+        var scriptException = exception as InterpreterException;
+        if (scriptException != null)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("[Script][Error] {0}\n", exception.Message);
+            sb.AppendLine("Lua stacktrace (most recent call on top):");
+
+            foreach (var wi in scriptException.CallStack)
+            {
+                string name;
+
+                if (wi.Name == null)
+                    if (wi.RetAddress < 0)
+                        name = "main chunk";
+                    else
+                        name = "?";
+                else
+                    name = "function '" + wi.Name + "'";
+
+                string loc = wi.Location != null ? wi.Location.FormatLocation(L) : "[clr]";
+                sb.AppendFormat("\t{0}: in {1}\n", loc, name);
+            }
+
+            MagicLog.LogError(sb.ToString());
+        }
+
+        MagicLog.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
+        MagicLog.LogException(exception);
+        Cancel();
+    }
 
     public override void Activate(float dt) { CallScript("Activate", dt); }
     public override void OnToggle(bool active) { CallScript("OnToggle", active); }
 
     public override void OnTargetLost() { CallScript("OnTargetLost"); }
     public override void OnFocusLost(int handle) { CallScript("OnFocusLost", handle); }
+
 }
 
 [MoonSharpUserData]
@@ -109,6 +170,38 @@ public class ScriptStagedSpell : StagedSpellComponent, IScriptSpell
     public void Bind(Script L, DynValue component) { this.L = L; this.component = component; }
     public DynValue CallScript(string method) { return L.Call(component.Table.GetField(method), component); }
     public DynValue CallScript(string method, params object[] args) { return L.Call(component.Table.GetField(method), component, args); }
+    protected override void HandleException(Exception exception)
+    {
+        var scriptException = exception as InterpreterException;
+        if (scriptException != null)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("[Script][Error] {0}\n", exception.Message);
+            sb.AppendLine("Lua stacktrace (most recent call on top):");
+
+            foreach (var wi in scriptException.CallStack)
+            {
+                string name;
+
+                if (wi.Name == null)
+                    if (wi.RetAddress < 0)
+                        name = "main chunk";
+                    else
+                        name = "?";
+                else
+                    name = "function '" + wi.Name + "'";
+
+                string loc = wi.Location != null ? wi.Location.FormatLocation(L) : "[clr]";
+                sb.AppendFormat("\t{0}: in {1}\n", loc, name);
+            }
+
+            MagicLog.LogError(sb.ToString());
+        }
+
+        MagicLog.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
+        MagicLog.LogException(exception);
+        Cancel();
+    }
 
     public override void OnBegin() { CallScript("OnBegin"); }
     public override void Cast(float dt) { CallScript("Cast", dt); }
@@ -117,4 +210,5 @@ public class ScriptStagedSpell : StagedSpellComponent, IScriptSpell
 
     public override void OnTargetLost() { CallScript("OnTargetLost"); }
     public override void OnFocusLost(int handle) { CallScript("OnFocusLost", handle); }
+
 }
