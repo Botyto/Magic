@@ -47,6 +47,7 @@ public static class MagicScriptLibrary
         tSpellBase["DisownAllFocused"] = new CallbackFunction(SpellBase_DisownAllFocused);
         tSpellBase["Cancel"] = new CallbackFunction(SpellBase_Cancel);
         tSpellBase["Finish"] = new CallbackFunction(SpellBase_Finish);
+        ScriptLibrary.BindEnum<StatusEffect.Type>(L.Globals, "StatusEffectType");
 
         var tSpell = new Table(L);
         L.Globals["__Spell"] = tSpell;

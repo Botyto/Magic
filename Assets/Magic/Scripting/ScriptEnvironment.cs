@@ -35,9 +35,9 @@ public class ScriptEnvironment
         {
             return L.DoString(code, null, name);
         }
-        catch (ScriptRuntimeException ex)
+        catch (InterpreterException e)
         {
-            Debug.LogErrorFormat("[Script][Error] {0}", ex.DecoratedMessage);
+            Debug.LogErrorFormat("[Script][Error] {0}", e.DecoratedMessage);
             return null;
         }
     }
@@ -51,7 +51,7 @@ public class ScriptEnvironment
             return 0;
         }
 
-        L.DoFile(script.name);
+        L.DoFile(script.name, null, filePath);
         return 1;
     }
 
@@ -65,7 +65,8 @@ public class ScriptEnvironment
         var scripts = Resources.LoadAll("Scripts");
         foreach (var script in scripts)
         {
-            L.DoFile(folderPath + script.name);
+            var filePath = folderPath + script.name;
+            L.DoFile(filePath, null, filePath);
         }
 
         return scripts.Length;

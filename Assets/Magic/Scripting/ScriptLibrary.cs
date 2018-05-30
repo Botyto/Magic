@@ -44,10 +44,10 @@ public static class ScriptLibrary
         return boundClass;
     }
 
-    public static Table BindEnum<T>(Table ownerTable)
+    public static Table BindEnum<T>(Table ownerTable, string key = null)
     {
         var tEnum = new Table(ownerTable.OwnerScript);
-        ownerTable[typeof(T).Name] = tEnum;
+        ownerTable[key ?? typeof(T).Name] = tEnum;
         foreach (var value in Enum.GetValues(typeof(T)))
         {
             tEnum[value.ToString()] = (int)value;

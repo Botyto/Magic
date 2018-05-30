@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using MoonSharp.Interpreter;
+using System.Text;
 
 public interface IScriptSpell
 {
@@ -32,7 +33,32 @@ public class ScriptInstantSpell : InstantSpellComponent, IScriptSpell
     /// </summary>
     protected override void HandleException(Exception exception)
     {
-        L.DoString("print(debug.traceback())");
+        var scriptException = exception as InterpreterException;
+        if (scriptException != null)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("[Script][Error] {0}\n", exception.Message);
+            sb.AppendLine("Lua stacktrace (most recent call on top):");
+
+            foreach (var wi in scriptException.CallStack)
+            {
+                string name;
+
+                if (wi.Name == null)
+                    if (wi.RetAddress < 0)
+                        name = "main chunk";
+                    else
+                        name = "?";
+                else
+                    name = "function '" + wi.Name + "'";
+
+                string loc = wi.Location != null ? wi.Location.FormatLocation(L) : "[clr]";
+                sb.AppendFormat("\t{0}: in {1}\n", loc, name);
+            }
+
+            Debug.LogError(sb.ToString());
+        }
+
         Debug.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
         Debug.LogException(exception);
         Cancel();

@@ -8,6 +8,8 @@ public static class UnityScriptLibrary
 
     public static void Bind(Script L)
     {
+        ScriptLibrary.BindClass<Object>(L);
+
         BindUtils(L); //Vector, Quaternion, ..
         BindGameplay(L); //GameObject, Transform, ...
 
