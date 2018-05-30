@@ -11,13 +11,9 @@ Script.DoFile("Scripts/lib/class")
 Script.DoFile("Scripts/lib/Object")
 
 --Load source code
-local files = Resources.ListAll("Scripts/")
-for i,filename in ipairs(files) do
-	if not string.ends_with(filename, "autorun") then
-		--print("dofile("..filename..")")
-		Script.DoFile(filename)
-	end
-end
+Script.DoFolder("Script/", function(filename)
+	return not string.ends_with(filename, "autorun")
+end)
 
 FirstLoad = false
 setmetatable(_G, {

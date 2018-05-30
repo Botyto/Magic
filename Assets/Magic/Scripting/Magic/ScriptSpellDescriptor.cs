@@ -19,7 +19,7 @@ public class ScriptSpellDescriptor : SpellDescriptor
         if (scriptSpellDef == null || scriptSpellDef.Type != DataType.Table)
         {
             spell = null;
-            Debug.LogErrorFormat("Casting spell '{0}' failed! No script counterpart found!", id);
+            MagicLog.LogErrorFormat("Casting spell '{0}' failed! No script counterpart found!", id);
             return SpellCastResult.InvalidDescriptor;
         }
 
@@ -35,7 +35,7 @@ public class ScriptSpellDescriptor : SpellDescriptor
             if (scriptSpell == null)
             {
                 Util.Destroy(spell);
-                Debug.LogErrorFormat("Casting spell '{0}' failed! '{1}' is not a script-compatible spell class!", id, spellClass);
+                MagicLog.LogErrorFormat("Casting spell '{0}' failed! '{1}' is not a script-compatible spell class!", id, spellClass);
                 return SpellCastResult.InvalidDescriptor;
             }
 
@@ -43,7 +43,7 @@ public class ScriptSpellDescriptor : SpellDescriptor
             if (scriptSpell.SpellType != scriptSpellDef.Table.GetField("SpellType").String)
             {
                 Util.Destroy(spell);
-                Debug.LogErrorFormat("Casting spell '{0}' failed! Different Spell class type from the script spell type!", id);
+                MagicLog.LogErrorFormat("Casting spell '{0}' failed! Different Spell class type from the script spell type!", id);
                 return SpellCastResult.InvalidDescriptor;
             }
 
@@ -51,7 +51,7 @@ public class ScriptSpellDescriptor : SpellDescriptor
             if (newFunction == null || (newFunction.Type != DataType.Function && newFunction.Type != DataType.ClrFunction))
             {
                 Util.Destroy(spell);
-                Debug.LogErrorFormat("Casting spell '{0}' failed! No script constructor found!", id);
+                MagicLog.LogErrorFormat("Casting spell '{0}' failed! No script constructor found!", id);
                 return SpellCastResult.InvalidDescriptor;
             }
 

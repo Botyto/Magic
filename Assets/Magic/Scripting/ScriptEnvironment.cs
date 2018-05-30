@@ -42,7 +42,7 @@ public class ScriptEnvironment
         }
         catch (InterpreterException e)
         {
-            Debug.LogErrorFormat("[Script][Error] {0}", e.DecoratedMessage);
+            MagicLog.LogErrorFormat("[Script][Error] {0}", e.DecoratedMessage);
             return null;
         }
     }
@@ -52,7 +52,7 @@ public class ScriptEnvironment
         var script = Resources.Load(filePath);
         if (script == null)
         {
-            Debug.LogErrorFormat("[Script][Error] Cannot find file {0}", filePath);
+            MagicLog.LogErrorFormat("[Script][Error] Cannot find file {0}", filePath);
             return 0;
         }
 
@@ -67,11 +67,31 @@ public class ScriptEnvironment
             folderPath += "/";
         }
 
-        var scripts = Resources.LoadAll("Scripts");
+        var scripts = Resources.LoadAll<TextAsset>("Scripts");
         foreach (var script in scripts)
         {
             var filePath = folderPath + script.name;
             L.DoFile(filePath, null, filePath);
+        }
+
+        return scripts.Length;
+    }
+
+    public int DoFolder(string folderPath, Closure filterFunction)
+    {
+        if (!string.IsNullOrEmpty(folderPath) && !folderPath.EndsWith("/"))
+        {
+            folderPath += "/";
+        }
+
+        var scripts = Resources.LoadAll<TextAsset>("Scripts");
+        foreach (var script in scripts)
+        {
+            var filePath = folderPath + script.name;
+            if (filterFunction.Call(filePath).Boolean)
+            {
+                L.DoFile(filePath, null, filePath);
+            }
         }
 
         return scripts.Length;

@@ -23,11 +23,7 @@ public static class UnityScriptLibrary
         L.Globals["Editor"] = tEditor;
         tEditor["Pause"] = new CallbackFunction(EditorPause);
         tEditor["SelectedObject"] = new CallbackFunction(EditorSelectedObject);
-
-        var tResources = new Table(L);
-        L.Globals["Resources"] = tResources;
-        tResources["ListAll"] = new CallbackFunction(ResourcesListAll);
-
+        
         var tScript = new Table(L);
         L.Globals["Script"] = tScript;
         tScript["DoFile"] = new CallbackFunction(ScriptDoFile);
@@ -188,11 +184,11 @@ public static class UnityScriptLibrary
 
         if (text[0] == '[')
         {
-            Debug.LogFormat("[Script]{0}", text);
+            MagicLog.LogFormat("[Script]{0}", text);
         }
         else
         {
-            Debug.LogFormat("[Script] {0}", text);
+            MagicLog.LogFormat("[Script] {0}", text);
         }
 
         return DynValue.Nil;
@@ -236,9 +232,18 @@ public static class UnityScriptLibrary
 
     public static DynValue ScriptDoFolder(ScriptExecutionContext ctx, CallbackArguments args)
     {
-        var path = args.AsStringUsingMeta(ctx, 0, "Script.DoFile");
         var env = ScriptEnvironment.FetchEnvironment(ctx.OwnerScript);
-        return DynValue.FromObject(ctx.OwnerScript, env.DoFolder(path));
+        var path = args.AsStringUsingMeta(ctx, 0, "Script.DoFile");
+        if (args.Count == 2)
+        {
+            var filter = args.RawGet(1, true);
+            if (filter.Type == DataType.Function || filter.Type == DataType.ClrFunction)
+            {
+                return DynValue.NewNumber(env.DoFolder(path, filter.Function));
+            }
+        }
+
+        return DynValue.NewNumber(env.DoFolder(path));
     }
 
     public static DynValue ScriptReload(ScriptExecutionContext ctx, CallbackArguments args)
@@ -249,36 +254,4 @@ public static class UnityScriptLibrary
     }
 
     #endregion
-
-    #region Resources
-
-    public static DynValue ResourcesListAll(ScriptExecutionContext ctx, CallbackArguments args)
-    {
-        var path = args.AsStringUsingMeta(ctx, 0, "Resources.ListAll");
-#if DEBUG
-        var resources = Resources.LoadAll(path);
-#else
-        var resources = FileUtility.GetAllFiles(path, ".txt").ToArray();
-#endif
-        var names = new string[resources.Length];
-        
-        for (int i = 0; i < resources.Length; ++i)
-        {
-#if DEBUG
-            var fullPath = AssetDatabase.GetAssetPath(resources[i]);
-#else
-            var fullPath = resources[i];
-#endif
-
-            var pathWithExtension = fullPath.Substring(17); //17 == #"Assets/Resources/"
-            var periodIdx = pathWithExtension.LastIndexOf('.');
-            var finalPath = pathWithExtension.Substring(0, periodIdx);
-            names[i] = finalPath;
-        }
-
-        return DynValue.FromObject(ctx.OwnerScript, names);
-    }
-
-#endregion
 }
-;

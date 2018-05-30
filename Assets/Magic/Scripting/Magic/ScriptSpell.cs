@@ -56,11 +56,11 @@ public class ScriptInstantSpell : InstantSpellComponent, IScriptSpell
                 sb.AppendFormat("\t{0}: in {1}\n", loc, name);
             }
 
-            Debug.LogError(sb.ToString());
+            MagicLog.LogError(sb.ToString());
         }
 
-        Debug.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
-        Debug.LogException(exception);
+        MagicLog.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
+        MagicLog.LogException(exception);
         Cancel();
     }
 }

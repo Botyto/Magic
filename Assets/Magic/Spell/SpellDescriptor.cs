@@ -127,7 +127,7 @@ public class SpellDescriptor : ScriptableObject
         if (type == null)
         {
             //No such class - invalid descriptor
-            Debug.LogErrorFormat("Casting spell '{0}' failed! Class '{1}' not found!", id, type.Name);
+            MagicLog.LogErrorFormat("Casting spell '{0}' failed! Class '{1}' not found!", id, type.Name);
             spell = null;
             return SpellCastResult.InvalidDescriptor;
         }
@@ -141,7 +141,7 @@ public class SpellDescriptor : ScriptableObject
             //Can't find target
             if (!CheckTargetType(target) && targetRequired)
             {
-                Debug.LogErrorFormat("Casting spell '{0}' failed! Requires target, but none was found!", id);
+                MagicLog.LogErrorFormat("Casting spell '{0}' failed! Requires target, but none was found!", id);
                 spell = null;
                 return SpellCastResult.NoTarget;
             }

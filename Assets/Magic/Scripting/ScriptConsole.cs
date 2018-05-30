@@ -256,7 +256,7 @@ public class ScriptConsole : MonoBehaviour
         var loadedCode = LoadCode(code);
         if (loadedCode.IsNil())
         {
-            Debug.LogErrorFormat("Couldn't understand `{0}`", code);
+            MagicLog.LogErrorFormat("Couldn't understand `{0}`", code);
             return;
         }
         var result = loadedCode.Function.Call();
@@ -276,11 +276,19 @@ public class ScriptConsole : MonoBehaviour
         //print the result
         if (m_Log != null)
         {
-            m_Log.text += resultText + "\n";
+            Log(resultText);
         }
         else
         {
-            Debug.LogFormat("[Script] {0}", resultText);
+            MagicLog.LogFormat("[Script] {0}", resultText);
+        }
+    }
+
+    public void Log(string message)
+    {
+        if (m_Log != null)
+        {
+            m_Log.text += message + "\n";
         }
     }
 

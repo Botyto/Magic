@@ -1,7 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections.Generic;
-using System.IO;
 
 public static class Util
 {
@@ -158,50 +156,4 @@ public static class Util
     }
 
     #endregion
-}
-  
- public class FileUtility
-{
-    public static List<string> GetAllFiles(string path, string extension = null)
-    {
-        List<string> result = new List<string>();
-        Stack<string> stack = new Stack<string>();
-
-        if (extension != null && !extension.StartsWith("."))
-        {
-            extension = '.' + extension;
-        }
-
-        var resourcesPath = Path.Combine(Application.dataPath, "Resources/");
-        var fullPath = Path.Combine(resourcesPath, path);
-        stack.Push(fullPath);
-        while (stack.Count > 0)
-        {
-            var currentDir = stack.Pop();
-            try
-            {
-                if (extension == null)
-                {
-                    foreach (var file in Directory.GetFiles(currentDir))
-                        result.Add(file);
-                }
-                else
-                {
-                    foreach (var file in Directory.GetFiles(currentDir))
-                        if (file.EndsWith(extension))
-                            result.Add(file);
-                }
-
-                foreach (var dir in Directory.GetDirectories(currentDir))
-                {
-                    stack.Push(dir);
-                }
-            }
-            catch
-            {
-                Debug.LogError("Directory " + currentDir + " couldn't be read from.");
-            }
-        }
-        return result;
-    }
 }

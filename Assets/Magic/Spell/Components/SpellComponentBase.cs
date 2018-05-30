@@ -244,8 +244,8 @@ public class SpellComponentBase : MonoBehaviour
     /// </summary>
     protected virtual void HandleException(Exception exception)
     {
-        Debug.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
-        Debug.LogException(exception);
+        MagicLog.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
+        MagicLog.LogException(exception);
         Cancel();
     }
 
