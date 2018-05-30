@@ -43,6 +43,8 @@ public static class UnityScriptLibrary
 
         var tTransform = ScriptLibrary.BindClass<Transform>(L);
         tTransform["ListChildren"] = new CallbackFunction(TransformListChildren);
+
+        ScriptLibrary.BindEnum<ForceMode>(L.Globals);
     }
 
     public static void BindUtils(Script L)

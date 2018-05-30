@@ -1,0 +1,55 @@
+local function GetMembers(classTable, membersTable)
+	for member,value in pairs(membersTable) do
+		classTable[member] = value
+	end
+end
+
+Class.InstantSpell = {
+	__inherit = "Spell",
+
+	SpellType = "Instant",
+
+	Cast = function(self) end,
+	OnTargetLost = function(self) end,
+    OnFocusLost = function(self, handle) end,
+}
+GetMembers(InstantSpell, __InstantSpell)
+
+Class.ContinuousSpell = {
+	__inherit = "Spell",
+
+	SpellType = "Continuous",
+
+	OnBegin = function(self) end,
+	Activate = function(self, deltaTime) end,
+    OnFinish = function(self) end,
+    OnTargetLost = function(self) end,
+    OnFocusLost = function(self, handle) end,
+}
+GetMembers(ContinuousSpell, __ContinuousSpell)
+
+Class.ToggleSpell = {
+	__inherit = "Spell",
+
+	SpellType = "Toggle",
+
+	Activate = function(self, deltaTime) end,
+    OnToggle = function(self, active) end,
+    OnTargetLost = function(self) end,
+    OnFocusLost = function(self, handle) end,
+}
+GetMembers(ToggleSpell, __ToggleSpell)
+
+Class.StagedSpell = {
+	__inherit = "Spell",
+
+	SpellType = "Staged",
+
+	OnBegin = function(self) end,
+    Cast = function(self, deltaTime) end,
+    Execute = function(self, deltaTime) end,
+    OnFinish = function(self) end,
+    OnTargetLost = function(self) end,
+    OnFocusLost = function(self, handle) end,
+}
+GetMembers(StagedSpell, __StagedSpell)

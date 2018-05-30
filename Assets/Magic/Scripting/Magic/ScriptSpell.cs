@@ -1,4 +1,6 @@
-﻿using MoonSharp.Interpreter;
+﻿using System;
+using UnityEngine;
+using MoonSharp.Interpreter;
 
 public interface IScriptSpell
 {
@@ -22,6 +24,19 @@ public class ScriptInstantSpell : InstantSpellComponent, IScriptSpell
     
     public override void OnTargetLost() { CallScript("OnTargetLost"); }
     public override void OnFocusLost(int handle) { CallScript("OnFocusLost", handle); }
+
+    /// <summary>
+    /// Handles exceptions in a uniform fashion.
+    /// The calling function should assume the spell was cancelled here and should return immediately after.
+    /// In all base classes, when running spell-specific code it must be wrapped in a try/catch construct
+    /// </summary>
+    protected override void HandleException(Exception exception)
+    {
+        L.DoString("print(debug.traceback())");
+        Debug.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
+        Debug.LogException(exception);
+        Cancel();
+    }
 }
 
 [MoonSharpUserData]

@@ -1,0 +1,23 @@
+local function GetMembers(classTable, membersTable)
+	for member,value in pairs(membersTable) do
+		classTable[member] = value
+	end
+end
+
+Class.SpellBase = {
+	SpellType = "None",
+}
+GetMembers(SpellBase, __SpellBase)
+
+function SpellBase:__index(key)
+	error(string.format("Reading from undefined member `%s.%s`", self.class, key))
+end
+
+function SpellBase:__newindex(key, value)
+	error(string.format("Writing to undefined member `%s.%s`", self.class, key))
+end
+
+Class.Spell = {
+	__inherit = "SpellBase",
+}
+GetMembers(Spell, __Spell)

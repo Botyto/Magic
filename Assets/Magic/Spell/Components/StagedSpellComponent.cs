@@ -132,9 +132,7 @@ public abstract class StagedSpellComponent : SpellComponent
         }
         catch (Exception e)
         {
-            Debug.LogErrorFormat("Staged spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, e.Message);
-            Debug.LogException(e);
-            Cancel();
+            HandleException(e);
             return;
         }
     }

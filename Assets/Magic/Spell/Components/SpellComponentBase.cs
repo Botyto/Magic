@@ -242,7 +242,7 @@ public class SpellComponentBase : MonoBehaviour
     /// The calling function should assume the spell was cancelled here and should return immediately after.
     /// In all base classes, when running spell-specific code it must be wrapped in a try/catch construct
     /// </summary>
-    protected void HandleException(Exception exception)
+    protected virtual void HandleException(Exception exception)
     {
         Debug.LogErrorFormat("Spell '{0}' failed due to an exception: '{1}' (see below)", GetType().Name, exception.Message);
         Debug.LogException(exception);
