@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+#if DEBUG
 using UnityEditor;
+#endif
 
 public class SimulationSpeed : MonoBehaviour
 {
@@ -38,9 +40,11 @@ public class SimulationSpeed : MonoBehaviour
 			timeScale = Mathf.Max(0.1f, Time.timeScale - 0.5f);
 		}
 
+#if DEBUG
         if (Gameplay.GetKeyDown(KeyCode.Pause) && Application.isEditor)
         {
             EditorApplication.isPaused = true;
         }
-	}
+#endif
+    }
 }

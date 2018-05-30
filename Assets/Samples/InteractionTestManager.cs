@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+#if DEBUG
 using UnityEditor;
+#endif
 
 public class InteractionTestManager : MonoBehaviour
 {
@@ -219,10 +221,12 @@ public class InteractionTestManager : MonoBehaviour
 
     private void Start()
     {
+#if DEBUG
         if (autoPause && Application.isEditor)
         {
             EditorApplication.isPaused = true;
         }
+#endif
 
         RunTest();
     }

@@ -19,6 +19,11 @@ public class ScriptEnvironment
         L = new Script(CoreModules.Preset_Complete);
         L.Options.ScriptLoader = new UnityAssetsScriptLoader("Scripts");
         L.Globals["__SCRIPT_ENVIRONMENT"] = DynValue.FromObject(L, this);
+#if DEBUG
+        L.Globals["__DEBUG"] = true;
+#else
+        L.Globals["__DEBUG"] = false;
+#endif
 
         ReloadScripts();
     }

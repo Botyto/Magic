@@ -1,6 +1,8 @@
 ﻿using MoonSharp.Interpreter;
 using UnityEngine;
+#if DEBUG
 using UnityEditor;
+#endif
 
 public static class UnityScriptLibrary
 {
@@ -52,9 +54,16 @@ public static class UnityScriptLibrary
     public static void BindUtils(Script L)
     {
         var tVector3 = ScriptLibrary.BindClass<Vector3>(L);
+        UserData.RegisterExtensionType(typeof(Extensions));
         tVector3["new"] = new CallbackFunction(Vector3New);
         tVector3["one"] = DynValue.FromObject(L, Vector3.one);
         tVector3["zero"] = DynValue.FromObject(L, Vector3.zero);
+        tVector3["forward"] = DynValue.FromObject(L, Vector3.forward);
+        tVector3["back"] = DynValue.FromObject(L, Vector3.back);
+        tVector3["left"] = DynValue.FromObject(L, Vector3.left);
+        tVector3["right"] = DynValue.FromObject(L, Vector3.right);
+        tVector3["up"] = DynValue.FromObject(L, Vector3.up);
+        tVector3["down"] = DynValue.FromObject(L, Vector3.down);
 
         var tQuaternion = ScriptLibrary.BindClass<Quaternion>(L);
         tQuaternion["Euler"] = new CallbackFunction(QuaternionEuler);
@@ -191,17 +200,20 @@ public static class UnityScriptLibrary
 
     public static DynValue EditorPause(ScriptExecutionContext ctx, CallbackArguments args)
     {
+#if DEBUG
         if (Application.isEditor)
         {
             var paused = args.AsType(0, "Application.Pause", DataType.Boolean, false).Boolean;
             EditorApplication.isPaused = paused;
         }
+#endif
 
         return DynValue.Nil;
     }
 
     public static DynValue EditorSelectedObject(ScriptExecutionContext ctx, CallbackArguments args)
     {
+#if DEBUG
         if (Application.isEditor)
         {
             var obj = Selection.activeGameObject;
@@ -210,6 +222,7 @@ public static class UnityScriptLibrary
                 return DynValue.FromObject(ctx.OwnerScript, obj);
             }
         }
+#endif
 
         return DynValue.Nil;
     }
@@ -247,16 +260,20 @@ public static class UnityScriptLibrary
         
         for (int i = 0; i < resources.Length; ++i)
         {
+#if DEBUG
             var fullPath = AssetDatabase.GetAssetPath(resources[i]);
             var pathWithExtension = fullPath.Substring(17); //17 == #"Assets/Resources/"
             var periodIdx = pathWithExtension.LastIndexOf('.');
             var finalPath = pathWithExtension.Substring(0, periodIdx);
+#else
+            var finalPath = resources[i].name;
+#endif
             names[i] = finalPath;
         }
 
         return DynValue.FromObject(ctx.OwnerScript, names);
     }
 
-    #endregion
+#endregion
 }
 ;
