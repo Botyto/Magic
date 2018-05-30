@@ -255,19 +255,24 @@ public static class UnityScriptLibrary
     public static DynValue ResourcesListAll(ScriptExecutionContext ctx, CallbackArguments args)
     {
         var path = args.AsStringUsingMeta(ctx, 0, "Resources.ListAll");
+#if DEBUG
         var resources = Resources.LoadAll(path);
+#else
+        var resources = FileUtility.GetAllFiles(path, ".txt").ToArray();
+#endif
         var names = new string[resources.Length];
         
         for (int i = 0; i < resources.Length; ++i)
         {
 #if DEBUG
             var fullPath = AssetDatabase.GetAssetPath(resources[i]);
+#else
+            var fullPath = resources[i];
+#endif
+
             var pathWithExtension = fullPath.Substring(17); //17 == #"Assets/Resources/"
             var periodIdx = pathWithExtension.LastIndexOf('.');
             var finalPath = pathWithExtension.Substring(0, periodIdx);
-#else
-            var finalPath = resources[i].name;
-#endif
             names[i] = finalPath;
         }
 
