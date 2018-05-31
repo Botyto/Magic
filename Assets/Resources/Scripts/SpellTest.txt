@@ -39,7 +39,7 @@ function RainScriptSpell:Activate(deltaTime)
 			local angle = self.random:Range(0, 360)
 			local len = self.random:Range(5.0, 15.0)
 			local spawnPos = center + Vector3.new(math.sin(angle) * len, 0, math.cos(angle) * len)
-			local result, handle = self:ManifestEnergyAndFocus(50 + 50 * self:GetParam().level, self:GetWizard().transform.InverseTransformPoint(spawnPos))
+			local result, handle = self:ManifestEnergyAndFocusAbsolute(50 + 50 * self:GetParam().level, spawnPos)
 			if Try(result) then
 				self:OrientTowards(handle, self:GetTargetPosition())
 				local forceDirection = self:GetTargetPosition() - self:GetFocusPosition(handle)

@@ -36,7 +36,7 @@ public static class UnityScriptLibrary
     public static void BindGameplay(Script L)
     {
         var tCamera = ScriptLibrary.BindClass<Camera>(L);
-        tCamera["Main"] = new CallbackFunction(CameraMain);
+        tCamera["GetMain"] = new CallbackFunction(CameraMain);
 
         var tGameObject = ScriptLibrary.BindClass<GameObject>(L);
         tGameObject["Find"] = new CallbackFunction(GameObjectFind);

@@ -3,20 +3,31 @@ using MoonSharp.Interpreter;
 
 public static class MagicScriptLibrary
 {
-    #region Bind
-
-    public static void Bind(Script L)
+    public struct MemberVisibilty
     {
-        ScriptLibrary.BindClass<Unit>(L);
-        ScriptLibrary.BindClass<Selectable>(L);
-        ScriptLibrary.BindClass<PlayerMovement>(L);
+        public bool spellComponents;
+        public bool energyComponents;
+        public bool gameplayComponents;
 
-        var tEnergyHolder = ScriptLibrary.BindClass<EnergyHolder>(L);
+        public InteropAccessMode spellAccess { get { return spellComponents ? InteropAccessMode.Default : InteropAccessMode.HideMembers; } }
+        public InteropAccessMode energyAccess { get { return energyComponents ? InteropAccessMode.Default : InteropAccessMode.HideMembers; } }
+        public InteropAccessMode gameplayAccess { get { return gameplayComponents ? InteropAccessMode.Default : InteropAccessMode.HideMembers; } }
+    }
+
+    #region Bind
+    
+    public static void Bind(Script L, MemberVisibilty visibilty)
+    {
+        ScriptLibrary.BindClass<Unit>(L, visibilty.gameplayAccess);
+        ScriptLibrary.BindClass<Selectable>(L, visibilty.gameplayAccess);
+        ScriptLibrary.BindClass<PlayerMovement>(L, visibilty.gameplayAccess);
+
+        var tEnergyHolder = ScriptLibrary.BindClass<EnergyHolder>(L, visibilty.energyAccess);
         tEnergyHolder["ResolveOwner"] = new CallbackFunction(EnergyHolderResolveOwner);
-        ScriptLibrary.BindClass<EnergyController>(L);
+        ScriptLibrary.BindClass<EnergyController>(L, visibilty.energyAccess);
         ScriptLibrary.BindEnum<EnergyActionResult>(L.Globals);
-        ScriptLibrary.BindClass<EnergyManifestation>(L);
-        ScriptLibrary.BindClass<Wizard>(L);
+        ScriptLibrary.BindClass<EnergyManifestation>(L, visibilty.energyAccess);
+        ScriptLibrary.BindClass<Wizard>(L, visibilty.energyAccess);
 
         var tEnergy = new Table(L);
         L.Globals["Energy"] = tEnergy;
@@ -36,10 +47,10 @@ public static class MagicScriptLibrary
         tSpellUtilities["FindClosestEnemy"] = new CallbackFunction(SpellUtilities_FindClosestEnemy);
         tSpellUtilities["FindClosestFriend"] = new CallbackFunction(SpellUtilities_FindClosestFriend);
 
-        BindSpellComponent(L);
+        BindSpellComponent(L, visibilty);
     }
 
-    private static void BindSpellComponent(Script L)
+    private static void BindSpellComponent(Script L, MemberVisibilty visibilty)
     {
         var tSpellBase = new Table(L);
         L.Globals["__SpellBase"] = tSpellBase;
@@ -51,7 +62,7 @@ public static class MagicScriptLibrary
         tSpellBase["SetTarget"] = new CallbackFunction(SpellBase_SetTarget);
         tSpellBase["CanFocusMore"] = new CallbackFunction(SpellBase_CanFocusMore);
         tSpellBase["IsFocusValid"] = new CallbackFunction(SpellBase_IsFocusValid);
-        tSpellBase["DosposeAllFocused"] = new CallbackFunction(SpellBase_DisposeAllFocused);
+        tSpellBase["DisposeAllFocused"] = new CallbackFunction(SpellBase_DisposeAllFocused);
         tSpellBase["DisownAllFocused"] = new CallbackFunction(SpellBase_DisownAllFocused);
         tSpellBase["Cancel"] = new CallbackFunction(SpellBase_Cancel);
         tSpellBase["Finish"] = new CallbackFunction(SpellBase_Finish);
@@ -62,6 +73,7 @@ public static class MagicScriptLibrary
         tSpell["GetTargetPosition"] = new CallbackFunction(Spell_GetTargetPosition);
         tSpell["GetCursorPosition"] = new CallbackFunction(Spell_GetCursorPosition);
         tSpell["ManifestEnergyAndFocus"] = new CallbackFunction(Spell_ManifestEnergyAndFocus);
+        tSpell["ManifestEnergyAndFocusAbsolute"] = new CallbackFunction(Spell_ManifestEnergyAndFocusAbsolute);
         tSpell["GetFocusPosition"] = new CallbackFunction(Spell_GetFocusPosition);
         tSpell["GetFocusVelocity"] = new CallbackFunction(Spell_GetFocusVelocity);
         tSpell["DisownFocus"] = new CallbackFunction(Spell_DisownFocus);
@@ -84,17 +96,21 @@ public static class MagicScriptLibrary
         tSpell["CounterGravity"] = new CallbackFunction(Spell_CounterGravity);
         tSpell["CounterMotion"] = new CallbackFunction(Spell_CounterMotion);
 
+        ScriptLibrary.BindClass<ScriptInstantSpell>(L, visibilty.spellAccess);
         var tInstantSpell = new Table(L);
         L.Globals["__InstantSpell"] = tInstantSpell;
 
+        ScriptLibrary.BindClass<ScriptContinuousSpell>(L, visibilty.spellAccess);
         var tContinuousSpell = new Table(L);
         L.Globals["__ContinuousSpell"] = tContinuousSpell;
 
+        ScriptLibrary.BindClass<ScriptToggleSpell>(L, visibilty.spellAccess);
         var tToggleSpell = new Table(L);
         L.Globals["__ToggleSpell"] = tToggleSpell;
         tToggleSpell["GetInterval"] = new CallbackFunction(ToggleSpell_GetInterval);
         tToggleSpell["SetInterval"] = new CallbackFunction(ToggleSpell_SetInterval);
 
+        ScriptLibrary.BindClass<ScriptToggleSpell>(L, visibilty.spellAccess);
         var tStagedSpell = new Table(L);
         L.Globals["__StagedSpell"] = tStagedSpell;
         tStagedSpell["GetCurrentStage"] = new CallbackFunction(StagedSpell_GetCurrentStage);
@@ -289,7 +305,6 @@ public static class MagicScriptLibrary
         }
         else
         {
-
             var element = (Energy.Element)args.AsInt(3, "SpellComponent.ManifestEnergyAndFocus");
             var shape = (Energy.Shape)args.AsInt(4, "SpellComponent.ManifestEnergyAndFocus");
             status = spell.ManifestEnergyAndFocus(amount, relativePos, element, shape, out handle);
@@ -297,7 +312,30 @@ public static class MagicScriptLibrary
 
         return DynValue.NewTuple(DynValue.NewNumber((int)status), DynValue.NewNumber(handle));
     }
-    
+
+    public static DynValue Spell_ManifestEnergyAndFocusAbsolute(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var spell = GetSpell<SpellComponent>(args);
+        var amount = args.AsInt(1, "SpellComponent.ManifestEnergyAndFocusAbsolute");
+        var absolutePos = args.AsUserData<Vector3>(2, "SpellComponent.ManifestEnergyAndFocusAbsolute", false);
+
+        var status = EnergyActionResult.UndefinedError;
+        var handle = -1;
+
+        if (args.Count == 3)
+        {
+            status = spell.ManifestEnergyAndFocus(amount, absolutePos, out handle);
+        }
+        else
+        {
+            var element = (Energy.Element)args.AsInt(3, "SpellComponent.ManifestEnergyAndFocusAbsolute");
+            var shape = (Energy.Shape)args.AsInt(4, "SpellComponent.ManifestEnergyAndFocusAbsolute");
+            status = spell.ManifestEnergyAndFocusAbsolute(amount, absolutePos, element, shape, out handle);
+        }
+
+        return DynValue.NewTuple(DynValue.NewNumber((int)status), DynValue.NewNumber(handle));
+    }
+
     public static DynValue Spell_GetFocusPosition(ScriptExecutionContext ctx, CallbackArguments args)
     {
         var spell = GetSpell<SpellComponent>(args);
@@ -366,7 +404,7 @@ public static class MagicScriptLibrary
         var forceMode = (ForceMode)args.AsInt(4, "SpellComponent.Separate");
         int separatedEnergyFocusHandle;
         var result = spell.Separate(handle, amount, force, forceMode, out separatedEnergyFocusHandle);
-        return DynValue.NewTuple(DynValue.NewNumber((int)result), DynValue.FromObject(ctx.OwnerScript, separatedEnergyFocusHandle));
+        return DynValue.NewTuple(DynValue.NewNumber((int)result), DynValue.NewNumber(separatedEnergyFocusHandle));
     }
 
     public static DynValue Spell_ChangeElement(ScriptExecutionContext ctx, CallbackArguments args)

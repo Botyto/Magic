@@ -14,9 +14,22 @@ public class ScriptSpellDescriptor : SpellDescriptor
     public override SpellCastResult Cast(Wizard wizard, GameObject target, out SpellComponent spell)
     {
         var env = new ScriptEnvironment();
+
+#if DEBUG
+        //Attach debugger
         //var server = new MoonSharpVsCodeDebugServer();
         //server.AttachToScript(env.L, "Magic:" + scriptSpellName);
+#endif
 
+        //Check if C# spell class is a script-bound spell component
+        if (!typeof(IScriptSpell).IsAssignableFrom(spellType))
+        {
+            spell = null;
+            MagicLog.LogErrorFormat("Casting spell '{0}' failed! '{1}' is not a script-compatible spell class!", id, spellClass);
+            return SpellCastResult.InvalidDescriptor;
+        }
+
+        //Check if there is a script definition of this spell
         var scriptSpellDef = env.L.Globals.Get(spellScriptClass);
         if (scriptSpellDef == null || scriptSpellDef.Type != DataType.Table)
         {
@@ -24,10 +37,17 @@ public class ScriptSpellDescriptor : SpellDescriptor
             MagicLog.LogErrorFormat("Casting spell '{0}' failed! No script counterpart found!", id);
             return SpellCastResult.InvalidDescriptor;
         }
-
-        //TODO: move 'SpellType' check from below
-        //TODO: check if class is indeed a IScriptSpell (remove from below)
-
+        
+        //Check if the script definition has a constructor function
+        var ctorFunc = scriptSpellDef.Table.GetField("new");
+        if (ctorFunc == null || (ctorFunc.Type != DataType.Function && ctorFunc.Type != DataType.ClrFunction))
+        {
+            spell = null;
+            MagicLog.LogErrorFormat("Casting spell '{0}' failed! No script constructor found!", id);
+            return SpellCastResult.InvalidDescriptor;
+        }
+        
+        //Cast the spell
         SpellCastResult castResult;
         lock (this)
         {
@@ -36,37 +56,23 @@ public class ScriptSpellDescriptor : SpellDescriptor
             m_TempScriptEnvironment = null;
         }
 
+        //Bind the spell
         if (castResult == SpellCastResult.Success)
         {
             var scriptSpell = spell as IScriptSpell;
-
-            //TODO: Move class check before creation
-            if (scriptSpell == null)
-            {
-                Util.Destroy(spell);
-                MagicLog.LogErrorFormat("Casting spell '{0}' failed! '{1}' is not a script-compatible spell class!", id, spellClass);
-                return SpellCastResult.InvalidDescriptor;
-            }
-
-            //TODO: Move type check before creation
+            
+            //TODO - Move spell behaviour type check before creation (script & component types must be the same)
             if (scriptSpell.SpellType != scriptSpellDef.Table.GetField("SpellType").String)
             {
                 Util.Destroy(spell);
                 MagicLog.LogErrorFormat("Casting spell '{0}' failed! Different Spell class type from the script spell type!", id);
                 return SpellCastResult.InvalidDescriptor;
             }
-
-            var newFunction = scriptSpellDef.Table.GetField("new");
-            if (newFunction == null || (newFunction.Type != DataType.Function && newFunction.Type != DataType.ClrFunction))
-            {
-                Util.Destroy(spell);
-                MagicLog.LogErrorFormat("Casting spell '{0}' failed! No script constructor found!", id);
-                return SpellCastResult.InvalidDescriptor;
-            }
-
+            
+            //Bind the spell
             var obj = new Table(env.L);
             obj[true] = spell;
-            var scriptComponent = newFunction.Function.Call(scriptSpellDef, obj);
+            var scriptComponent = ctorFunc.Function.Call(scriptSpellDef, obj);
             scriptSpell.Bind(env.L, scriptComponent);
         }
 
@@ -81,6 +87,7 @@ public class ScriptSpellDescriptor : SpellDescriptor
             return target;
         }
 
+        //Access the script 'TryFindTarget' method and call it
         var scriptSpellDef = m_TempScriptEnvironment.L.Globals.Get(spellScriptClass);
         var tryFindTargetFunc = scriptSpellDef.Table.GetField("TryFindTarget");
         if (tryFindTargetFunc.Type != DataType.Function && tryFindTargetFunc.Type != DataType.ClrFunction)

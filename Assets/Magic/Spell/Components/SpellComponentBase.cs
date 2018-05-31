@@ -49,6 +49,9 @@ public class SpellComponentBase : MonoBehaviour
     [SerializeField]
     private int m_ActiveFocusNum = 0;
 
+    /// <summary>
+    /// Max number of manifestations that can be focused at once.
+    /// </summary>
     public int maxFocus = 10;
 
     #endregion

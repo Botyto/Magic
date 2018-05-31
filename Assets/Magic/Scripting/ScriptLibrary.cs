@@ -8,7 +8,14 @@ public static class ScriptLibrary
     {
         UnityScriptLibrary.Bind(L);
         UIScriptLibrary.Bind(L);
-        MagicScriptLibrary.Bind(L);
+
+        var magicVisibility = new MagicScriptLibrary.MemberVisibilty()
+        {
+            spellComponents = false,
+            energyComponents = false,
+            gameplayComponents = true,
+        };
+        MagicScriptLibrary.Bind(L, magicVisibility);
     }
 
     public struct BoundClass
@@ -32,12 +39,12 @@ public static class ScriptLibrary
         }
     }
 
-    public static BoundClass BindClass<T>(Script L)
+    public static BoundClass BindClass<T>(Script L, InteropAccessMode accessMode = InteropAccessMode.Default)
     {
         var boundClass = new BoundClass();
         boundClass.name = typeof(T).Name;
 
-        boundClass.userData = UserData.RegisterType<T>() as StandardUserDataDescriptor;
+        boundClass.userData = UserData.RegisterType<T>(accessMode) as StandardUserDataDescriptor;
         boundClass.table = new Table(L);
         L.Globals[boundClass.name] = boundClass.table;
 

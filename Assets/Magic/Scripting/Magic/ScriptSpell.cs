@@ -11,11 +11,11 @@ public interface IScriptSpell
     DynValue CallScript(string method, params object[] args);
 }
 
-[MoonSharpUserData]
 public class ScriptInstantSpell : InstantSpellComponent, IScriptSpell
 {
     Script L;
     DynValue component;
+    public string spellScriptClass;
     public string SpellType { get { return "Instant"; } }
     public void Bind(Script L, DynValue component) { this.L = L; this.component = component; }
     public DynValue CallScript(string method) { return L.Call(component.Table.GetField(method), component); }
@@ -60,11 +60,11 @@ public class ScriptInstantSpell : InstantSpellComponent, IScriptSpell
     
 }
 
-[MoonSharpUserData]
 public class ScriptContinuousSpell : ContinuousSpellComponent, IScriptSpell
 {
     Script L;
     DynValue component;
+    public string spellScriptClass;
     public string SpellType { get { return "Continuous"; } }
     public void Bind(Script L, DynValue component) { this.L = L; this.component = component; }
     public DynValue CallScript(string method) { return L.Call(component.Table.GetField(method), component); }
@@ -111,11 +111,11 @@ public class ScriptContinuousSpell : ContinuousSpellComponent, IScriptSpell
 
 }
 
-[MoonSharpUserData]
 public class ScriptToggleSpell : ToggleSpellComponent, IScriptSpell
 {
     Script L;
     DynValue component;
+    public string spellScriptClass;
     public string SpellType { get { return "Toggle"; } }
     public void Bind(Script L, DynValue component) { this.L = L; this.component = component; }
     public DynValue CallScript(string method) { return L.Call(component.Table.GetField(method), component); }
@@ -161,11 +161,11 @@ public class ScriptToggleSpell : ToggleSpellComponent, IScriptSpell
 
 }
 
-[MoonSharpUserData]
 public class ScriptStagedSpell : StagedSpellComponent, IScriptSpell
 {
     Script L;
     DynValue component;
+    public string spellScriptClass;
     public string SpellType { get { return "Staged"; } }
     public void Bind(Script L, DynValue component) { this.L = L; this.component = component; }
     public DynValue CallScript(string method) { return L.Call(component.Table.GetField(method), component); }
