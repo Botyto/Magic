@@ -1,0 +1,181 @@
+[Index](index.md.html)
+
+# Spells are implemented as two separate parts:
+
+## Spell Logic
+Spell logic is implemented in either `Lua` or `C#` as a separate class.
+In `C#` the class must be a component that will be attached to the `Wizard` and must inherit `SpellComponentBase`.
+In `Lua` the class must inherit from one of the provided base spell classes.
+
+One written, the logic can be reused for multiple magics, using `spell descriptors`.
+Spells fall into one of four types:
+- `Instant` spells - when cast, a single function is called. After it the spell is over.
+- `Continuous` spells - when cast, a function is called each frame. The spell must `Cancel` or `Finish` itself.
+- `Toggle` spells - they are toggled *ON* or *OFF* by the player. When toggled *ON*, a function is called periodically.
+- `Staged` spells - an extension to the `Continuous` spell. These spells are separated into stages:
+	- `Initial` stage - before the spell has began. Usually you don't do anything at this stage.
+	- `Beginning` stage is when a single function is called (once) to set up everything.
+	- `Casting` stage is when a function is called each frame. This is the place to charge energies and setup for the action.
+	- `Executing` stage is another function is called each frame. This is where the action happens.
+	- `Finishing` stage is the last function to be called (only once) - the finilizing step.
+	- `Finished` stage - after the spell has finished. Usually you don't do anything at this stage.
+- In `C#` a custom spell behaviour can be created by inheriting the base spell class.
+
+Spell caster have energy that can be physically manifested.
+Once manifested, the caster can focus onto that enery and manipulate it.
+!!!Unfinished
+
+Each spell implementation details are explained below for the `C#` and for the `Lua` language.
+
+### CSharp
+
+When working in `C#` you must create a new `public class` that inherits from one of these base spell classes and implement at least some of their *virtual*/*abstract* methods.
+
+- `InstantSpellComponent` - for `Instant` spells.
+	- `abstract void Cast()` - called to cast the instant spell.
+- `ContinuousSpellComponent` - for `Continuous` spells.
+	- `virtual void OnBegin()` - called to initialize the spell.
+	- `abstract void Activate(float deltaTime)` - called to execute the spell.
+	- `virtual void OnFinish()` - called to finilize the spell.
+- `ToggleSpellComponent` - for `Toggle` spells.
+	- `virtual void OnToggle(bool active)` - called when toggling *ON* or *OFF* the spell.
+	- `void Activate(float deltaTime)` - called periodically while the spell is *ON*.
+	- `float interval` - must be set appropriately to indicate how often the `Activate` method will be called.
+- `StagedSpellComponent` - for `Staged` spells.
+	- `Stage stage` - marks the current stage.
+	- `void NextStage()` - marks this stage as over. The next stage begins on the next frame.
+	- `virtual void OnBegin()` - called to initialize the spell (`stage == Beginning`).
+	- `virtual void Cast(float deltaTime)` - called to setup the spell (`stage == Casting`).
+	- `virtual void Execute(float deltaTime)` - called to execute the spell (`stage == Executing`).
+	- `virtual void OnFinish()` - called to finilize the spell (`stage == Finishing`).
+- `SpellComponent` - for custom spell behaviour.
+	- `void Start()` - default Unity `Start()` method.
+	- `void LateUpdate()` - default Unity `LateUpdate()` method.
+	- `virtual void OnDestroy()` - default Unity `OnDestroy()` method. Default implementation simply disowns all energies.
+	- **Note:** during `LateUpdate()` you should use `Time.deltaTime` as your *deltaTime*.
+
+All spells should implement the following methods:
+- `static GameObject TryFindTarget(Wizard wizard)` - called before the spell has been cast.
+- `virtual void OnTargetLost()` - called when the target has been lost for some reason. Spells usually `Cancel` themselves at this point.
+- `virtual void OnFocusLost(int focusHandle)` - called when a focus has been lost for some reason.
+
+`C#` base spells classes are separated logically into two:
+- `SpellComponentBase` - has all things that define it as a *spell*:
+	- `Wizard wizard` - caster of this spell.
+	- `EnergyController controller` - energy controller of the caster (for fast access).
+	- `Unit unit` - unit of the caster (for fast access).
+	- `GameObject target` - spell target.
+	- `SpellParameters param` - spell parameters passed by the `Spell Descriptor`
+	- `int maxFocus` - max number of manifestations that can be focused at once.
+	- For easily working with `EnergyActionResult` values there are two methods provided:
+		- `TryStrict(result)` - returns *true* if the result is `EnergyActionResult.Success`.
+		- `Try(result)` - returns *true* if the result is `EnergyActionResult.Success` or `EnergyActionResult.RedundantAction`.
+- `SpellComponent` - has higher level function and easy interface:
+
+!!!Unfinished
+
+Example `C#` spell:
+~~~CSharp
+public class InstantBallSpell : InstantSpellComponent
+{
+    int handle;
+
+    public new static GameObject TryFindTarget(Wizard wizard)
+    {
+        return SpellUtilities.FindClosestEnemy(wizard, Wizard.TargetSearchDistance);
+    }
+
+    public override void Cast()
+    {
+        if (!Try(ManifestEnergyAndFocus(param.level * 50, Vector3.forward * 3, out handle)))
+        {
+            Cancel();
+            return;
+        }
+
+        OrientTowards(handle, TargetPosition);
+        var forceDirection = TargetPosition - GetFocusPosition(handle);
+        ApplyForce(handle, forceDirection.SetLength(5 * param.level), ForceMode.Impulse);
+    }
+}
+~~~
+
+### Lua
+
+When working in `Lua` you must crate a new `class` that inherits from one of the following base spell classes:
+
+- `InstantSpell` - for `Instant` spells.
+	- `InstantSpell:Cast()` - called to cast the instant spell.
+- `ContinuousSpell` - for `Continuous` spells.
+	- `ContinuousSpell:OnBegin()` - called to initialize the spell.
+	- `ContinuousSpell:Activate(deltaTime)` - called to execute the spell.
+	- `ContinuousSpell:OnFinish()` - called to finilize the spell.
+- `ToggleSpell` - for `Toggle` spells.
+	- `ToggleSpell:OnToggle(active)` - called when toggling *ON* or *OFF* the spell.
+	- `ToggleSpell:Activate(deltaTime)` - called periodically while the spell is *ON*.
+	- `ToggleSpell:GetInterval()` - returns the interval between two `Activate` calls.
+	- `ToggleSpell:SetInterval(newInterval)` - sets the interval between two `Activate` calls.
+- `StagedSpell` - for `Staged` spells.
+	- `StagedSpell:GetCurrentStage` - returns the current stage.
+	- `StagedSpell:NextStage()` - marks this stage as over. The next stage begins on the next frame.
+	- `StagedSpell:OnBegin()` - called to initialize the spell (`stage == Beginning`).
+	- `StagedSpell:Cast(deltaTime)` - called to setup the spell (`stage == Casting`).
+	- `StagedSpell:Execute(deltaTime)` - called to execute the spell (`stage == Executing`).
+	- `StagedSpell:OnFinish()` - called to finilize the spell (`stage == Finishing`).
+
+A little explanation on how `Lua` spells are implemented:
+!!!Unfinished
+
+For easily working with `EnergyActionResult` values there are two global functions provided:
+- `TryStrict(result)` - returns *true* if the result is `EnergyActionResult.Success`.
+- `Try(result)` - returns *true* if the result is `EnergyActionResult.Success` or `EnergyActionResult.RedundantAction`.
+
+Example `Lua` spell:
+~~~Lua
+Class.InstantBallSpell = {
+	__inherit = "InstantSpell",
+}
+
+function InstantBallSpell.TryFindTarget(wizard)
+	return SpellUtilities.FindClosestEnemy(wizard);
+end
+
+function InstantBallSpell:Cast()
+	local result, handle = self:ManifestEnergyAndFocus(self:GetParam().level * 50, Vector3.forward * 3)
+	if not Try(result) then
+		self:Cancel()
+		return
+	end
+
+	self:OrientTowards(handle, self:GetTargetPosition())
+	local forceDirection = self:GetTargetPosition() - self:GetFocusPosition(handle)
+	self:ApplyForce(handle, forceDirection:SetLength(5 * self:GetParam().level), ForceMode.Impulse)
+end
+~~~
+
+### Both languages
+
+Both languages have access to similar methods (signature of both languages is the same):
+	- [`C#` only] `EnergyActionResult SpellComponent.ManifestEnergyAndFocus(int amount, Vector3 wizardRelativePos, out int handle)`
+	- [`C#` only] `EnergyActionResult SpellComponent.ManifestEnergyAndFocus(int amount, Vector3 wizardRelativePos, Energy.Element element, Energy.Shape shape, out int handle)`
+	- [`C#` only] `EnergyActionResult SpellComponent.ManifestEnergyAndFocusAbsolute(int amount, Vector3 absolutePos, out int handle)`
+	- [`C#` only] `EnergyActionResult SpellComponent.ManifestEnergyAndFocusAbsolute(int amount, Vector3 absolutePos, Energy.Element element, Energy.Shape shape, out int handle)`
+	- [`Lua` only] `result, handle Spell:ManifestEnergyAndFocus(int amount, Vector3 wizardRelativePos)`
+	- [`Lua` only] `result, handle Spell:ManifestEnergyAndFocus(int amount, Vector3 wizardRelativePos, Energy.Element element, Energy.Shape shape)`
+	- [`Lua` only] `result, handle Spell:ManifestEnergyAndFocusAbsolute(int amount, Vector3 absolutePos)`
+	- [`Lua` only] `result, handle Spell:ManifestEnergyAndFocusAbsolute(int amount, Vector3 absolutePos, Energy.Element element, Energy.Shape shape)`
+
+!!!Unfinished
+
+## Spell Descriptors
+
+`Spell Descriptors` are what will be displayed in the wizards "spell book".
+
+!!!Unfinished
+
+
+<!-- Markdeep: -->
+<style class="fallback"> body { visibility:hidden; white-space:pre; font-family:monospace; } </style>
+<script src="markdeep.min.js"></script>
+<script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script>
+<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

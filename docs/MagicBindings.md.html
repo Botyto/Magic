@@ -1,0 +1,99 @@
+[Index](index.md.html)
+
+# Magic members
+
+## Classes (access category)
+
+- Unit *(gameplay)*
+- Selectable *(gameplay)*
+- PlayerMovement *(gameplay)*
+
+- EnergyHolder *(energy)*
+	- EnergyHolder EnergyHolder.ResolveOwner(EnergyHolder holder)
+- EnergyController *(energy)*
+- EnergyManifestation *(energy)*
+- Wizard *(energy)*
+- enum EnergyActionResult
+
+- Energy
+	- int Energy.scale
+	- float Energy.scalef
+	- int Energy.minTemperature
+	- float Energy.speedLimit
+	- float Energy.sqrSpeedLimit
+	- enum Energy.Element
+	- enum Energy.Shape
+
+- SpellUtilities
+	- Unit SpellUtilities.FindClosestEnemy(Wizard wizard)
+	- Unit SpellUtilities.FindClosestEnemy(Wizard wizard, float maxDistance)
+	- Unit SpellUtilities.FindClosestFriend(Wizard wizard)
+	- Unit SpellUtilities.FindClosestFriend(Wizard wizard, float maxDistance)
+
+- SpellBase *(spell)*
+	- Wizard SpellBase:GetWizard()
+	- EnergyController SpellBase:GetController()
+	- Unit SpellBase:GetUnit()
+	- table SpellBase:GetParam()
+	- int SpellBase:GetMaxFocus()
+	- SpellBase:SetTarget(GameObject newTarget)
+	- bool SpellBase:CanFocusMore()
+	- bool SpellBase:IsFocusValid(int focusHandle)
+	- SpellBase:DisposeAllFocused()
+	- SpellBase:DisownAllFocused()
+	- SpellBase:Cancel(bool disposeAll)
+	- SpellBase:Finish()
+
+- Spell *(spell)*
+	- Vector3 Spell:GetTargetPosition()
+	- Vector3 Spell:GetCursorPosition()
+	- EnergyActionResult, int handle Spell:ManifestEnergyAndFocus(int amount, Vector3 wizardRelativePos)
+	- EnergyActionResult, int handle Spell:ManifestEnergyAndFocus(int amount, Vector3 wizardRelativePos, Energy.Element element, Energy.Shape shape)
+	- EnergyActionResult, int handle Spell:ManifestEnergyAndFocusAbsolute(int amount, Vector3 worldPos)
+	- EnergyActionResult, int handle Spell:ManifestEnergyAndFocusAbsolute(int amount, Vector3 worldPos, Energy.Element element, Energy.Shape shape)
+	- Vector3 Spell:GetFocusPosition(int focusHandle)
+	- Vector3 Spell:GetFocusVelocity(int focusHandle)
+	- bool Spell:DisownFocus(int focusHandle)
+	- EnergyActionResult, GameObject Spell:Summon(int focusHandle, SummonRecipe recipe)
+	- EnergyActionResult Spell:Charge(int focusHandle, int amount)
+	- EnergyActionResult Spell:Discharge(int focusHandle, int amount)
+	- EnergyActionResult Spell:Merge(int focusHandleA, int focusHandleB)
+	- EnergyActionResult, int newFocusHandle Spell:Separate(int focusHandle, int amount, Vector3 force, ForceMode forceMode)
+	- EnergyActionResult Spell:ChangeElement(int focusHandle, Energy.Element newElement)
+	- EnergyActionResult Spell:ChangeShape(int focusHandle, Energy.Shape newShape)
+	- EnergyActionResult Spell:Deform(int focusHandle, Vector3 stress)
+	- EnergyActionResult Spell:CreateElasticConnection(int focusHandleA, int focusHandleB, int connectionCharge)
+	- EnergyActionResult Spell:ApplyForceRelative(int focusHandle, Vector3 wizardRelativeForce, ForceMode forceMode)
+	- EnergyActionResult Spell:ApplyForce(int focusHandle, Vector3 force, ForceMode forceMode)
+	- EnergyActionResult Spell:ApplyTorque(int focusHandle, Vector3 torque, ForceMode forceMode)
+	- EnergyActionResult Spell:OrientToward(int focusHandle, Vector3 position)
+	- EnergyActionResult Spell:Substitute(int focusHandle, GameObject object)
+	- EnergyActionResult Spell:Substitute(int focusHandle, GameObject first, GameObject second)
+	- EnergyActionResult Spell:CounterFalling(int focusHandle)
+	- EnergyActionResult Spell:CounterGravity(int focusHandle)
+	- EnergyActionResult Spell:CounterMotion(int focusHandle)
+
+- InstantSpell *(spell)*
+
+- ContinuousSpell *(spell)*
+
+- ToggleSpell *(spell)*
+	- int ToggleSpell:GetInterval()
+	- ToggleSpell:SetInterval(int newInterval)
+
+- StagedSpell *(spell)*
+	- StagedSpell.Stage StagedSpell:GetCurrentStage()
+	- StagedSpell:NextStage()
+- enum StagedSpell.Stage
+
+
+## Global functions
+
+- bool TryStrict(EnergyActionResult result)
+- bool Try(EnergyActionResult result)
+
+<!-- Markdeep: -->
+<style class="fallback"> body { visibility:hidden; white-space:pre; font-family:monospace; } </style>
+<script src="markdeep.min.js"></script>
+<script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script>
+<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
