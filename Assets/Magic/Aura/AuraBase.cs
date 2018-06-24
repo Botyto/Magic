@@ -57,7 +57,7 @@ public abstract class AuraBase : EnergyUser
     /// </summary>
     public void Cancel()
     {
-        Util.Destroy(gameObject, "canceled");
+        Gameplay.Destroy(gameObject, "canceled");
     }
 
     #endregion
@@ -143,7 +143,7 @@ public abstract class AuraBase : EnergyUser
 
     private void EnergyDepleted()
     {
-        Util.Destroy(gameObject, "energy depleted");
+        Gameplay.Destroy(gameObject, "energy depleted");
     }
     
     private void Update()
@@ -154,7 +154,7 @@ public abstract class AuraBase : EnergyUser
         if (target == null)
         {
             OnTargetLost();
-            Util.Destroy(gameObject, "target lost");
+            Gameplay.Destroy(gameObject, "target lost");
             return;
         }
         
@@ -168,7 +168,7 @@ public abstract class AuraBase : EnergyUser
             if (GetEnergy() == oldEnergy)
             {
                 //Every aura tick must use energy
-                Util.Destroy(gameObject, "expired");
+                Gameplay.Destroy(gameObject, "expired");
             }
         }
     }

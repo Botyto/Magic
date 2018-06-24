@@ -3,6 +3,32 @@ using UnityEngine;
 
 public static class Extensions
 {
+    #region Gameplay
+
+    public static Transform FindRecursive(this Transform self, string name)
+    {
+        var target = self.Find(name);
+        if (target != null)
+        {
+            return target;
+        }
+        else
+        {
+            for (int i = 0; i < self.childCount; ++i)
+            {
+                var subTarget = FindRecursive(self.GetChild(i), name);
+                if (subTarget != null)
+                {
+                    return subTarget;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    #endregion
+
     #region Vectors
 
     public static float DistanceTo(this Vector3 self, Vector3 other)

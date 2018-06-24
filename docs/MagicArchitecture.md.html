@@ -22,7 +22,9 @@ Spells fall into one of four types:
 - In `C#` a custom spell behaviour can be created by inheriting the base spell class.
 
 Spell caster have energy that can be physically manifested.
-Once manifested, the caster can focus onto that enery and manipulate it.
+A manifestation has three main properties - `charge`, `element` and `shape`.
+Once manifested, the caster can focus onto that energy and manipulate it.
+
 !!!Unfinished
 
 Each spell implementation details are explained below for the `C#` and for the `Lua` language.
@@ -67,10 +69,38 @@ All spells should implement the following methods:
 	- `GameObject target` - spell target.
 	- `SpellParameters param` - spell parameters passed by the `Spell Descriptor`
 	- `int maxFocus` - max number of manifestations that can be focused at once.
+	- `void SetTarget(GameObject newTarget)` - changes the spell target.
+	- `int AddFocus(EnergyManifestation manifestation)` - focuses on a new manifestation (if possible).
+	- `bool DisownFocus(EnergyManifestation manifestation)` - disowns (lose focus) a manifestation, but doesn't destroy it.
+	- `bool CanFocusMore()` - if focusing a new manifestation is possible.
+	- `bool IsFocusValid(int focusHandle)` - if a manifestation with that handle is still in focus.
+	- `EnergyManifestation GetFocus(int focusHandle)` - maps a focus handle to a manifestation.
+	- `void DisposeAllFocused()` - disposes (destroys) all focused manifestations.
+	- `void DisownAllFocused()` - disowns (doesn't destroy) all focused manifestations.
+	- `void Cancel(bool disposeFocused)` - cancels the current spell with an option to dispose or disown focused energies.
+	- `void Finish()` - finishes the current spell. Same to `Cancel`, but always disowns focused energies.
 	- For easily working with `EnergyActionResult` values there are two methods provided:
 		- `TryStrict(result)` - returns *true* if the result is `EnergyActionResult.Success`.
 		- `Try(result)` - returns *true* if the result is `EnergyActionResult.Success` or `EnergyActionResult.RedundantAction`.
 - `SpellComponent` - has higher level function and easy interface:
+	- `Vector3 CursorPosition` - fetches the position of the wizard cursor.
+	- `Vector3 TargetPosition` - fetches the position of the target (or the cursor position, if there's no target).
+	- `EnergyActionResult ManifestEnergyAndFocus(int amount, Vector3 wizardRelativePos, out int focusHandle)` - manifests and focuses some energy. The element and shape is taken from the parameters. Position is relative to the wizard.
+	- `EnergyActionResult ManifestEnergyAndFocus(int amount, Vector3 wizardRelativePos, Energy.Element element, Energy.Shape shape, out int focusHandle)` - manifests and focuses some energy. Position is relative to the wizard.
+	- `EnergyActionResult ManifestEnergyAndFocusAbsolute(int amount, Vector3 absolutePos, out int focusHandle)` - manifests and focuses some energy. The element and shape is taken from the parameters. Position is in world space.
+	- `EnergyActionResult ManifestEnergyAndFocusAbsolute(int amount, Vector3 absolutePos, Energy.Element element, Energy.Shape shape, out int focusHandle)` - manifests and focuses some energy. Position is in world space.
+	- `Transform GetFocusTransform(int focusHandle)` - fetches the `Transform` component of a focused manifestation.
+	- `Vector3 GetFocusPosition(int focusHandle)` - fetches the world space position of a focused manifestation.
+	- `Vector3 GetFocusVelocity(int focusHandle)` - fetches the physical velocity of a focused manifestation.
+	- `bool DisownFocus(int focusHandle)` - disowns this manifestation - doesn't destroy it, but looses focus.
+	- `EnergyActionResult Summon(int focusHandle, SummonRecipe recipe, out GameObject summonedObj)` - attempts to summon an object using the energy stored in a focused manifestation.
+	- `EnergyActionResult Charge(int focusHandle, int amount)` - charges a focused manifestation.
+	- `EnergyActionResult Discharge(int focusHandle, int amount)` - discharges a focused manifestation, returning part of that energy to the wizard.
+	- `EnergyActionResult Merge(int focusHandleA, int focusHandleB)` - merges two focused manifestations into one (must be of the same element).
+	- `EnergyActionResult Separate(int focusHandle, int amount, Vector3 force, ForceMode forceMode, out int separatedEnergyFocusHandle)` - separates a focused manifestation into two (an focuses the new one), applying a force to the new one.
+	- `EnergyActionResult ChangeElement(int focusHandle, Energy.Element newElement)` - changes the element of a focused manifestation.
+	- `EnergyActionResult ChangeShape(int focusHandle, Energy.Shape newShape)` - changes the shape of a focused manifestation.
+	- `EnergyActionResult Deform(int focusHandle, Vector3 stress)`
 
 !!!Unfinished
 

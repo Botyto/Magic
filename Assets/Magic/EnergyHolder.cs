@@ -80,7 +80,7 @@ public class EnergyHolder : MonoBehaviour
             //No longer has owner - destroy self
             if (!keepObject && gameObject != null)
             {
-                Util.Destroy(gameObject, "no owner");
+                Gameplay.Destroy(gameObject, "no owner");
             }
         }
     }

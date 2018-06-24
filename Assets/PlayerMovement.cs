@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
             SetMouseLock(true);
         }
     }
-
+    
     void FixedUpdate()
     {
         //Movement

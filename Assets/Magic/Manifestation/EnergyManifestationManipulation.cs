@@ -19,7 +19,7 @@ public partial class EnergyManifestation
     public void Smash()
     {
         _Particles_TriggerSmashParticles();
-        Util.Destroy(gameObject, "smash");
+        Gameplay.Destroy(gameObject, "smash");
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public partial class EnergyManifestation
     public void Dispose()
     {
         _Particles_TriggerDisposeParticles();
-        Util.Destroy(gameObject, "dispose");
+        Gameplay.Destroy(gameObject, "dispose");
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public partial class EnergyManifestation
         //}
 
         IncreaseEnergy(other.GetEnergy());
-        Util.Destroy(other.gameObject, "merged");
+        Gameplay.Destroy(other.gameObject, "merged");
 
         //TODO recalculate velocity
 

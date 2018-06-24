@@ -8,7 +8,7 @@ public class StandUpright : MonoBehaviour
     {
         if (Vector3.Dot(transform.up, Vector3.up) >= 1.0f)
         {
-            Util.Destroy(this);
+            Gameplay.Destroy(this);
         }
         else
         {

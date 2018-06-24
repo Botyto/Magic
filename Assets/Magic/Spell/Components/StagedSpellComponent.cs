@@ -125,8 +125,8 @@ public abstract class StagedSpellComponent : SpellComponent
                 case Stage.Finishing:
                     OnFinish();
                     stage = Stage.Finished;
-                    //Util.Destroy(this, "finished");
-                    Util.Destroy(this);
+                    //Gameplay.Destroy(this, "finished");
+                    Gameplay.Destroy(this);
                     break;
             }
         }

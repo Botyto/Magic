@@ -17,11 +17,11 @@ public class ParticlesAutodestroy : MonoBehaviour
         var ps = FindParticleSystem();
         if (ps == null)
         {
-            Util.Destroy(this);
+            Gameplay.Destroy(this);
         }
         else if (!ps.main.loop)
         {
-            Util.Destroy(gameObject, ps.main.duration + ps.main.startLifetime.constantMax, "ps finished");
+            Gameplay.Destroy(gameObject, ps.main.duration + ps.main.startLifetime.constantMax, "ps finished");
         }
     }
 }

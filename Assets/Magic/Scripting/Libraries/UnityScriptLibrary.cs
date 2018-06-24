@@ -159,7 +159,7 @@ public static class UnityScriptLibrary
             }
         }
 
-        Util.Destroy(obj, delay, note);
+        Gameplay.Destroy(obj, delay, note);
 
         return DynValue.FromObject(ctx.OwnerScript, obj);
     }

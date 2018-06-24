@@ -30,8 +30,8 @@ public abstract class InstantSpellComponent : SpellComponent
             return;
         }
 
-        //Util.Destroy(this, "finished");
-        Util.Destroy(this);
+        //Gameplay.Destroy(this, "finished");
+        Gameplay.Destroy(this);
     }
 
     #endregion

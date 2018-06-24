@@ -40,7 +40,7 @@ public partial class EnergyManifestation
     {
         if (particles != null)
         {
-            Util.Destroy(particles);
+            Gameplay.Destroy(particles);
             particles = null;
         }
     }

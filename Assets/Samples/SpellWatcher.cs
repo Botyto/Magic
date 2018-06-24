@@ -8,19 +8,31 @@ public class SpellWatcher : MonoBehaviour
     private float x = 0.0f;
     int key = 1;
 
-    void Start()
+    private void Start()
     {
+        UpdateSpells();
+    }
+
+    public void UpdateSpells()
+    {
+        for (int i = 0; i < transform.childCount; ++i)
+        {
+            Gameplay.Destroy(transform.GetChild(i).gameObject);
+        }
+
+        x = 0.0f;
+        key = 1;
         foreach (var idx in wizard.spellOrdering)
         {
             if (idx >= 0)
             {
                 var desc = wizard.spells[idx];
-                AddSpell(wizard, desc);
+                AddSpell(desc);
             }
         }
     }
 
-    void AddSpell(Wizard wizard, SpellDescriptor desc)
+    public void AddSpell(SpellDescriptor desc)
     {
         var btn = Instantiate(buttonPrefab);
         btn.transform.SetParent(transform);

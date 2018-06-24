@@ -149,7 +149,7 @@ public class ScriptConsole : MonoBehaviour
 
         for (int i = 0; i < m_PredictionsContainer.childCount; ++i)
         {
-            Util.Destroy(m_PredictionsContainer.GetChild(i).gameObject);
+            Gameplay.Destroy(m_PredictionsContainer.GetChild(i).gameObject);
         }
         m_PredictionsControl.gameObject.SetActive(false);
     }
@@ -164,7 +164,7 @@ public class ScriptConsole : MonoBehaviour
         m_PredictionsControl.gameObject.SetActive(true);
         for (int i = 0; i < m_PredictionsContainer.childCount; ++i)
         {
-            Util.Destroy(m_PredictionsContainer.GetChild(i).gameObject);
+            Gameplay.Destroy(m_PredictionsContainer.GetChild(i).gameObject);
         }
 
         var dy = 18.0f;

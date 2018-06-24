@@ -53,7 +53,7 @@ public partial class EnergyManifestation
     /// </summary>
     private void EnergyDepleted()
     {
-        Util.Destroy(gameObject, "energy depleted");
+        Gameplay.Destroy(gameObject, "energy depleted");
     }
 
     private void EnergyChanged(int delta)

@@ -116,7 +116,7 @@ public class Wizard : MonoBehaviour
             //Deactivate toggle spells
             if ((oldSpell as ToggleSpellComponent) != null)
             {
-                Util.Destroy(oldSpell);
+                Gameplay.Destroy(oldSpell);
             }
             return null;
         }

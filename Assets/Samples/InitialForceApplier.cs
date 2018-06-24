@@ -18,7 +18,7 @@ public class InitialForceApplier : MonoBehaviour
             }
         }
 
-        Util.Destroy(this);
+        Gameplay.Destroy(this);
 	}
 	
 }

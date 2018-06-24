@@ -75,7 +75,7 @@ public class Unit : MonoBehaviour
         {
             SendMessage("HealthDepleted", SendMessageOptions.DontRequireReceiver);
             LogManager.LogMessage(LogManager.Combat, "'{0}' died.", name);
-            Util.Destroy(gameObject, "no health");
+            Gameplay.Destroy(gameObject, "no health");
         }
     }
     

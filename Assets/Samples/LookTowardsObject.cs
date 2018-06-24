@@ -8,7 +8,7 @@ public class LookTowardsObject : MonoBehaviour
     {
         if (target == null)
         {
-            Util.Destroy(this);
+            Gameplay.Destroy(this);
             return;
         }
             

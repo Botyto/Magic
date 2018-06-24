@@ -380,7 +380,7 @@ public partial class EnergyManifestation
         {
             case Energy.Shape.Sphere:
                 if (collider is SphereCollider) break; //Already has correct collider
-                if (collider != null) Util.Destroy(collider); //Destroy incorrect collider
+                if (collider != null) Gameplay.Destroy(collider); //Destroy incorrect collider
 
                 { //Attach & setup correct collider
                     var sphere = gameObject.AddComponent<SphereCollider>();
@@ -390,7 +390,7 @@ public partial class EnergyManifestation
                 break;
             case Energy.Shape.Cube:
                 if (collider is BoxCollider) break; //Already has correct collider
-                if (collider != null) Util.Destroy(collider); //Destroy incorrect collider
+                if (collider != null) Gameplay.Destroy(collider); //Destroy incorrect collider
 
                 { //Attach & setup correct collider
                     var box = gameObject.AddComponent<BoxCollider>();
@@ -401,7 +401,7 @@ public partial class EnergyManifestation
 
             case Energy.Shape.Capsule:
                 if (collider is CapsuleCollider) break; //Already has correct collider
-                if (collider != null) Util.Destroy(collider);
+                if (collider != null) Gameplay.Destroy(collider);
 
                 { //Attach & setup correct collider
                     var capsule = gameObject.AddComponent<CapsuleCollider>();
@@ -418,7 +418,7 @@ public partial class EnergyManifestation
                     (collider as MeshCollider).sharedMesh = Energy.GetShape(shape).collider;
                     break;
                 }
-                if (collider != null) Util.Destroy(collider); //Destroy incorrect collider
+                if (collider != null) Gameplay.Destroy(collider); //Destroy incorrect collider
 
                 { //Attach & setup correct collider
                     var meshc = gameObject.AddComponent<MeshCollider>();

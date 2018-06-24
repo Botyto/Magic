@@ -28,6 +28,13 @@ public class TestPlayer : MonoBehaviour
                 }
             }
         }
+
+        if (Gameplay.GetKeyDown(KeyCode.L))
+        {
+            var canvas = GameObject.Find("Canvas");
+            var spellBook = Instantiate(Resources.Load<GameObject>("UI/Prefabs/SpellBook"), canvas.transform);
+            spellBook.GetComponent<SpellBookManager>().wizard = GetComponent<Wizard>();
+        }
     }
 
     public Unit FindEnemy()

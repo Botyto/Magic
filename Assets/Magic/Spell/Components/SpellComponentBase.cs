@@ -106,6 +106,12 @@ public class SpellComponentBase : MonoBehaviour
             return -1;
         }
 
+        var idx = m_Focus.IndexOf(manifestation);
+        if (idx != -1)
+        {
+            return idx;
+        }
+
         m_Focus.Add(manifestation);
         m_ActiveFocusNum++;
         return m_Focus.Count - 1;
@@ -207,9 +213,13 @@ public class SpellComponentBase : MonoBehaviour
         {
             DisposeAllFocused();
         }
+        else
+        {
+            DisownAllFocused();
+        }
 
-        //Util.Destroy(this, "cancelled");
-        Util.Destroy(this);
+        //Gameplay.Destroy(this, "cancelled");
+        Gameplay.Destroy(this);
     }
 
     /// <summary>
@@ -218,8 +228,9 @@ public class SpellComponentBase : MonoBehaviour
     /// </summary>
     public void Finish()
     {
-        //Util.Destroy(this, "manual finish");
-        Util.Destroy(this);
+        DisownAllFocused();
+        //Gameplay.Destroy(this, "manual finish");
+        Gameplay.Destroy(this);
     }
 
     /// <summary>

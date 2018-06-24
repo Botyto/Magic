@@ -191,7 +191,7 @@ public class InteractionTestManager : MonoBehaviour
             var child = transform.GetChild(0);
             if (Application.isPlaying)
             {
-                Util.Destroy(child.gameObject);
+                Gameplay.Destroy(child.gameObject);
             }
             else
             {

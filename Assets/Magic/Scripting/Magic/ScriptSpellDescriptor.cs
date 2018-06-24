@@ -64,7 +64,7 @@ public class ScriptSpellDescriptor : SpellDescriptor
             //TODO - Move spell behaviour type check before creation (script & component types must be the same)
             if (scriptSpell.SpellType != scriptSpellDef.Table.GetField("SpellType").String)
             {
-                Util.Destroy(spell);
+                Gameplay.Destroy(spell);
                 MagicLog.LogErrorFormat("Casting spell '{0}' failed! Different Spell class type from the script spell type!", id);
                 return SpellCastResult.InvalidDescriptor;
             }
