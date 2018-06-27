@@ -31,9 +31,15 @@ public class TestPlayer : MonoBehaviour
 
         if (Gameplay.GetKeyDown(KeyCode.L))
         {
-            var canvas = GameObject.Find("Canvas");
-            var spellBook = Instantiate(Resources.Load<GameObject>("UI/Prefabs/SpellBook"), canvas.transform);
-            spellBook.GetComponent<SpellBookManager>().wizard = GetComponent<Wizard>();
+            Dialog.Spawn<UISpellBook>(true).wizard = GetComponent<Wizard>();
+        }
+        if (Gameplay.GetKeyDown(KeyCode.N))
+        {
+            Dialog.Spawn<UIMagicCreation>(true);
+        }
+        if (Gameplay.GetKeyDown(KeyCode.M))
+        {
+            Dialog.Spawn<UISpellDescriptorCreation>(true);
         }
     }
 

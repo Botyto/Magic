@@ -72,9 +72,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224190337935667204}
-  - component: {fileID: 114999443767950864}
+  - component: {fileID: 114005530797348652}
   m_Layer: 5
-  m_Name: SpellBook
+  m_Name: UISpellBook
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -197,6 +197,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114005530797348652
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1260878237082934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a05594d2de771c544b360a8d786ffd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wizard: {fileID: 0}
 --- !u!114 &114109854673707706
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -553,8 +565,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114999443767950864}
-        m_MethodName: CloseSpellBook
+      - m_Target: {fileID: 114005530797348652}
+        m_MethodName: Close
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -566,20 +578,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114999443767950864
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1260878237082934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a05594d2de771c544b360a8d786ffd3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wizard: {fileID: 0}
-  spellEntryPrefab: {fileID: 1600744870696126, guid: 30e77f8973cbf7645acb58fe187d004f,
-    type: 2}
 --- !u!222 &222018577968749798
 CanvasRenderer:
   m_ObjectHideFlags: 1

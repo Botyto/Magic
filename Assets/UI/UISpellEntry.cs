@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 
-public class SpellBookEntry : MonoBehaviour
+public class UISpellEntry : Dialog
 {
     public Wizard wizard;
     public SpellDescriptor descriptor;
@@ -18,10 +16,10 @@ public class SpellBookEntry : MonoBehaviour
     {
         descriptor = newDescriptor;
 
-        transform.FindRecursive("Icon").GetComponent<Image>().sprite = descriptor.icon;
-        transform.FindRecursive("Name").GetComponent<Text>().text = descriptor.displayName + " " + descriptor.parameters.level;
+        FindRecursive<Image>("Icon").sprite = descriptor.icon;
+        FindRecursive<Text>("Name").text = descriptor.displayName + " " + descriptor.parameters.level;
         var className = (descriptor is ScriptSpellDescriptor) ? ((descriptor as ScriptSpellDescriptor).spellScriptClass) : descriptor.spellClass;
-        transform.FindRecursive("Class").GetComponent<Text>().text = className;
+        FindRecursive<Text>("Class").text = className;
         
         for (int i = 0; i < wizard.spells.Length; ++i)
         {
@@ -41,12 +39,12 @@ public class SpellBookEntry : MonoBehaviour
                 break;
             }
         }
-        transform.FindRecursive("Toggle").GetComponent<Toggle>().isOn = found;
+        FindRecursive<Toggle>("Toggle").isOn = found;
     }
 
     public void OnToggle()
     {
-        if (transform.FindRecursive("Toggle").GetComponent<Toggle>().isOn)
+        if (FindRecursive<Toggle>("Toggle").isOn)
         {
             Add();
         }

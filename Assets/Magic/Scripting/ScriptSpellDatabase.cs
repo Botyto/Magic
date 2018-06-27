@@ -4,25 +4,36 @@ using System.Text;
 public class ScriptSpellInput
 {
     public string type;
-    public string name;
+    public string id;
+    public string displayName;
+    public bool targetRequired;
+    public SpellDescriptor.SpellTargetType targetType;
     public Dictionary<string, object> variables;
     public Dictionary<string, string> methods;
+
+    public string className { get { return id; } }
+    public string scriptBaseClass
+    {
+        get
+        {
+            switch (type)
+            {
+                case "Instant": return "InstantSpell";
+                case "Continuous": return "ContinuousSpell";
+                case "Toggle": return "ToggleSpell";
+                case "Staged": return "StagedSpell";
+                default: return "Spell";
+            }
+        }
+    }
+    public string nativeBaseClass { get { return "Script" + scriptBaseClass; } }
 
     public string GenerateCode()
     {
         var str = new StringBuilder();
-
-        var baseClass = "Spell";
-        switch (type)
-        {
-            case "Instant": baseClass = "InstantSpell"; break;
-            case "Continuous": baseClass = "ContinuousSpell"; break;
-            case "Toggle": baseClass = "ToggleSpell"; break;
-            case "Staged": baseClass = "StagedSpell"; break;
-        }
-
-        str.AppendFormat("Class.{0} = {\n", name);
-        str.AppendFormat("\t__inherit = '{0}',\n", baseClass);
+        
+        str.AppendFormat("Class.{0} = {\n", className);
+        str.AppendFormat("\t__inherit = '{0}',\n", scriptBaseClass);
         str.AppendFormat("\t\n");
         foreach (var variable in variables)
         {
@@ -30,23 +41,23 @@ public class ScriptSpellInput
         }
         str.AppendFormat("}\n\n");
 
-        var classMethods = ScriptSpellDatabase.GetMethodsList(baseClass);
+        var classMethods = ScriptSpellDatabase.GetMethodsList(scriptBaseClass);
         foreach (var method in methods)
         {
             var descriptor = classMethods.Find(m => m.name == method.Key);
             if (descriptor != null)
             {
-                str.AppendFormat("function {0}:{1}\n", name, descriptor.Signature);
+                str.AppendFormat("function {0}:{1}\n", className, descriptor.Signature);
             }
             else
             {
-                MagicLog.LogErrorFormat("Unknown method {0} for script spell {1}", method.Key, name);
-                str.AppendFormat("function {0}:{1}(...)\n", name, method.Key);
+                MagicLog.LogErrorFormat("Unknown method {0} for script spell {1}", method.Key, id);
+                str.AppendFormat("function {0}:{1}(...)\n", className, method.Key);
             }
 
             foreach (var line in method.Value.Split('\n'))
             {
-                str.AppendFormat(" \t{0}\n", line);
+                str.AppendFormat("\t{0}\n", line);
             }
             str.AppendFormat("end\n\n");
         }

@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
 
-public class UIMagicCreation : MonoBehaviour
+public class UIMagicCreation : Dialog
 {
     Dictionary<string, string> methodImplementaions = new Dictionary<string, string>();
     string lastMethod = "";
-
     
-
     public void Start()
     {
         UpdateMethodsDropdown();
@@ -16,19 +13,17 @@ public class UIMagicCreation : MonoBehaviour
 
     public string GetSpellType()
     {
-        var dropdown = transform.Find("SpellTypeDropdown").GetComponent<Dropdown>();
-        return dropdown.options[dropdown.value].text;
+        return FindRecursive<Dropdown>("SpellTypeDropdown").GetSelectionText();
     }
 
     public string GetSpellClass()
     {
-        return GetSpellType() + "Class";
+        return GetSpellType() + "Spell";
     }
 
     public string GetMethod()
     {
-        var dropdown = transform.Find("MethodDropDown").GetComponent<Dropdown>();
-        var signature = dropdown.options[dropdown.value].text;
+        var signature = FindRecursive<Dropdown>("MethodDropDown").GetSelectionText();
         return signature.Substring(0, signature.IndexOf('('));
     }
 
@@ -81,11 +76,24 @@ public class UIMagicCreation : MonoBehaviour
     public void OnConfirm()
     {
         methodImplementaions[lastMethod] = GetCode();
+        
+        var targetString = FindRecursive<Dropdown>("Input_TargetType").GetSelectionText();
+        var targetType = SpellDescriptor.SpellTargetType.None;
+        switch (targetString)
+        {
+            case "Unit":          targetType = SpellDescriptor.SpellTargetType.Unit;          break;
+            case "Manifestation": targetType = SpellDescriptor.SpellTargetType.Manifestation; break;
+        }
 
         var spellInput = new ScriptSpellInput();
-        spellInput.name = "TestSpellName";
+        spellInput.id = FindRecursive<InputField>("Input_ID").text;
+        spellInput.targetRequired = FindRecursive<Toggle>("Input_RequireTarget").isOn;
+        spellInput.displayName = FindRecursive<InputField>("Input_DisplayName").text;
+        spellInput.targetType = targetType;
         spellInput.type = GetSpellType();
         spellInput.variables = new Dictionary<string, object>();
         spellInput.methods = new Dictionary<string, string>();
+
+        ScriptSpellDatabase.Spells.Add(spellInput.id, spellInput);
     }
 }

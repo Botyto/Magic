@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class Extensions
 {
@@ -65,6 +66,15 @@ public static class Extensions
             (self.z * m.z) / d.z);
     }
 
+    #endregion
+
+    #region UI
+
+    public static string GetSelectionText(this Dropdown self)
+    {
+        return self.options[self.value].text;
+    }
+    
     #endregion
 
     #region Collections
