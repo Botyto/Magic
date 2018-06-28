@@ -13,7 +13,15 @@ public class ScriptSpellDescriptor : SpellDescriptor
 
     public override SpellCastResult Cast(Wizard wizard, GameObject target, out SpellComponent spell)
     {
-        var env = new ScriptEnvironment();
+        var additionalCode = "";
+
+        //Generate code from database
+        if (ScriptSpellDatabase.spells.ContainsKey(id))
+        {
+            additionalCode = ScriptSpellDatabase.spells[id].GenerateCode();
+        }
+
+        var env = new ScriptEnvironment(additionalCode);
 
 #if DEBUG
         //Attach debugger

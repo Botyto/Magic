@@ -26,6 +26,7 @@ public static class UnityScriptLibrary
         
         var tScript = new Table(L);
         L.Globals["Script"] = tScript;
+        tScript["DoString"] = new CallbackFunction(ScriptDoString);
         tScript["DoFile"] = new CallbackFunction(ScriptDoFile);
         tScript["DoFolder"] = new CallbackFunction(ScriptDoFolder);
         tScript["Reload"] = new CallbackFunction(ScriptReload);
@@ -236,6 +237,13 @@ public static class UnityScriptLibrary
 #endif
 
         return DynValue.Nil;
+    }
+
+    public static DynValue ScriptDoString(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var code = args.AsStringUsingMeta(ctx, 0, "Script.DoString");
+        var env = ScriptEnvironment.FetchEnvironment(ctx.OwnerScript);
+        return DynValue.FromObject(ctx.OwnerScript, env.DoString(code));
     }
 
     public static DynValue ScriptDoFile(ScriptExecutionContext ctx, CallbackArguments args)

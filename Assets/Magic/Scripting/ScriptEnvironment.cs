@@ -11,7 +11,7 @@ public class ScriptEnvironment
         return L.Globals.RawGet("__SCRIPT_ENVIRONMENT").ToObject<ScriptEnvironment>();
     }
 
-    public ScriptEnvironment()
+    public ScriptEnvironment(string additionalCode = "")
     {
         UserData.RegisterAssembly();
         UserData.RegisterType<ScriptEnvironment>();
@@ -19,6 +19,7 @@ public class ScriptEnvironment
         L = new Script(CoreModules.Preset_Complete);
         L.Options.ScriptLoader = new UnityAssetsScriptLoader("Scripts");
         L.Globals["__SCRIPT_ENVIRONMENT"] = DynValue.FromObject(L, this);
+        L.Globals["__ADDITIONAL_CODE"] = DynValue.FromObject(L, additionalCode);
 #if DEBUG
         L.Globals["__DEBUG"] = true;
 #else

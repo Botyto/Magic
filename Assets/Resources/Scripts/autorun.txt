@@ -15,6 +15,10 @@ Script.DoFolder("Script/", function(filename)
 	return not string.ends_with(filename, "autorun")
 end)
 
+if __ADDITIONAL_CODE then
+	Script.DoString(__ADDITIONAL_CODE)
+end
+
 FirstLoad = false
 setmetatable(_G, {
 	__index = function(t, key)

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UISpellDescriptorCreation : Dialog
@@ -12,7 +13,7 @@ public class UISpellDescriptorCreation : Dialog
     {
         var dropdown = FindRecursive<Dropdown>("SpellClass_Choice");
         dropdown.options.Clear();
-        foreach (var entry in ScriptSpellDatabase.Spells)
+        foreach (var entry in ScriptSpellDatabase.spells)
         {
             dropdown.options.Add(new Dropdown.OptionData(entry.Key));
         }
@@ -36,9 +37,9 @@ public class UISpellDescriptorCreation : Dialog
     public void OnConfirm()
     {
         var spellClass = FindRecursive<Dropdown>("SpellClass_Choice").GetSelectionText();
-        var spellInput = ScriptSpellDatabase.Spells[spellClass];
+        var spellInput = ScriptSpellDatabase.spells[spellClass];
 
-        var descr = new ScriptSpellDescriptor();
+        var descr = ScriptableObject.CreateInstance<ScriptSpellDescriptor>();
         descr.id = spellInput.id;
         descr.spellClass = spellInput.nativeBaseClass;
         descr.targetType = spellInput.targetType;
@@ -52,6 +53,6 @@ public class UISpellDescriptorCreation : Dialog
         descr.displayName = spellInput.displayName;
         descr.spellScriptClass = spellInput.className;
 
-        ScriptSpellDatabase.SpellDescriptors.Add(descr);
+        ScriptSpellDatabase.AddSpellDescriptor(descr);
     }
 }

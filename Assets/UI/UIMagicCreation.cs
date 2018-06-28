@@ -46,7 +46,7 @@ public class UIMagicCreation : Dialog
 
         foreach (var method in ScriptSpellDatabase.GetMethodsList(GetSpellClass()))
         {
-            dropdown.options.Add(new Dropdown.OptionData(method.Signature));
+            dropdown.options.Add(new Dropdown.OptionData(method.signature));
         }
 
         dropdown.value = 0;
@@ -94,6 +94,6 @@ public class UIMagicCreation : Dialog
         spellInput.variables = new Dictionary<string, object>();
         spellInput.methods = new Dictionary<string, string>();
 
-        ScriptSpellDatabase.Spells.Add(spellInput.id, spellInput);
+        ScriptSpellDatabase.AddSpellImplementation(spellInput);
     }
 }

@@ -10,6 +10,19 @@ public class UISpellBook : Dialog
         UpdateSpellEntries();
     }
 
+    private UISpellEntry SpawnEntry(SpellDescriptor spellDescriptor, RectTransform parent, ref float y)
+    {
+        var entry = Spawn<UISpellEntry>(parent);
+        var pos = (entry.transform as RectTransform).anchoredPosition;
+        pos.y -= y;
+        (entry.transform as RectTransform).anchoredPosition = pos;
+        entry.descriptor = spellDescriptor;
+        entry.wizard = wizard;
+        y += 80.0f;
+
+        return entry;
+    }
+
     public void UpdateSpellEntries()
     {
         var contentHolder = FindRecursive<ScrollRect>("Scroll View").content;
@@ -22,13 +35,11 @@ public class UISpellBook : Dialog
         var y = 0.0f;
         foreach (var spellDescriptor in wizard.spells)
         {
-            var entry = Spawn<UISpellEntry>(contentHolder);
-            var pos = (entry.transform as RectTransform).anchoredPosition;
-            pos.y -= y;
-            (entry.transform as RectTransform).anchoredPosition = pos;
-            entry.descriptor = spellDescriptor;
-            entry.wizard = wizard;
-            y += 80.0f;
+            SpawnEntry(spellDescriptor, contentHolder, ref y);
+        }
+        foreach (var spellDescriptor in ScriptSpellDatabase.spellDescriptors)
+        {
+            SpawnEntry(spellDescriptor, contentHolder, ref y);
         }
 
         var sizeDelta = contentHolder.sizeDelta;

@@ -51,7 +51,7 @@ public class SpellDescriptor : ScriptableObject
     /// <summary>
     /// Universally unique identifier
     /// </summary>
-    public readonly Guid guid;
+    public Guid guid;
 
     /// <summary>
     /// Unique spell identifier

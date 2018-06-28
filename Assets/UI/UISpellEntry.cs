@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using System;
+using UnityEngine.UI;
 
 public class UISpellEntry : Dialog
 {
@@ -28,6 +29,16 @@ public class UISpellEntry : Dialog
                 m_SpellIdx = i;
                 break;
             }
+        }
+        
+        //wizard doesn't know this spell
+        if (m_SpellIdx == -1)
+        {
+            var new_spells = new SpellDescriptor[wizard.spells.Length + 1];
+            Array.Copy(wizard.spells, new_spells, wizard.spells.Length);
+            new_spells[wizard.spells.Length] = newDescriptor;
+            m_SpellIdx = wizard.spells.Length;
+            wizard.spells = new_spells;
         }
 
         bool found = false;
