@@ -6,7 +6,7 @@ public class SummonCompSpell : ContinuousSpellComponent
 
     public override void OnBegin()
     {
-        if (!Try(ManifestEnergyAndFocus(50, Vector3.forward * 15, Energy.Element.Ritual, Energy.Shape.Cube, out handle)))
+        if (!Try(ManifestEnergyAndFocus(50, Vector3.forward * 15, Energy.Element.Ritual, Energy.Shape.Sphere, out handle)))
         {
             Cancel();
             return;

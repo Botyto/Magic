@@ -14,8 +14,8 @@ MonoBehaviour:
   displayName: Ritualistic
   material: {fileID: 2100000, guid: 5f8774ad24be8d149a97fd4856df2933, type: 2}
   mass: 5
-  baseVolume: 0
-  volume: 0.1
+  baseVolume: 0.5
+  volume: 0.002
   usesGravity: 0
   passThrough: 0
   smashImpulse: 1

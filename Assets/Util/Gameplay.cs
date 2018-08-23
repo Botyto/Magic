@@ -1,44 +1,55 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public static class Gameplay
 {
     #region Input
 
+    public static bool IsUIFocused()
+    {
+        return EventSystem.current.currentSelectedGameObject != null;
+    }
+
+    public static bool CanHandleInput()
+    {
+        return !IsUIFocused();
+    }
+
     public static bool GetKey(KeyCode key)
     {
-        return Input.GetKey(key);
+        return CanHandleInput() && Input.GetKey(key);
     }
 
     public static bool GetKeyDown(KeyCode key)
     {
-        return Input.GetKeyDown(key);
+        return CanHandleInput() && Input.GetKeyDown(key);
     }
 
     public static bool GetKeyUp(KeyCode key)
     {
-        return Input.GetKeyUp(key);
+        return CanHandleInput() && Input.GetKeyUp(key);
     }
     
 
     public static bool GetMouseButton(int button)
     {
-        return Input.GetMouseButton(button);
+        return CanHandleInput() && Input.GetMouseButton(button);
     }
     
     public static bool GetMouseButtonDown(int button)
     {
-        return Input.GetMouseButtonDown(button);
+        return CanHandleInput() && Input.GetMouseButtonDown(button);
     }
     
     public static bool GetMouseButtonUp(int button)
     {
-        return Input.GetMouseButtonUp(button);
+        return CanHandleInput() && Input.GetMouseButtonUp(button);
     }
 
     
     public static float GetAxis(string axisName)
     {
-        return Input.GetAxis(axisName);
+        return CanHandleInput() ? 0.0f : Input.GetAxis(axisName);
     }
 
     #endregion

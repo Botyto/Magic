@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Dialog : MonoBehaviour
 {
     public void Close()
     {
         Gameplay.Destroy(gameObject, "close");
+
+        if (EventSystem.current.currentSelectedGameObject == gameObject)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     public Transform FindRecursive(string name)

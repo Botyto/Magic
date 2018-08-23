@@ -58,6 +58,13 @@ public partial class EnergyManifestation
         {
             __Visuals_UpdateVisuals();
         }
+
+        switch (element)
+        {
+            case Energy.Element.Ritual:
+                GetComponent<MeshRenderer>().material.SetFloat("_Speed", GetEnergyScaledf() / 100.0f);
+                break;
+        }
     }
 
     #endregion

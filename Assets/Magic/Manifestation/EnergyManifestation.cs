@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /// <summary>
 /// A physically manifested energy
@@ -81,6 +82,7 @@ public partial class EnergyManifestation : EnergyUser
 }
 
 #if DEBUG
+[Serializable]
 public struct ManifestationDebugOverview
 {
     public int energy;

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop.BasicDescriptors;
 
@@ -41,7 +42,7 @@ public class ScriptConsole : MonoBehaviour
         }
         if (transform.parent != null)
         {
-            var logObject = transform.parent.Find("Log");
+            var logObject = transform.parent.Find("UIConsoleLog");
             if (logObject != null)
             {
                 m_Log = logObject.GetComponent<Text>();
@@ -137,6 +138,13 @@ public class ScriptConsole : MonoBehaviour
         if (active)
         {
             m_Input.ActivateInputField();
+        }
+        else
+        {
+            if (EventSystem.current.currentSelectedGameObject == gameObject)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
         }
     }
 

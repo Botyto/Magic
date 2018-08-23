@@ -127,6 +127,7 @@ public class SpellComponentBase : MonoBehaviour
             return false;
         }
 
+        manifestation.holder.SetOwner(null, true);
         return m_Focus.Remove(manifestation);
     }
 

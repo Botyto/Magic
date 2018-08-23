@@ -39,6 +39,15 @@ public class UIMagicCreation : Dialog
         input.text = newCode;
     }
     
+    public void OnEndEditCodeField(string code)
+    {
+        //methodImplementaions[lastMethod] = GetCode();
+        //var input = GenerateScriptInput();
+        //var classCode = input.GenerateCode();
+
+        var env = new ScriptEnvironment(code);
+    }
+
     public void UpdateMethodsDropdown()
     {
         var dropdown = transform.Find("MethodDropDown").GetComponent<Dropdown>();
@@ -73,15 +82,13 @@ public class UIMagicCreation : Dialog
         SetCode(methodImplementaions.TryGetValue(currMethod, ""));
     }
 
-    public void OnConfirm()
+    public ScriptSpellInput GenerateScriptInput()
     {
-        methodImplementaions[lastMethod] = GetCode();
-        
         var targetString = FindRecursive<Dropdown>("Input_TargetType").GetSelectionText();
         var targetType = SpellDescriptor.SpellTargetType.None;
         switch (targetString)
         {
-            case "Unit":          targetType = SpellDescriptor.SpellTargetType.Unit;          break;
+            case "Unit": targetType = SpellDescriptor.SpellTargetType.Unit; break;
             case "Manifestation": targetType = SpellDescriptor.SpellTargetType.Manifestation; break;
         }
 
@@ -94,6 +101,12 @@ public class UIMagicCreation : Dialog
         spellInput.variables = new Dictionary<string, object>();
         spellInput.methods = new Dictionary<string, string>();
 
-        ScriptSpellDatabase.AddSpellImplementation(spellInput);
+        return spellInput;
+    }
+
+    public void OnConfirm()
+    {
+        methodImplementaions[lastMethod] = GetCode();
+        ScriptSpellDatabase.AddSpellImplementation(GenerateScriptInput());
     }
 }
