@@ -112,6 +112,11 @@ public class SpellWatcher : Dialog
     static Dictionary<Sprite, Color> m_ColorsCache = new Dictionary<Sprite, Color>();
     public static Color GetMostUsedColor(Sprite sprite)
     {
+        if (sprite == null)
+        {
+            return Color.white;
+        }
+
         if (m_ColorsCache.ContainsKey(sprite))
         {
             return m_ColorsCache[sprite];

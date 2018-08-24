@@ -278,10 +278,13 @@ public class SpellComponentBase : MonoBehaviour
     protected virtual void Update()
     {
         //Handle lost target
-        if ((target as object) != null && target == null)
+        if ((target as object) != null)
         {
-            OnTargetLost();
-            target = null;
+            if (target == null)
+            {
+                OnTargetLost();
+                target = null;
+            }
         }
 
         //Handle lost focus

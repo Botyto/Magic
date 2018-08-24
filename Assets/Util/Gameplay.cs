@@ -49,7 +49,7 @@ public static class Gameplay
     
     public static float GetAxis(string axisName)
     {
-        return CanHandleInput() ? 0.0f : Input.GetAxis(axisName);
+        return CanHandleInput() ? Input.GetAxis(axisName) : 0.0f;
     }
 
     #endregion

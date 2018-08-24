@@ -29,10 +29,7 @@ public class PlayerMovement : MonoBehaviour
     {
         //Movement
         HandleMovement();
-        if (Mathf.Abs(body.velocity.y) < 0.01f)
-        {
-            HandleJump();
-        }
+        HandleJump();
 
         //Camera look
         if (mouseLocked)
@@ -95,7 +92,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Gameplay.GetKeyDown(KeyCode.Space))
         {
-            body.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            if (Physics.Raycast(transform.position, -transform.up, LayerMask.NameToLayer("SolidEnvironment")))
+            {
+                body.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
         }
     }
 

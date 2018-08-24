@@ -40,5 +40,22 @@ public static class SpellUtilities
         }
     }
 
+    /// <summary>
+    /// Checks if a manifestation can do harm to the wizard.
+    /// </summary>
+    public static bool IsManifestationHarmful(Wizard wizard, EnergyManifestation manifestation)
+    {
+        var wizardUnit = wizard.GetComponent<Unit>();
+        if (wizardUnit == null) { return false; }
+
+        var owner = manifestation.holder.ResolveOwner();
+        if (owner == null) { return true; }
+
+        var ownerUnit = owner.GetComponent<Unit>();
+        if (ownerUnit == null) { return true; }
+
+        return ownerUnit.CanAttack(wizardUnit);
+    }
+
     #endregion
 }
