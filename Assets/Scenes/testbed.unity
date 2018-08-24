@@ -158,7 +158,7 @@ Prefab:
     - target: {fileID: 224339323414026334, guid: f34d22d3820c40b468f1cc325caa2d37,
         type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 224339323414026334, guid: f34d22d3820c40b468f1cc325caa2d37,
         type: 2}
@@ -217,7 +217,7 @@ Prefab:
       objectReference: {fileID: 1040189975}
     - target: {fileID: 1820820488874030, guid: f34d22d3820c40b468f1cc325caa2d37, type: 2}
       propertyPath: m_Name
-      value: UIWizardStats (1)
+      value: UIWizardStats-Player
       objectReference: {fileID: 0}
     - target: {fileID: 224134002256846346, guid: f34d22d3820c40b468f1cc325caa2d37,
         type: 2}
@@ -956,8 +956,8 @@ RectTransform:
   - {fileID: 604661769}
   - {fileID: 419330767}
   - {fileID: 1024730083}
-  - {fileID: 2100717284}
   - {fileID: 1967110}
+  - {fileID: 2100717284}
   - {fileID: 1248533876}
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -1119,7 +1119,7 @@ Prefab:
     - target: {fileID: 224339323414026334, guid: f34d22d3820c40b468f1cc325caa2d37,
         type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 224339323414026334, guid: f34d22d3820c40b468f1cc325caa2d37,
         type: 2}
@@ -1290,6 +1290,10 @@ Prefab:
         type: 2}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820820488874030, guid: f34d22d3820c40b468f1cc325caa2d37, type: 2}
+      propertyPath: m_Name
+      value: UIWizardStats-Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f34d22d3820c40b468f1cc325caa2d37, type: 2}
@@ -1837,6 +1841,7 @@ MonoBehaviour:
   DefaultShape: 0
   m_Elements: []
   m_Shapes: []
+  m_StatusEffects: []
 --- !u!4 &1328157570
 Transform:
   m_ObjectHideFlags: 0

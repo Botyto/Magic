@@ -148,7 +148,7 @@ public class Unit : MonoBehaviour
             return;
         }
 
-        //Effect fully removed
+        //Effect fully discharged
         if (amount >= effect.charge)
         {
             effects.Remove(effectType);
@@ -172,7 +172,7 @@ public class Unit : MonoBehaviour
     private void Update()
     {
         var keys = new StatusEffect.Type[effects.Keys.Count];
-        effects.Keys.CopyTo(keys, 0);
+        effects.Keys.CopyTo(keys, 0); //copy them, because they might change
         foreach (var effectType in keys)
         {
             StatusEffectDischarge(effectType, (int)(Time.deltaTime*10.0f), false);

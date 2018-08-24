@@ -31,6 +31,13 @@ public class EnergyGlobals : MonoBehaviour
     private EnergyShape[] m_Shapes;
 
     /// <summary>
+    /// List of status effects
+    /// </summary>
+    [HideInInspector]
+    [SerializeField]
+    private StatusEffectInfo[] m_StatusEffects;
+
+    /// <summary>
     /// Singleton instance
     /// </summary>
     public static EnergyGlobals instance { get; private set; }
@@ -63,6 +70,17 @@ public class EnergyGlobals : MonoBehaviour
                 m_Shapes[i] = Resources.Load<EnergyShape>("Shapes/" + shape);
             }
         }
+
+        { //Load status effects
+            var effectTypes = Enum.GetValues(typeof(StatusEffect.Type)).Cast<StatusEffect.Type>().ToArray();
+            var n = effectTypes.Length;
+            m_StatusEffects = new StatusEffectInfo[n];
+            for (int i = 0; i < n; ++i)
+            {
+                var effect = effectTypes[i];
+                m_StatusEffects[i] = Resources.Load<StatusEffectInfo>("StatusEffects/" + effect);
+            }
+        }
     }
 
     /// <summary>
@@ -79,5 +97,13 @@ public class EnergyGlobals : MonoBehaviour
     public EnergyShape GetShape(Energy.Shape shape)
     {
         return m_Shapes[(int)shape];
+    }
+    
+    /// <summary>
+    /// Returns the definition of the specified status effect
+    /// </summary>
+    public StatusEffectInfo GetStatusEffect(StatusEffect.Type type)
+    {
+        return m_StatusEffects[(int)type];
     }
 }

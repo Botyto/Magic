@@ -66,7 +66,7 @@ public class SpellWatcher : Dialog
     }
 
     static List<Color> m_PresetColors;
-    private static Color GetNearestColor(Color inputColor)
+    public static Color GetNearestColor(Color inputColor)
     {
         var inputRed = inputColor.r;
         var inputGreen = inputColor.g;

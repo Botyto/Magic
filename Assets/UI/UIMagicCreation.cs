@@ -45,7 +45,7 @@ public class UIMagicCreation : Dialog
         //var input = GenerateScriptInput();
         //var classCode = input.GenerateCode();
 
-        var env = new ScriptEnvironment(code);
+        //var env = new ScriptEnvironment(code);
     }
 
     public void UpdateMethodsDropdown()

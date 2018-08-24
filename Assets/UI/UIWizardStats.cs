@@ -6,6 +6,7 @@ public class UIWizardStats : Dialog
     public Wizard wizard;
 
     public Dictionary<EnergyManifestation, UIFocusStats> focusWatchers;
+    public Dictionary<StatusEffect.Type, UIStatusWatch> statusWatchers;
 
     public void Start()
     {
@@ -16,6 +17,7 @@ public class UIWizardStats : Dialog
         }
 
         focusWatchers = new Dictionary<EnergyManifestation, UIFocusStats>();
+        statusWatchers = new Dictionary<StatusEffect.Type, UIStatusWatch>();
 
         FindRecursive<Text>("Name").text = wizard.name;
 
@@ -39,6 +41,10 @@ public class UIWizardStats : Dialog
             return;
         }
 
+        var focuses = FindRecursive("Focuses").gameObject;
+        var auras = FindRecursive("Auras").gameObject;
+        var unit = wizard.GetComponent<Unit>();
+
         var activeSpells = wizard.GetComponents<SpellComponentBase>();
         foreach (var spell in activeSpells)
         {
@@ -52,15 +58,29 @@ public class UIWizardStats : Dialog
                 if (watch == null)
                 {
                     //add watch
-                    watch = Spawn<UIFocusStats>(FindRecursive("Focuses").gameObject);
+                    watch = Spawn<UIFocusStats>(focuses);
                     watch.manifestation = focus;
                     focusWatchers.Add(focus, watch);
                 }
-                else if(focus == null) //energy has died
+                else if (focus == null) //energy has died
                 {
                     watch.Close();
                     focusWatchers.Remove(focus);
                 }
+            }
+        }
+
+        var effects = unit.effects;
+        foreach (var effect in effects)
+        {
+            var watch = statusWatchers.TryGetValue(effect.Key, null);
+            if (watch == null)
+            {
+                //add watch
+                watch = Spawn<UIStatusWatch>(auras);
+                watch.unit = unit;
+                watch.type = effect.Key;
+                statusWatchers.Add(effect.Key, watch);
             }
         }
     }

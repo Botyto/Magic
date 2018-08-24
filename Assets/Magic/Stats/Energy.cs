@@ -180,5 +180,13 @@ public static class Energy //TODO organize/spearate into classes
         return EnergyGlobals.instance.GetShape(shape);
     }
 
+    /// <summary>
+    /// Returns the defintion of the specified energy shape
+    /// </summary>
+    public static StatusEffectInfo GetStatusEffect(StatusEffect.Type type)
+    {
+        return EnergyGlobals.instance.GetStatusEffect(type);
+    }
+
     #endregion
 }
