@@ -19,6 +19,20 @@ public class PropertyBinding : MonoBehaviour
             return;
         }
 
+        Rebind();
+    }
+
+    public void Rebind(MonoBehaviour sourceObj, string sourceProp, MonoBehaviour targetObj, string targetProp)
+    {
+        sourceObject = sourceObj;
+        sourceProperty = sourceProp;
+        targetObject = targetObj;
+        targetProperty = targetProp;
+        Rebind();
+    }
+
+    public void Rebind()
+    {
         m_SourceField = sourceObject.GetType().GetField(sourceProperty);
         m_TargetField = targetObject.GetType().GetField(targetProperty);
     }

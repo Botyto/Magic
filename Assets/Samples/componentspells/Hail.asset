@@ -17,7 +17,7 @@ MonoBehaviour:
   targetRequired: 1
   parameters:
     level: 1
-    element: 8
+    element: 7
     shape: 3
     obj: {fileID: 0}
     statusEffect: 0

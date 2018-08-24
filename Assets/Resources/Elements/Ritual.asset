@@ -39,3 +39,4 @@ MonoBehaviour:
     attached: 1
     scaled: 1
     rotated: 1
+  keyColor: {r: 0.6603774, g: 0, b: 0.6449401, a: 1}

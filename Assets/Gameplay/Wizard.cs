@@ -36,6 +36,11 @@ public class Wizard : MonoBehaviour
     [HideInInspector]
     public EnergyHolder holder;
 
+    /// <summary>
+    /// Maximum energy
+    /// </summary>
+    public int maxEnergy;
+
     public SpellDescriptor FindSpellDescriptor(string id)
     {
         foreach (var desc in spells)
@@ -82,12 +87,15 @@ public class Wizard : MonoBehaviour
 
     private void FixedUpdate()
     {
-        m_EnergyRegenerationAccumulator += energyRegenerationPerFrame;
-        if (m_EnergyRegenerationAccumulator > 1.0f)
+        if (holder.GetEnergy() < maxEnergy)
         {
-            var energyAdded = Mathf.FloorToInt(m_EnergyRegenerationAccumulator);
-            holder.Increase(energyAdded);
-            m_EnergyRegenerationAccumulator -= energyAdded;
+            m_EnergyRegenerationAccumulator += energyRegenerationPerFrame;
+            if (m_EnergyRegenerationAccumulator > 1.0f)
+            {
+                var energyAdded = Mathf.FloorToInt(m_EnergyRegenerationAccumulator);
+                holder.Increase(energyAdded);
+                m_EnergyRegenerationAccumulator -= energyAdded;
+            }
         }
     }
 

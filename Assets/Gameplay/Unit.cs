@@ -21,6 +21,11 @@ public class Unit : MonoBehaviour
     /// Current health
     /// </summary>
     public int health;
+
+    /// <summary>
+    /// Maximum health
+    /// </summary>
+    public int maxHealth;
     
     /// <summary>
     /// Status effects applied to this unit

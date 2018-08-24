@@ -91,6 +91,11 @@ public class EnergyElement : ScriptableObject
     /// </summary>
     public ElementParticles disposeParticles;
 
+    /// <summary>
+    /// Color used for UI
+    /// </summary>
+    public Color keyColor = Color.white;
+
     #endregion
 
     #region Types

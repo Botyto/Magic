@@ -79,7 +79,7 @@ public class LogManager : MonoBehaviour
 
     private void UpdateLogText()
     {
-        string str = logName + " Log:\n";
+        string str = "";
         foreach (var message in m_Log)
         {
             str += message + "\n";
