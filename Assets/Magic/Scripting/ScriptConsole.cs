@@ -52,73 +52,84 @@ public class ScriptConsole : MonoBehaviour
         SetActive(false);
     }
 
-    public void Update()
+    public void OnGUI()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && isActive)
+        var e = Event.current;
+        if (e != null && e.isKey && e.type == EventType.KeyDown)
         {
-            SetActive(false);
-        }
-        else if (Input.GetKeyDown(KeyCode.Return))
-        {
-            if (isActive)
+            if (e.keyCode == KeyCode.Escape)
             {
-                Execute(m_Input.text);
-                ClearPredictions();
                 SetActive(false);
+                e.Use();
             }
-            else
+            else if (e.keyCode == KeyCode.Return)
             {
-                SetActive(true);
-                ClearPredictions();
-                SetCode("");
-            }
-        }
-        else if (Input.GetKeyDown(clearKey))
-        {
-            if (m_Log != null) { m_Log.text = ""; }
-        }
-        else if (m_Input != null && m_Input.enabled)
-        {
-            if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                var predictions = GeneratePredictions(m_Input.text);
-                if (predictions.Count == 0)
+                if (isActive)
                 {
+                    Execute(m_Input.text);
                     ClearPredictions();
-                }
-                else if (predictions.Count == 1)
-                {
-                    var parts = m_Input.text.Split('.');
-                    parts[parts.Length - 1] = predictions[0];
-                    SetCode(string.Join(".", parts));
-                    ClearPredictions();
+                    SetActive(false);
                 }
                 else
                 {
-                    FillPredictions(predictions);
+                    SetActive(true);
+                    ClearPredictions();
+                    SetCode("");
+                }
+                e.Use();
+            }
+            else if (e.keyCode == clearKey)
+            {
+                if (m_Log != null) { m_Log.text = ""; }
+                e.Use();
+            }
+            else if (m_Input != null && m_Input.enabled)
+            {
+                if (e.keyCode == KeyCode.Tab)
+                {
+                    var predictions = GeneratePredictions(m_Input.text);
+                    if (predictions.Count == 0)
+                    {
+                        ClearPredictions();
+                    }
+                    else if (predictions.Count == 1)
+                    {
+                        var parts = m_Input.text.Split('.');
+                        parts[parts.Length - 1] = predictions[0];
+                        SetCode(string.Join(".", parts));
+                        ClearPredictions();
+                    }
+                    else
+                    {
+                        FillPredictions(predictions);
+                    }
+                    e.Use();
+                }
+                else if (e.keyCode == KeyCode.UpArrow)
+                {
+                    SetCode(HistoryBack());
+                    e.Use();
+                }
+                else if (e.keyCode == KeyCode.DownArrow)
+                {
+                    SetCode(HistoryForward());
+                    e.Use();
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            else //if m_Input.enabled is false
             {
-                SetCode(HistoryBack());
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                SetCode(HistoryForward());
-            }
-        }
-        else //if m_Input.enabled is false
-        {
-            if (Input.GetKeyDown(repeatKey))
-            {
-                if (history.Count > 0)
+                if (e.keyCode == repeatKey)
                 {
-                    Execute(history[history.Count - 1]);
+                    if (history.Count > 0)
+                    {
+                        Execute(history[history.Count - 1]);
+                    }
+                    e.Use();
                 }
             }
         }
     }
-
+    
     public void SetCode(string code)
     {
         m_Input.ActivateInputField();

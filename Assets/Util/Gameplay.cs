@@ -5,51 +5,45 @@ public static class Gameplay
 {
     #region Input
 
-    public static bool IsUIFocused()
-    {
-        return EventSystem.current.currentSelectedGameObject != null;
-    }
-
-    public static bool CanHandleInput()
-    {
-        return !IsUIFocused();
-    }
+    public static bool keyboardInputBlocked { get { return EventSystem.current.currentSelectedGameObject != null; } }
+    public static bool mouseInputBlocked { get { return false; } }
+    public static bool gamepadInputBlocked { get { return false; } }
 
     public static bool GetKey(KeyCode key)
     {
-        return CanHandleInput() && Input.GetKey(key);
+        return !keyboardInputBlocked && Input.GetKey(key);
     }
 
     public static bool GetKeyDown(KeyCode key)
     {
-        return CanHandleInput() && Input.GetKeyDown(key);
+        return !keyboardInputBlocked && Input.GetKeyDown(key);
     }
 
     public static bool GetKeyUp(KeyCode key)
     {
-        return CanHandleInput() && Input.GetKeyUp(key);
+        return !keyboardInputBlocked && Input.GetKeyUp(key);
     }
     
 
     public static bool GetMouseButton(int button)
     {
-        return CanHandleInput() && Input.GetMouseButton(button);
+        return !mouseInputBlocked && Input.GetMouseButton(button);
     }
     
     public static bool GetMouseButtonDown(int button)
     {
-        return CanHandleInput() && Input.GetMouseButtonDown(button);
+        return !mouseInputBlocked && Input.GetMouseButtonDown(button);
     }
     
     public static bool GetMouseButtonUp(int button)
     {
-        return CanHandleInput() && Input.GetMouseButtonUp(button);
+        return !mouseInputBlocked && Input.GetMouseButtonUp(button);
     }
 
     
     public static float GetAxis(string axisName)
     {
-        return CanHandleInput() ? Input.GetAxis(axisName) : 0.0f;
+        return Input.GetAxis(axisName);
     }
 
     #endregion

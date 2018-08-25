@@ -57,14 +57,20 @@ public class ScriptSpellInput
             else
             {
                 MagicLog.LogErrorFormat("Unknown method {0} for script spell {1}", method.Key, id);
-                str.AppendFormat("function {0}:{1}(...)\n", className, method.Key);
+                if (!string.IsNullOrEmpty(method.Key))
+                {
+                    str.AppendFormat("function {0}:{1}(...)\n", className, method.Key);
+                }
             }
 
-            foreach (var line in method.Value.Split('\n'))
+            if (!string.IsNullOrEmpty(method.Key))
             {
-                str.AppendFormat("\t{0}\n", line);
+                foreach (var line in method.Value.Split('\n'))
+                {
+                    str.AppendFormat("\t{0}\n", line);
+                }
+                str.AppendFormat("end\n\n");
             }
-            str.AppendFormat("end\n\n");
         }
 
         return str.ToString();

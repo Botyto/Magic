@@ -84,6 +84,7 @@ public class UIMagicCreation : Dialog
 
     public ScriptSpellInput GenerateScriptInput()
     {
+        methodImplementaions.Remove(""); //TODO fix this
         var targetString = FindRecursive<Dropdown>("Input_TargetType").GetSelectionText();
         var targetType = SpellDescriptor.SpellTargetType.None;
         switch (targetString)
@@ -99,8 +100,8 @@ public class UIMagicCreation : Dialog
         spellInput.targetType = targetType;
         spellInput.type = GetSpellType();
         spellInput.variables = new Dictionary<string, object>();
-        spellInput.methods = new Dictionary<string, string>();
-
+        spellInput.methods = methodImplementaions;
+        
         return spellInput;
     }
 

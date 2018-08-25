@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 
 public class Dialog : MonoBehaviour
 {
+    #region Standard Dialog Methdods
+
     public void Close()
     {
         Gameplay.Destroy(gameObject, "close");
@@ -12,6 +14,20 @@ public class Dialog : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(null);
         }
     }
+    
+    protected virtual void OnOpen() { }
+     
+    protected virtual void OnClose() { }
+
+    #endregion
+
+    #region Input Handling
+    
+    public virtual bool OnKeyDown(KeyCode keyCode) { return false; }
+
+    #endregion
+
+    #region Child Lookup
 
     public Transform FindRecursive(string name)
     {
@@ -28,7 +44,11 @@ public class Dialog : MonoBehaviour
 
         return child.GetComponent<T>();
     }
-    
+
+    #endregion
+
+    #region Dialog Spawning
+
     public static T Spawn<T>(bool single = false) where T : Dialog
     {
         return Spawn<T>(FindObjectOfType<Canvas>().transform as RectTransform, single);
@@ -71,4 +91,22 @@ public class Dialog : MonoBehaviour
         var dlg = Instantiate(prefab, parent.transform);
         return dlg.GetComponent<T>();
     }
+
+    #endregion
+
+    #region Unity Internals
+
+    private void Start() { OnOpen(); }
+
+    private void OnDestroy() { OnClose(); }
+
+    protected virtual void OnGUI()
+    {
+        var e = Event.current;
+        if (e == null) { return; }
+
+        if (e.type == EventType.KeyDown && OnKeyDown(e.keyCode)) { e.Use(); }
+    }
+
+    #endregion
 }
