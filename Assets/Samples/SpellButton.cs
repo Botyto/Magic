@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class SpellButton : MonoBehaviour, IPointerClickHandler
+[RequireComponent(typeof(Clickable))]
+public class SpellButton : MonoBehaviour
 {
     public Wizard wizard;
     public string id;
@@ -22,20 +22,4 @@ public class SpellButton : MonoBehaviour, IPointerClickHandler
 
         wizard.CastSpell(id, target);
 	}
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (eventData.button == PointerEventData.InputButton.Left)
-        {
-            SendMessage("OnLeftClick", SendMessageOptions.DontRequireReceiver);
-        }
-        else if (eventData.button == PointerEventData.InputButton.Right)
-        {
-            SendMessage("OnRightClick", SendMessageOptions.DontRequireReceiver);
-        }
-        else if (eventData.button == PointerEventData.InputButton.Middle)
-        {
-            SendMessage("OnMiddleClick", SendMessageOptions.DontRequireReceiver);
-        }
-    }
 }
