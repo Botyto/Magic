@@ -113,7 +113,7 @@ public class SpellComponentBase : MonoBehaviour
         }
 
         m_Focus.Add(manifestation);
-        if (manifestation.holder.ResolveOwner() == wizard)
+        if (manifestation.holder.ResolveOwner() == wizard.holder)
         {
             manifestation.focusesCount++;
         }
@@ -131,7 +131,7 @@ public class SpellComponentBase : MonoBehaviour
             return false;
         }
 
-        if (manifestation.holder.ResolveOwner() == wizard)
+        if (manifestation.holder.ResolveOwner() == wizard.holder)
         {
             manifestation.focusesCount--;
             if (manifestation.focusesCount == 0)
@@ -181,7 +181,7 @@ public class SpellComponentBase : MonoBehaviour
         foreach (var manif in m_Focus)
         {
             if (manif == null || manif.gameObject == null) { continue; } //Check validity
-            if (manif.holder.ResolveOwner() != wizard) { continue; } //Check ownership
+            if (manif.holder.ResolveOwner() != wizard.holder) { continue; } //Check ownership
 
             manif.Dispose();
         }
@@ -198,7 +198,7 @@ public class SpellComponentBase : MonoBehaviour
         foreach (var manifestation in m_Focus)
         {
             if (manifestation == null || manifestation.gameObject == null) { continue; } //Check validity
-            if (manifestation.holder.ResolveOwner() != wizard) { continue; } //Check ownership
+            if (manifestation.holder.ResolveOwner() != wizard.holder) { continue; } //Check ownership
 
             manifestation.focusesCount--;
             if (manifestation.focusesCount == 0)
@@ -326,7 +326,7 @@ public class SpellComponentBase : MonoBehaviour
                 var manifestation = m_Focus[handle];
                 if (manifestation.transform.SqrDistanceTo(controller.transform) > sqControlRange)
                 {
-                    if (manifestation.holder.ResolveOwner() == wizard)
+                    if (manifestation.holder.ResolveOwner() == wizard.holder)
                     {
                         manifestation.focusesCount = 0;
                         manifestation.holder.SetOwner(null, true);
