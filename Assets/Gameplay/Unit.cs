@@ -32,9 +32,11 @@ public class Unit : MonoBehaviour
     /// </summary>
     [SerializeField]
     public Dictionary<StatusEffect.Type, StatusEffect> effects; //TODO redesign (make serializable)
+    private Dictionary<StatusEffect.Type, float> m_EffectDischargeAccumulator;
 
     private void Awake()
     {
+        m_EffectDischargeAccumulator = new Dictionary<StatusEffect.Type, float>();
         effects = new Dictionary<StatusEffect.Type, StatusEffect>();
     }
 
@@ -134,20 +136,20 @@ public class Unit : MonoBehaviour
         {
             return;
         }
-
+        
         StatusEffect effect;
         //Effect not applied
         if (!effects.TryGetValue(effectType, out effect))
         {
             return;
         }
-
+        
         //Non-negative effect
         if (negativeOnly && effect.intensity > 0)
         {
             return;
         }
-
+        
         //Effect fully discharged
         if (amount >= effect.charge)
         {
@@ -175,7 +177,15 @@ public class Unit : MonoBehaviour
         effects.Keys.CopyTo(keys, 0); //copy them, because they might change
         foreach (var effectType in keys)
         {
-            StatusEffectDischarge(effectType, (int)(Time.deltaTime*10.0f), false);
+            var amount = m_EffectDischargeAccumulator.TryGetValue(effectType, 0.0f);
+            amount += Time.deltaTime * 10.0f;
+            if ((int)amount >= 1)
+            {
+                StatusEffectDischarge(effectType, (int)amount, false);
+                amount -= (int)amount;
+            }
+
+            m_EffectDischargeAccumulator[effectType] = amount;
         }
     }
 

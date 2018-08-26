@@ -308,15 +308,29 @@ public static class ScriptSpellDatabase
         }
     }
 
+    public static void DoNothing() { } //Initialized using this
+
     public static void AddSpellImplementation(ScriptSpellInput input)
     {
         spells.Add(input.id, input);
+        SaveSpellImplementation(input);
+    }
 
+    public static void SaveSpellImplementation(ScriptSpellInput input)
+    {
         var bf = new BinaryFormatter();
         Directory.CreateDirectory(spellsPath);
-        var file = File.Create(spellsPath + input.id + ".spellInput");
+        var file = File.OpenWrite(spellsPath + input.id + ".spellInput");
         bf.Serialize(file, input);
         file.Close();
+    }
+
+    public static void RemoveSpellImplementation(string id)
+    {
+        if (spells.Remove(id))
+        {
+            File.Delete(spellsPath + id + ".spellInput");
+        }
     }
 
     public static void AddSpellDescriptor(SpellDescriptor descriptor)
@@ -332,6 +346,20 @@ public static class ScriptSpellDatabase
         file.Close();
     }
 
+    public static void RemoveSpellDescriptor(string id)
+    {
+        var descriptor = spellDescriptors.Find(sd => sd.id == id);
+        if (descriptor == null)
+        {
+            return;
+        }
+
+        if (spellDescriptors.Remove(descriptor))
+        {
+            File.Delete(spellsPath + descriptor.id + descriptor.parameters.level + ".spellDescriptor");
+        }
+    }
+    
     public static Dictionary<string, ScriptSpellInput> spells = new Dictionary<string, ScriptSpellInput>();
     public static List<SpellDescriptor> spellDescriptors = new List<SpellDescriptor>();
 }

@@ -1,3 +1,5 @@
+--[[
+
 Class.SpellTest = {
 	__inherit = "InstantSpell",
 }
@@ -63,3 +65,5 @@ function RainScriptSpell:Activate(deltaTime)
 		end
 	end
 end
+
+]]

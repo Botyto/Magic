@@ -23,7 +23,7 @@ public class StatusBallCompSpell : ContinuousSpellComponent
 
     public override void OnBegin()
     {
-        if (!Try(ManifestEnergyAndFocus(30*param.level, Vector3.forward*3, param.element, param.shape, out ballHandle)))
+        if (!Try(ManifestEnergyAndFocus(100*param.level, Vector3.forward*3, param.element, param.shape, out ballHandle)))
         {
             Cancel();
             return;

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: FallingManaBall3
   spellClass: FallingBall
-  targetRequirement: 0
+  targetType: 0
+  targetRequired: 0
   parameters:
     level: 3
     element: 1
@@ -23,5 +24,5 @@ MonoBehaviour:
     integer: 0
     real: 0
   displayName: Falling Mana Ball
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 21300630, guid: 33be92ed296551c4fb7659add0fe8b9a, type: 3}
   visible: 1

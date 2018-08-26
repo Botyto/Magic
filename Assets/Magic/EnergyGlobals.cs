@@ -46,6 +46,8 @@ public class EnergyGlobals : MonoBehaviour
 
     private void Awake()
     {
+        ScriptSpellDatabase.DoNothing();
+
         Debug.AssertFormat(instance == null, "EnergyGlobals must be singleton!");
         instance = this;
 

@@ -9,14 +9,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 183031d2dab74e246a9346dd1c8acc9c, type: 3}
-  m_Name: Speed
+  m_Name: Energy
   m_EditorClassIdentifier: 
   type: 0
   positive:
-    displayName: Swiftness
-    description: Increases moving speed
+    displayName: Energy+
+    description: Increases energy regeneration
     icon: {fileID: 0}
   negative:
-    displayName: Slowness
-    description: Decreases moving speed
-    icon: {fileID: 21300012, guid: 91c6ddd978cbffa48ae2a1dc32fe3368, type: 3}
+    displayName: Energy-
+    description: Decreases energy regeneration
+    icon: {fileID: 0}

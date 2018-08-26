@@ -80,7 +80,7 @@ public class UIWizardStats : Dialog
                 watch = Spawn<UIStatusWatch>(auras);
                 watch.unit = unit;
                 watch.type = effect.Key;
-                statusWatchers.Add(effect.Key, watch);
+                statusWatchers[effect.Key] = watch;
             }
         }
     }

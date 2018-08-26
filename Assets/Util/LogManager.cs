@@ -79,10 +79,17 @@ public class LogManager : MonoBehaviour
 
     private void UpdateLogText()
     {
-        string str = "";
-        foreach (var message in m_Log)
+        var textGenenerator = new TextGenerator();
+        var generationSettings = m_Text.GetGenerationSettings(m_Text.rectTransform.rect.size);
+        var lineHeight = textGenenerator.GetPreferredHeight("single line", generationSettings);
+        var height = m_Text.rectTransform.rect.height;
+        var visibleLines = (int)(height / lineHeight);
+
+        var str = "";
+        var n = m_Log.Count;
+        for (int i = Mathf.Max(0, n - visibleLines); i < n; ++i)
         {
-            str += message + "\n";
+            str += m_Log[i] + "\n";
         }
 
         m_Text.text = str;

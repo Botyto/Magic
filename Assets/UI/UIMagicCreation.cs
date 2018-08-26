@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.UI;
 
 public class UIMagicCreation : Dialog
 {
-    Dictionary<string, string> methodImplementaions = new Dictionary<string, string>();
-    string lastMethod = "";
+    private ScriptSpellInput m_EditedSpellInput = null;
+    private Dictionary<string, string> m_MethodImplementaions = new Dictionary<string, string>();
+    private string m_LastMethod = "";
     
     public void Start()
     {
-        UpdateMethodsDropdown();
+        var dropdown = FindRecursive<Dropdown>("ScriptsDropdown");
+        dropdown.AddOptions(ScriptSpellDatabase.spells.Keys.ToList());
     }
 
     public string GetSpellType()
@@ -29,13 +32,13 @@ public class UIMagicCreation : Dialog
 
     public string GetCode()
     {
-        var input = transform.Find("CodeField").GetComponent<InputField>();
+        var input = FindRecursive<InputField>("CodeField");
         return input.text;
     }
 
     public void SetCode(string newCode)
     {
-        var input = transform.Find("CodeField").GetComponent<InputField>();
+        var input = FindRecursive<InputField>("CodeField");
         input.text = newCode;
     }
     
@@ -50,15 +53,8 @@ public class UIMagicCreation : Dialog
 
     public void UpdateMethodsDropdown()
     {
-        var dropdown = transform.Find("MethodDropDown").GetComponent<Dropdown>();
-        dropdown.options = new List<Dropdown.OptionData>();
-
-        foreach (var method in ScriptSpellDatabase.GetMethodsList(GetSpellClass()))
-        {
-            dropdown.options.Add(new Dropdown.OptionData(method.signature));
-        }
-
-        dropdown.value = 0;
+        var dropdown = FindRecursive<Dropdown>("MethodDropDown");
+        dropdown.AddOptions(ScriptSpellDatabase.GetMethodsList(GetSpellClass()).ConvertAll(md => md.signature));
     }
     
     public void OnUpdateSpellType()
@@ -67,24 +63,31 @@ public class UIMagicCreation : Dialog
 
         foreach (var method in ScriptSpellDatabase.GetMethodsList(GetSpellClass()))
         {
-            newImplementations.Add(method.name, methodImplementaions.TryGetValue(method.name, ""));
+            newImplementations.Add(method.name, m_MethodImplementaions.TryGetValue(method.name, ""));
         }
 
-        methodImplementaions = newImplementations;
+        m_MethodImplementaions = newImplementations;
         UpdateMethodsDropdown();
     }
 
     public void OnUpdateMethod()
     {
-        methodImplementaions[lastMethod] = GetCode();
+        m_MethodImplementaions[m_LastMethod] = GetCode();
         var currMethod = GetMethod();
-        lastMethod = currMethod;
-        SetCode(methodImplementaions.TryGetValue(currMethod, ""));
+        m_LastMethod = currMethod;
+        SetCode(m_MethodImplementaions.TryGetValue(currMethod, ""));
     }
 
     public ScriptSpellInput GenerateScriptInput()
     {
-        methodImplementaions.Remove(""); //TODO fix this
+        var spellInput = new ScriptSpellInput();
+        FillScriptInput(spellInput);
+        return spellInput;
+    }
+
+    public void FillScriptInput(ScriptSpellInput spellInput)
+    {
+        m_MethodImplementaions.Remove(""); //TODO fix this
         var targetString = FindRecursive<Dropdown>("Input_TargetType").GetSelectionText();
         var targetType = SpellDescriptor.SpellTargetType.None;
         switch (targetString)
@@ -93,21 +96,69 @@ public class UIMagicCreation : Dialog
             case "Manifestation": targetType = SpellDescriptor.SpellTargetType.Manifestation; break;
         }
 
-        var spellInput = new ScriptSpellInput();
         spellInput.id = FindRecursive<InputField>("Input_ID").text;
         spellInput.targetRequired = FindRecursive<Toggle>("Input_RequireTarget").isOn;
         spellInput.displayName = FindRecursive<InputField>("Input_DisplayName").text;
         spellInput.targetType = targetType;
         spellInput.type = GetSpellType();
         spellInput.variables = new Dictionary<string, object>();
-        spellInput.methods = methodImplementaions;
-        
-        return spellInput;
+        spellInput.methods = m_MethodImplementaions;
     }
 
     public void OnConfirm()
     {
-        methodImplementaions[lastMethod] = GetCode();
-        ScriptSpellDatabase.AddSpellImplementation(GenerateScriptInput());
+        m_MethodImplementaions[m_LastMethod] = GetCode();
+
+        if (m_EditedSpellInput == null)
+        {
+            ScriptSpellDatabase.AddSpellImplementation(GenerateScriptInput());
+        }
+        else
+        {
+            FillScriptInput(m_EditedSpellInput);
+            ScriptSpellDatabase.SaveSpellImplementation(m_EditedSpellInput);
+        }
+    }
+
+    public void OnDeleteScript()
+    {
+        var dropdown = FindRecursive<Dropdown>("ScriptsDropdown");
+        ScriptSpellDatabase.RemoveSpellImplementation(dropdown.GetSelectionText());
+        dropdown.options.RemoveAt(dropdown.value);
+    }
+
+    public void OnEditScript()
+    {
+        FindRecursive("ManageScripts").gameObject.SetActive(false);
+        FindRecursive("NewScript").gameObject.SetActive(true);
+
+        var dropdown = FindRecursive<Dropdown>("ScriptsDropdown");
+        m_EditedSpellInput = ScriptSpellDatabase.spells[dropdown.options[dropdown.value].text];
+
+        FindRecursive<InputField>("Input_ID").text = m_EditedSpellInput.id;
+        FindRecursive<Toggle>("Input_RequireTarget").isOn = m_EditedSpellInput.targetRequired;
+        FindRecursive<InputField>("Input_DisplayName").text = m_EditedSpellInput.displayName;
+
+        var targetDropdown = FindRecursive<Dropdown>("Input_TargetType");
+        switch (m_EditedSpellInput.targetType)
+        {
+            case SpellDescriptor.SpellTargetType.Manifestation: targetDropdown.value = targetDropdown.options.FindIndex(o => o.text == "Manifestation"); break;
+            case SpellDescriptor.SpellTargetType.Unit: targetDropdown.value = targetDropdown.options.FindIndex(o => o.text == "Unit"); break;
+            case SpellDescriptor.SpellTargetType.None: targetDropdown.value = targetDropdown.options.FindIndex(o => o.text == "None"); break;
+            default: targetDropdown.value = targetDropdown.options.FindIndex(o => o.text == "None"); break;
+        }
+
+        var spellTypeDropdown = FindRecursive<Dropdown>("SpellTypeDropdown");
+        spellTypeDropdown.value = spellTypeDropdown.options.FindIndex(o => o.text == m_EditedSpellInput.type);
+
+        //new Dictionary<string, object>() = m_EditedSpellInput.variables;
+        m_MethodImplementaions = m_EditedSpellInput.methods;
+    }
+
+    public void OnNewScript()
+    {
+        FindRecursive("ManageScripts").gameObject.SetActive(false);
+        FindRecursive("NewScript").gameObject.SetActive(true);
+        UpdateMethodsDropdown();
     }
 }

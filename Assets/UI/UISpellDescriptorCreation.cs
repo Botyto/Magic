@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class UISpellDescriptorCreation : Dialog
 {
+    public Text codeReviewText;
+
     public void Start()
     {
         UpdateSpellClasses();
@@ -30,7 +32,7 @@ public class UISpellDescriptorCreation : Dialog
         {
             dropdown.options.Add(new Dropdown.OptionData(entry));
         }
-        
+
         dropdown.value = 0;
     }
 
@@ -54,5 +56,32 @@ public class UISpellDescriptorCreation : Dialog
         descr.spellScriptClass = spellInput.className;
 
         ScriptSpellDatabase.AddSpellDescriptor(descr);
+    }
+
+    public void OnViewCode()
+    {
+        var spellClass = FindRecursive<Dropdown>("SpellClass_Choice").GetSelectionText();
+        var spellDef = ScriptSpellDatabase.spells.TryGetValue(spellClass, null);
+        if (spellDef == null)
+        {
+            OnCloseCode();
+            return;
+        }
+
+        FindRecursive("CodeViewOverlay").gameObject.SetActive(true);
+        var code = spellDef.GenerateCode();
+
+        TextGenerator textGenenerator = new TextGenerator();
+        TextGenerationSettings generationSettings = codeReviewText.GetGenerationSettings(codeReviewText.rectTransform.rect.size);
+        float height = textGenenerator.GetPreferredHeight(code, generationSettings);
+        var sz = codeReviewText.rectTransform.sizeDelta;
+        sz.y = height;
+        codeReviewText.rectTransform.sizeDelta = sz;
+        codeReviewText.text = code;
+    }
+
+    public void OnCloseCode()
+    {
+        FindRecursive("CodeViewOverlay").gameObject.SetActive(false);
     }
 }
