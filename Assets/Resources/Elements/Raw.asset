@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Raw
   material: {fileID: 2100000, guid: 2fd03882de58d58438904f7d4ae3c906, type: 2}
+  physicMaterial: {fileID: 13400000, guid: c6ef50eb653b1e5458a60ce289deacf8, type: 2}
   mass: 1
   baseVolume: 0
   volume: 1

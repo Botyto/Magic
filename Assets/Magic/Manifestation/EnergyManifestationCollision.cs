@@ -429,8 +429,10 @@ public partial class EnergyManifestation
                 break;
         }
 
-        collider.isTrigger = Energy.GetElement(element).passThrough;
-        rigidbody.useGravity = Energy.GetElement(element).usesGravity;
+        var elementDef = Energy.GetElement(element);
+        collider.isTrigger = elementDef.passThrough;
+        rigidbody.useGravity = elementDef.usesGravity;
+        collider.sharedMaterial = elementDef.physicMaterial;
         rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; //TODO decide if this is needed
     }
 

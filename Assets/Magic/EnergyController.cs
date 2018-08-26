@@ -58,7 +58,18 @@ public class EnergyController : EnergyUser
     /// </summary>
     public bool IsWithinRange(Vector3 absolutePosition)
     {
-        return transform.position.SqrDistanceTo(absolutePosition) <= controlRange * controlRange;
+        if (transform.position.SqrDistanceTo(absolutePosition) > controlRange * controlRange)
+        {
+            return false;
+        }
+
+        RaycastHit hitInfo;
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitInfo, controlRange, ~LayerMask.NameToLayer("Unit")))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     #endregion

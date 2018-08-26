@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Earth
   material: {fileID: 2100000, guid: 971e3c735737056449d37f19eaaea7da, type: 2}
+  physicMaterial: {fileID: 13400000, guid: 707fc68bd2ad3744882e13463a36b777, type: 2}
   mass: 10
   baseVolume: 0
   volume: 0.5

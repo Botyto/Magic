@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Wood
   material: {fileID: 2100000, guid: 9706fa76d1502954496cd5d08d32a82d, type: 2}
+  physicMaterial: {fileID: 13400000, guid: 0c1077fd7c7c96d41bc146eb3661fd28, type: 2}
   mass: 8
   baseVolume: 0
   volume: 0.7

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Electricity
   material: {fileID: 2100000, guid: 09f5ef2c3adb0c349955be5e432e81a6, type: 2}
+  physicMaterial: {fileID: 13400000, guid: 8918dc823a51e344fa8a7baf6963223c, type: 2}
   mass: 0.05
   baseVolume: 0
   volume: 0.5

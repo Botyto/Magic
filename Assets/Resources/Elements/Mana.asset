@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Mana
   material: {fileID: 2100000, guid: bedb1546995b8b840a95095f0b2581c3, type: 2}
+  physicMaterial: {fileID: 13400000, guid: 93a9169ac43776e42acc9d718d80ed8f, type: 2}
   mass: 2
   baseVolume: 0
   volume: 1

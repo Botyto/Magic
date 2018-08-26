@@ -21,6 +21,11 @@ public class EnergyElement : ScriptableObject
     public Material material;
 
     /// <summary>
+    /// Physics material for the manifestation.
+    /// </summary>
+    public PhysicMaterial physicMaterial;
+
+    /// <summary>
     /// Mass (kg) per unit.
     /// </summary>
     public float mass = 1.0f;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Fire
   material: {fileID: 2100000, guid: 9780b5a5f96401a4f8b48faa5b64b9c9, type: 2}
+  physicMaterial: {fileID: 13400000, guid: 5fa088faf3d4e694e9829e5b2be0f7cf, type: 2}
   mass: 0.1
   baseVolume: 0
   volume: 0.8

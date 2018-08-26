@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Ice
   material: {fileID: 2100000, guid: 2b27119e0f5f6e44fba9b0dba8bfccc9, type: 2}
+  physicMaterial: {fileID: 13400000, guid: 6fbf38e77115a4a47882cb86b52e3126, type: 2}
   mass: 1
   baseVolume: 0
   volume: 1.1
