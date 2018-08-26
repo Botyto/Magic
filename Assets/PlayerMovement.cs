@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public float zoomSpeed = 10.0f;
     public float cameraDistance = 14.0f;
     public bool initiallyLockMouse = true;
+    public bool dragToLook = false;
 
     public Vector3 cursorPosition;
     public GameObject selectedObject;
@@ -133,23 +134,26 @@ public class PlayerMovement : MonoBehaviour
 
     #region Camera mode
 
-    private bool m_DragToLook = false;
+    private bool m_DragToLookActive = false;
     void HandleToggleMouseLock()
     {
-        if (Gameplay.GetKeyDown(KeyCode.Escape) || Gameplay.GetMouseButtonDown(1))
+        if (Gameplay.GetKeyDown(KeyCode.Escape))
         {
             ToggleMouseLock();
         }
 
-        if (Gameplay.GetMouseButtonDown(0) && !m_DragToLook)
+        if (dragToLook)
         {
-            m_DragToLook = true;
-            SetMouseLock(true);
-        }
-        else if (Gameplay.GetMouseButtonUp(0) && m_DragToLook)
-        {
-            m_DragToLook = false;
-            SetMouseLock(false);
+            if (Gameplay.GetMouseButtonDown(1) && !m_DragToLookActive)
+            {
+                m_DragToLookActive = true;
+                SetMouseLock(true);
+            }
+            else if (Gameplay.GetMouseButtonUp(1) && m_DragToLookActive)
+            {
+                m_DragToLookActive = false;
+                SetMouseLock(false);
+            }
         }
     }
 

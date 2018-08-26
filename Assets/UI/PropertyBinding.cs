@@ -45,7 +45,15 @@ public class PropertyBinding : MonoBehaviour
         }
         else
         {
-            m_TargetField.SetValue(targetObject, m_SourceField.GetValue(sourceObject));
+            if (m_SourceField == null || m_TargetField == null)
+            {
+                m_SourceField = sourceObject.GetType().GetField(sourceProperty);
+                m_TargetField = targetObject.GetType().GetField(targetProperty);
+            }
+            else
+            {
+                m_TargetField.SetValue(targetObject, m_SourceField.GetValue(sourceObject));
+            }
         }
 	}
 }

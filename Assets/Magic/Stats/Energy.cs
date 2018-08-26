@@ -157,12 +157,12 @@ public static class Energy //TODO organize/spearate into classes
     /// <summary>
     /// Default element, wherever needed
     /// </summary>
-    public static Element defaultElement { get { return EnergyGlobals.instance.DefaultElement; } }
+    public const Element defaultElement = Element.Raw;
 
     /// <summary>
     /// Default shape, wherever needed
     /// </summary>
-    public static Shape defaultShape { get { return EnergyGlobals.instance.DefaultShape; } }
+    public const Shape defaultShape = Shape.Sphere;
 
     /// <summary>
     /// Returns the definition of the specified energy element

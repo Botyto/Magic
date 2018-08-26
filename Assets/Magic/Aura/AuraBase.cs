@@ -127,10 +127,9 @@ public abstract class AuraBase : EnergyUser
     /// Last activateion time
     /// </summary>
     private float m_LastActivation = 0.0f;
-
-    protected override void Awake()
+    
+    protected virtual void OnEnable()
     {
-        base.Awake();
         cost = new DefaultAuraCost();
     }
 

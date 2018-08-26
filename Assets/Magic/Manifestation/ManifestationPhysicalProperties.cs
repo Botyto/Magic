@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
+[Serializable]
 public class ManifestationPhysicalProperties
 {
     //Fields that encode this state (must match with the manifestation)

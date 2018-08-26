@@ -21,25 +21,29 @@ public class UIStatusWatch : Dialog
     // Update is called once per frame
     void Update()
     {
-        StatusEffect effect;
-        if (unit == null || !unit.effects.TryGetValue(type, out effect))
+        if (unit == null)
         {
             Close();
+            return;
         }
-        else
+
+        var effect = unit.effects[(int)type];
+        if (effect.isActive)
         {
-            var info = Energy.GetStatusEffect(type);
-            var details = effect.intensity > 0 ? info.positive : info.negative;
-
-            m_Image.sprite = details.icon;
-            var iconMainColor = SpellWatcher.GetMostUsedColor(details.icon);
-            var textColor = SpellWatcher.GetOppositeLightnessColor(iconMainColor);
-
-            m_IntensityText.color = textColor;
-            m_IntensityText.text = effect.intensity.ToString();
-
-            m_ChargeProgress.max = Mathf.Max(m_ChargeProgress.max, effect.charge);
-            m_ChargeProgress.value = effect.charge;
+            return;
         }
+
+        var info = Energy.GetStatusEffect(type);
+        var details = effect.intensity > 0 ? info.positive : info.negative;
+
+        m_Image.sprite = details.icon;
+        var iconMainColor = SpellWatcher.GetMostUsedColor(details.icon);
+        var textColor = SpellWatcher.GetOppositeLightnessColor(iconMainColor);
+
+        m_IntensityText.color = textColor;
+        m_IntensityText.text = effect.intensity.ToString();
+
+        m_ChargeProgress.max = Mathf.Max(m_ChargeProgress.max, effect.charge);
+        m_ChargeProgress.value = effect.charge;
     }
 }

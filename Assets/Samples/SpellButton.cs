@@ -1,20 +1,41 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class SpellButton : MonoBehaviour
+public class SpellButton : MonoBehaviour, IPointerClickHandler
 {
     public Wizard wizard;
     public string id;
 
-	void Start ()
+    void OnRightClick()
     {
-        var btn = GetComponent<Button>();
-        btn.onClick.AddListener(HandleClick);
+        wizard.CancelSpell(id);
     }
-	
-	// Update is called once per frame
-	void HandleClick()
+
+    void OnLeftClick()
     {
-        wizard.CastSpell(id, null);
+        GameObject target = null;
+        var playerMovement = wizard.GetComponent<PlayerMovement>();
+        if (playerMovement != null)
+        {
+            target = playerMovement.selectedObject;
+        }
+
+        wizard.CastSpell(id, target);
 	}
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            SendMessage("OnLeftClick", SendMessageOptions.DontRequireReceiver);
+        }
+        else if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            SendMessage("OnRightClick", SendMessageOptions.DontRequireReceiver);
+        }
+        else if (eventData.button == PointerEventData.InputButton.Middle)
+        {
+            SendMessage("OnMiddleClick", SendMessageOptions.DontRequireReceiver);
+        }
+    }
 }

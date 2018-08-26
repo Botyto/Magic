@@ -22,7 +22,8 @@ public class EnergyController : EnergyUser
     /// <summary>
     /// Used for calculating action costs
     /// </summary>
-    public IEnergyCost cost { get; private set; }
+    [HideInInspector]
+    public IEnergyCost  cost;
 
     #endregion
     
@@ -843,10 +844,9 @@ public class EnergyController : EnergyUser
     #endregion
 
     #region Unity internals
-
-    protected override void Awake()
+    
+    protected virtual void OnEnable()
     {
-        base.Awake();
         cost = new DefaultEnergyCost();
     }
 

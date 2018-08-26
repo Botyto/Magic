@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 /// <summary>
@@ -31,14 +31,14 @@ public class Unit : MonoBehaviour
     /// <summary>
     /// Status effects applied to this unit
     /// </summary>
-    [SerializeField]
-    public Dictionary<StatusEffect.Type, StatusEffect> effects; //TODO redesign (make serializable)
-    private Dictionary<StatusEffect.Type, float> m_EffectDischargeAccumulator;
+    public StatusEffect[] effects; //TODO think about forward compatibility
+    private float[] m_EffectDischargeAccumulator;
 
     private void Awake()
     {
-        m_EffectDischargeAccumulator = new Dictionary<StatusEffect.Type, float>();
-        effects = new Dictionary<StatusEffect.Type, StatusEffect>();
+        var n = Enum.GetValues(typeof(StatusEffect.Type)).Length;
+        effects = new StatusEffect[n];
+        m_EffectDischargeAccumulator = new float[n];
     }
 
     /// <summary>
@@ -92,14 +92,7 @@ public class Unit : MonoBehaviour
     /// </summary>
     public int GetStatusEffect(StatusEffect.Type effectType)
     {
-        StatusEffect effect;
-        //Effect not applied
-        if (!effects.TryGetValue(effectType, out effect))
-        {
-            return 0;
-        }
-
-        return effect.intensity;
+        return effects[(int)effectType].intensity;
     }
 
     /// <summary>
@@ -112,23 +105,16 @@ public class Unit : MonoBehaviour
         { 
             return;
         }
-
-        StatusEffect effect;
-        //Adding the effect now
-        if (!effects.TryGetValue(effectType, out effect))
-        {
-            effect.type = effectType;
-        }
-
-        effect.intensity = intensity; //TODO fix intensity recalculation to interpolate towards provided intensity depending on amounts (immitate thermodynamics?)
-        effect.charge += amount; //TODO fix charge recalculation to depend on intensity sign difference (immitate thermodynamics?)
-        effects[effectType] = effect;
+        
+        effects[(int)effectType].intensity = intensity; //TODO fix intensity recalculation to interpolate towards provided intensity depending on amounts (immitate thermodynamics?)
+        effects[(int)effectType].charge += amount; //TODO fix charge recalculation to depend on intensity sign difference (immitate thermodynamics?)
+        effects[(int)effectType].type = effectType;
     }
 
     /// <summary>
     /// Discharge a status effect for this unit
     /// </summary>
-    public void StatusEffectDischarge(StatusEffect.Type effectType, int amount, bool negativeOnly)
+    public void StatusEffectDischarge(int effectIdx, int amount, bool negativeOnly)
     {
         Debug.Assert(amount >= 0);
 
@@ -138,28 +124,26 @@ public class Unit : MonoBehaviour
             return;
         }
         
-        StatusEffect effect;
         //Effect not applied
-        if (!effects.TryGetValue(effectType, out effect))
+        if (!effects[effectIdx].isActive)
         {
             return;
         }
         
         //Non-negative effect
-        if (negativeOnly && effect.intensity > 0)
+        if (negativeOnly && effects[effectIdx].intensity > 0)
         {
             return;
         }
         
         //Effect fully discharged
-        if (amount >= effect.charge)
+        if (amount >= effects[effectIdx].charge)
         {
-            effects.Remove(effectType);
+            effects[effectIdx].intensity = 0;
             return;
         }
-        
-        effect.charge -= amount;
-        effects[effectType] = effect;
+
+        effects[effectIdx].charge -= amount;
     }
 
     public Unit FindClosestEnemy(float maxDistance = float.PositiveInfinity)
@@ -174,19 +158,20 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        var keys = new StatusEffect.Type[effects.Keys.Count];
-        effects.Keys.CopyTo(keys, 0); //copy them, because they might change
-        foreach (var effectType in keys)
+        var delta = Time.deltaTime * 10.0f;
+
+        int n = m_EffectDischargeAccumulator.Length;
+        for (int i = 0; i < n; ++i)
         {
-            var amount = m_EffectDischargeAccumulator.TryGetValue(effectType, 0.0f);
-            amount += Time.deltaTime * 10.0f;
-            if ((int)amount >= 1)
+            var amount = m_EffectDischargeAccumulator[i];
+            amount += delta;
+            if ((int)amount > 1)
             {
-                StatusEffectDischarge(effectType, (int)amount, false);
+                StatusEffectDischarge(i, (int)amount, false);
                 amount -= (int)amount;
             }
 
-            m_EffectDischargeAccumulator[effectType] = amount;
+            m_EffectDischargeAccumulator[i] = amount;
         }
     }
 
@@ -196,24 +181,17 @@ public class Unit : MonoBehaviour
     /// </summary>
     public void ApplyForce(Vector3 force, ForceMode mode)
     {
-        StatusEffect speed;
-        if (effects.TryGetValue(StatusEffect.Type.Speed, out speed))
+        var speed = effects[(int)StatusEffect.Type.Speed];
+        if (speed.intensity < 0)
         {
-            if (speed.intensity < 0)
-            {
-                force /= -speed.intensity / 10.0f;
-            }
-            else if (speed.intensity > 0)
-            {
-                force *= speed.intensity / 10.0f;
-            }
+            force /= -speed.intensity / 10.0f;
+        }
+        else if (speed.intensity > 0)
+        {
+            force *= speed.intensity / 10.0f;
+        }
 
-            GetComponent<Rigidbody>().AddForce(force, mode);
-        }
-        else
-        {
-            GetComponent<Rigidbody>().AddForce(force, mode);
-        }
+        GetComponent<Rigidbody>().AddForce(force, mode);
     }
 
     private void OnCollisionEnter(Collision collision)

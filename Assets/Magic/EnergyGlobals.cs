@@ -7,34 +7,21 @@ public class EnergyGlobals : MonoBehaviour
     #region Members
 
     /// <summary>
-    /// Element with which all manifestations are initialized
-    /// </summary>
-    public Energy.Element DefaultElement;
-
-    /// <summary>
-    /// Shape in which all manifestations are initialized
-    /// </summary>
-    public Energy.Shape DefaultShape;
-
-    /// <summary>
     /// List of elements
     /// </summary>
     [HideInInspector]
-    [SerializeField]
     private EnergyElement[] m_Elements;
 
     /// <summary>
     /// List of shapes
     /// </summary>
     [HideInInspector]
-    [SerializeField]
     private EnergyShape[] m_Shapes;
 
     /// <summary>
     /// List of status effects
     /// </summary>
     [HideInInspector]
-    [SerializeField]
     private StatusEffectInfo[] m_StatusEffects;
 
     /// <summary>
@@ -47,10 +34,7 @@ public class EnergyGlobals : MonoBehaviour
     private void Awake()
     {
         ScriptSpellDatabase.DoNothing();
-
-        Debug.AssertFormat(instance == null, "EnergyGlobals must be singleton!");
-        instance = this;
-
+        
         { //Load elements
             var elements = Enum.GetValues(typeof(Energy.Element)).Cast<Energy.Element>().ToArray();
             var n = elements.Length;
@@ -83,6 +67,12 @@ public class EnergyGlobals : MonoBehaviour
                 m_StatusEffects[i] = Resources.Load<StatusEffectInfo>("StatusEffects/" + effect);
             }
         }
+    }
+
+    private void OnEnable()
+    {
+        Debug.AssertFormat(instance == null, "EnergyGlobals must be singleton!");
+        instance = this;
     }
 
     /// <summary>

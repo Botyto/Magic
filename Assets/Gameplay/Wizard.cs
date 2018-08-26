@@ -108,6 +108,26 @@ public class Wizard : MonoBehaviour
         }
     }
 
+    public bool CancelSpell(string id)
+    {
+        //Try finding spell descriptor
+        var descriptor = FindSpellDescriptor(id);
+        if (descriptor == null)
+        {
+            return false;
+        }
+
+        //Spell already executing
+        var spell = GetComponent(descriptor.spellType) as SpellComponent;
+        if (spell == null)
+        {
+            return false;
+        }
+
+        Gameplay.Destroy(spell);
+        return true;
+    }
+
     public SpellComponent CastSpell(string id, GameObject target)
     {
         //Try finding spell descriptor

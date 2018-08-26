@@ -8,17 +8,22 @@ public class UIWizardStats : Dialog
     public Dictionary<EnergyManifestation, UIFocusStats> focusWatchers;
     public Dictionary<StatusEffect.Type, UIStatusWatch> statusWatchers;
 
-    public void Start()
+    public void Awake()
     {
         if (wizard == null)
         {
             Close();
-            return;
         }
+    }
 
+    public void OnEnable()
+    {
         focusWatchers = new Dictionary<EnergyManifestation, UIFocusStats>();
         statusWatchers = new Dictionary<StatusEffect.Type, UIStatusWatch>();
+    }
 
+    public void Start()
+    {
         FindRecursive<Text>("Name").text = wizard.name;
 
         var unit = wizard.GetComponent<Unit>();
@@ -73,14 +78,17 @@ public class UIWizardStats : Dialog
         var effects = unit.effects;
         foreach (var effect in effects)
         {
-            var watch = statusWatchers.TryGetValue(effect.Key, null);
-            if (watch == null)
+            if (effect.isActive)
             {
-                //add watch
-                watch = Spawn<UIStatusWatch>(auras);
-                watch.unit = unit;
-                watch.type = effect.Key;
-                statusWatchers[effect.Key] = watch;
+                var watch = statusWatchers.TryGetValue(effect.type, null);
+                if (watch == null)
+                {
+                    //add watch
+                    watch = Spawn<UIStatusWatch>(auras);
+                    watch.unit = unit;
+                    watch.type = effect.type;
+                    statusWatchers[effect.type] = watch;
+                }
             }
         }
     }

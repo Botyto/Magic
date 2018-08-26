@@ -42,4 +42,9 @@ public struct StatusEffect
     /// Carge of the effect (decreases over time)
     /// </summary>
     public int charge;
+
+    /// <summary>
+    /// Returns if the status effect is currently active and effective
+    /// </summary>
+    public bool isActive { get { return intensity != 0; } }
 }
