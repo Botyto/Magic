@@ -5,6 +5,7 @@ using UnityEngine;
 /// Unit component
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Selectable))]
 public class Unit : MonoBehaviour
 {
     /// <summary>

@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 54942307734732880}
   - component: {fileID: 136876038339262756}
   - component: {fileID: 114827429226207870}
+  - component: {fileID: 114973766085089130}
   m_Layer: 0
   m_Name: Potion
   m_TagString: Untagged
@@ -86,6 +87,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 6b051bc964265438b9edf8fb79c57ccb, type: 2}
   m_StaticBatchInfo:
@@ -138,6 +140,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fea2e37bca01d4a418ad95b0617c6f40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114973766085089130
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1400471079796922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e15dc1ee9a9b52443896a401fd4f7d14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!136 &136876038339262756

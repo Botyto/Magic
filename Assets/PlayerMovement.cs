@@ -133,11 +133,23 @@ public class PlayerMovement : MonoBehaviour
 
     #region Camera mode
 
+    private bool m_DragToLook = false;
     void HandleToggleMouseLock()
     {
-        if (Gameplay.GetKeyDown(KeyCode.Escape))
+        if (Gameplay.GetKeyDown(KeyCode.Escape) || Gameplay.GetMouseButtonDown(1))
         {
             ToggleMouseLock();
+        }
+
+        if (Gameplay.GetMouseButtonDown(0) && !m_DragToLook)
+        {
+            m_DragToLook = true;
+            SetMouseLock(true);
+        }
+        else if (Gameplay.GetMouseButtonUp(0) && m_DragToLook)
+        {
+            m_DragToLook = false;
+            SetMouseLock(false);
         }
     }
 
@@ -165,7 +177,7 @@ public class PlayerMovement : MonoBehaviour
     void TrySelectObject()
     {
         RaycastHit hitInfo;
-        Physics.Raycast(targetCamera.transform.position, targetCamera.transform.rotation.eulerAngles, out hitInfo);
+        Physics.Raycast(targetCamera.transform.position, targetCamera.transform.TransformDirection(Vector3.forward), out hitInfo);
         if (hitInfo.distance < 100)
         {
             selectedObject = hitInfo.collider != null ? hitInfo.collider.gameObject : null;
