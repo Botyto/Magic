@@ -326,9 +326,13 @@ public class SpellComponentBase : MonoBehaviour
                 var manifestation = m_Focus[handle];
                 if (manifestation.transform.SqrDistanceTo(controller.transform) > sqControlRange)
                 {
+                    if (manifestation.holder.ResolveOwner() == wizard)
+                    {
+                        manifestation.focusesCount = 0;
+                        manifestation.holder.SetOwner(null, true);
+                    }
+
                     --m_ActiveFocusNum;
-                    manifestation.focusesCount = 0;
-                    manifestation.holder.SetOwner(null, true);
                     m_Focus[handle] = null;
                     OnFocusLost(handle);
                 }
