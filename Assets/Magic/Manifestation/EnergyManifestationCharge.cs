@@ -44,6 +44,11 @@ public partial class EnergyManifestation
     /// </summary>
     public Energy.Shape futureShape = Energy.defaultShape;
 
+    /// <summary>
+    /// Number of spells currently focusing on this energy
+    /// </summary>
+    public int focusesCount = 0;
+
     #endregion
 
     #region Unity interface & internals

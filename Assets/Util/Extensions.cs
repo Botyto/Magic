@@ -42,6 +42,16 @@ public static class Extensions
         return Vector3.SqrMagnitude(self - other);
     }
 
+    public static float DistanceTo(this Transform self, Transform other)
+    {
+        return Vector3.Distance(self.position, other.position);
+    }
+
+    public static float SqrDistanceTo(this Transform self, Transform other)
+    {
+        return Vector3.SqrMagnitude(self.position - other.position);
+    }
+
     public static Vector3 SetLength(this Vector3 self, float newLength)
     {
         return self.normalized * newLength;

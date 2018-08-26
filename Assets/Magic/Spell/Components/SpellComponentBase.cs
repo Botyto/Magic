@@ -113,6 +113,10 @@ public class SpellComponentBase : MonoBehaviour
         }
 
         m_Focus.Add(manifestation);
+        if (manifestation.holder.ResolveOwner() == wizard)
+        {
+            manifestation.focusesCount++;
+        }
         m_ActiveFocusNum++;
         return m_Focus.Count - 1;
     }
@@ -127,7 +131,15 @@ public class SpellComponentBase : MonoBehaviour
             return false;
         }
 
-        manifestation.holder.SetOwner(null, true);
+        if (manifestation.holder.ResolveOwner() == wizard)
+        {
+            manifestation.focusesCount--;
+            if (manifestation.focusesCount == 0)
+            {
+                manifestation.holder.SetOwner(null, true);
+            }
+        }
+
         return m_Focus.Remove(manifestation);
     }
 
@@ -168,10 +180,10 @@ public class SpellComponentBase : MonoBehaviour
     {
         foreach (var manif in m_Focus)
         {
-            if (manif != null && manif.gameObject != null) //Check validity
-            {
-                manif.Dispose();
-            }
+            if (manif == null || manif.gameObject == null) { continue; } //Check validity
+            if (manif.holder.ResolveOwner() != wizard) { continue; } //Check ownership
+
+            manif.Dispose();
         }
 
         m_ActiveFocusNum = 0;
@@ -183,11 +195,15 @@ public class SpellComponentBase : MonoBehaviour
     /// </summary>
     public void DisownAllFocused()
     {
-        foreach (var manif in m_Focus)
+        foreach (var manifestation in m_Focus)
         {
-            if (manif != null && manif.gameObject != null) //Check validity
+            if (manifestation == null || manifestation.gameObject == null) { continue; } //Check validity
+            if (manifestation.holder.ResolveOwner() != wizard) { continue; } //Check ownership
+
+            manifestation.focusesCount--;
+            if (manifestation.focusesCount == 0)
             {
-                manif.holder.SetOwner(null, true);
+                manifestation.holder.SetOwner(null, true);
             }
         }
 
@@ -307,11 +323,12 @@ public class SpellComponentBase : MonoBehaviour
             else
             {
                 //Focused manifestation hasn't disappeared - check if still within range
-                var manif = m_Focus[handle];
-                if (manif.transform.position.SqrDistanceTo(controller.transform.position) > sqControlRange)
+                var manifestation = m_Focus[handle];
+                if (manifestation.transform.SqrDistanceTo(controller.transform) > sqControlRange)
                 {
                     --m_ActiveFocusNum;
-                    manif.holder.SetOwner(null, true);
+                    manifestation.focusesCount = 0;
+                    manifestation.holder.SetOwner(null, true);
                     m_Focus[handle] = null;
                     OnFocusLost(handle);
                 }
