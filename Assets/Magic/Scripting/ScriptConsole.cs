@@ -35,21 +35,25 @@ public class ScriptConsole : MonoBehaviour
 
         m_Input = GetComponent<InputField>();
         m_Image = GetComponent<Image>();
-        m_PredictionsControl = transform.Find("Predictions") as RectTransform;
+        
+        SetActive(false);
+    }
+
+    public void Start()
+    {
+        m_PredictionsControl = transform.FindRecursive("Predictions") as RectTransform;
         if (m_PredictionsControl != null)
         {
-            m_PredictionsContainer = m_PredictionsControl.Find("Viewport").Find("Content") as RectTransform;
+            m_PredictionsContainer = m_PredictionsControl.FindRecursive("Viewport").Find("Content") as RectTransform;
         }
         if (transform.parent != null)
         {
-            var logObject = transform.parent.Find("UIConsoleLog");
+            var logObject = transform.parent.FindRecursive("UIConsoleLog");
             if (logObject != null)
             {
                 m_Log = logObject.GetComponent<Text>();
             }
         }
-
-        SetActive(false);
     }
 
     public void OnGUI()

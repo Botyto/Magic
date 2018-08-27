@@ -126,6 +126,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMouseZoom()
     {
+        if (!mouseLocked) { return; }
+
         var mouseScroll = Gameplay.GetAxis("Mouse ScrollWheel");
         cameraDistance -= mouseScroll * zoomSpeed;
     }
