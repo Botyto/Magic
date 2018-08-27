@@ -20,7 +20,6 @@ public class Wizard : MonoBehaviour
     /// <summary>
     /// In case 'energyRegenerationSpeed' is too small to add at least 1 energy per frame, this accumulator fixes that case
     /// </summary>
-    [SerializeField]
     [HideInInspector]
     private float m_EnergyRegenerationAccumulator = 0.0f;
 
@@ -171,16 +170,23 @@ public class Wizard : MonoBehaviour
             return null;
         }
     }
-
-    public void InterruptSpell(string id)
+    
+    public bool IsSpellActive(string id)
     {
-        var desc = FindSpellDescriptor(id);
-        if (desc == null)
+        //Try finding spell descriptor
+        var descriptor = FindSpellDescriptor(id);
+        if (descriptor == null)
         {
-            return;
+            return false;
         }
 
-        var comp = GetComponent(desc.spellType) as SpellComponent;
-        comp.Cancel();
+        //Spell already executing
+        var spell = GetComponent(descriptor.spellType) as SpellComponent;
+        if (spell == null)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

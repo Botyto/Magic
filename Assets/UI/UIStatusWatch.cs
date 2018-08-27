@@ -17,8 +17,7 @@ public class UIStatusWatch : Dialog
         m_ChargeProgress = FindRecursive<ProgressBar>("ChargeProgress");
         Update();
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         if (unit == null)
@@ -28,8 +27,9 @@ public class UIStatusWatch : Dialog
         }
 
         var effect = unit.effects[(int)type];
-        if (effect.isActive)
+        if (!effect.isActive)
         {
+            Close();
             return;
         }
 

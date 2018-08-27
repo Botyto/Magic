@@ -33,6 +33,11 @@ public class PropertyBinding : MonoBehaviour
 
     public void Rebind()
     {
+        if (sourceObject == null || targetObject == null)
+        {
+            return;
+        }
+
         m_SourceField = sourceObject.GetType().GetField(sourceProperty);
         m_TargetField = targetObject.GetType().GetField(targetProperty);
     }
@@ -42,6 +47,7 @@ public class PropertyBinding : MonoBehaviour
         if (sourceObject == null || targetObject == null)
         {
             Destroy(this);
+            return;
         }
         else
         {

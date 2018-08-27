@@ -19,10 +19,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4028192970800912}
+  - component: {fileID: 114973766085089130}
+  - component: {fileID: 114827429226207870}
   - component: {fileID: 54942307734732880}
   - component: {fileID: 136876038339262756}
-  - component: {fileID: 114827429226207870}
-  - component: {fileID: 114973766085089130}
   m_Layer: 0
   m_Name: Potion
   m_TagString: Untagged

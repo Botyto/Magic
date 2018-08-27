@@ -306,6 +306,12 @@ public partial class EnergyManifestation
                 return;
             }
         }
+
+        //Apply force to other object
+        if (collider.isTrigger && info.rigidbody != null && !info.rigidbody.isKinematic)
+        {
+            info.rigidbody.AddForce(rigidbody.velocity * rigidbody.mass, ForceMode.Impulse);
+        }
         
         if (info.unit != null)
         {
