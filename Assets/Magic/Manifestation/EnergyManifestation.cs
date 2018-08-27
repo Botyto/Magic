@@ -25,7 +25,7 @@ public partial class EnergyManifestation : EnergyUser
     {
         base.Awake();
 
-        //_Unity_Awake();
+        _Unity_Awake();
 
         _Physics_Awake();
         //_Manipulation_Awake();
@@ -80,6 +80,11 @@ public partial class EnergyManifestation : EnergyUser
 #if DEBUG
     public ManifestationDebugOverview __dbgOverview { get { return new ManifestationDebugOverview(this); } }
 #endif
+
+    protected void _Unity_Awake()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Manifestation");
+    }
 }
 
 #if DEBUG

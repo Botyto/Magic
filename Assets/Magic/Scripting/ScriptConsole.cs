@@ -29,7 +29,7 @@ public class ScriptConsole : MonoBehaviour
 
     public bool isActive { get { return m_Image.enabled; } }
 
-    public void Start()
+    public void OnEnable()
     {
         environment = new ScriptEnvironment();
 

@@ -24,6 +24,11 @@ public class EnergyController : EnergyUser
     /// </summary>
     [HideInInspector]
     public IEnergyCost  cost;
+    
+    /// <summary>
+    /// Line of sight checks is done only for these layers
+    /// </summary>
+    public LayerMask lineOfSightLayerMask;
 
     #endregion
     
@@ -58,13 +63,20 @@ public class EnergyController : EnergyUser
     /// </summary>
     public bool IsWithinRange(Vector3 absolutePosition)
     {
-        if (transform.position.SqrDistanceTo(absolutePosition) > controlRange * controlRange)
+        var delta = absolutePosition - transform.position;
+        
+        //Check distance
+        var sqrDeltaLength = delta.sqrMagnitude;
+        var sqrControlRange = controlRange * controlRange;
+        if (sqrDeltaLength > sqrControlRange)
         {
             return false;
         }
 
+        //Check line of sight
         RaycastHit hitInfo;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitInfo, controlRange, ~LayerMask.NameToLayer("Unit")))
+        var hit = Physics.Raycast(transform.position, delta, out hitInfo, controlRange, lineOfSightLayerMask);
+        if (hit && sqrDeltaLength > sqrControlRange)
         {
             return false;
         }
@@ -81,8 +93,10 @@ public class EnergyController : EnergyUser
     /// </summary>
     public EnergyActionResult ManifestEnergy(int amount, Vector3 relativePosition, out EnergyManifestation manifestation)
     {
+        var absolutePosition = transform.TransformPoint(relativePosition);
+
         //Check range
-        if (!IsWithinRange(transform.position + relativePosition))
+        if (!IsWithinRange(absolutePosition))
         {
             manifestation = default(EnergyManifestation);
             return EnergyActionResult.OutsideRange;
@@ -104,7 +118,7 @@ public class EnergyController : EnergyUser
             return EnergyActionResult.SubactionFailed;
         }
 
-        newObj.transform.position = transform.TransformPoint(relativePosition);
+        newObj.transform.position = absolutePosition;
         newObj.transform.rotation = transform.rotation;
         
         manifestation = newObj.AddComponent<EnergyManifestation>();
@@ -802,8 +816,10 @@ public class EnergyController : EnergyUser
     /// </summary>
     public EnergyActionResult ProbePoint(Vector3 relatitvePosition, out EnergyProbeResult probeResult)
     {
+        var absolutePosition = transform.TransformPoint(relatitvePosition);
+
         //Check range
-        if (!IsWithinRange(transform.position + relatitvePosition))
+        if (!IsWithinRange(absolutePosition))
         {
             probeResult = default(EnergyProbeResult);
             return EnergyActionResult.OutsideRange;
@@ -856,6 +872,12 @@ public class EnergyController : EnergyUser
 
     #region Unity internals
     
+    protected override void Awake()
+    {
+        base.Awake();
+        lineOfSightLayerMask.value = ~LayerMask.NameToLayer("Unit") & ~LayerMask.NameToLayer("Manifestation");
+    }
+
     protected virtual void OnEnable()
     {
         cost = new DefaultEnergyCost();

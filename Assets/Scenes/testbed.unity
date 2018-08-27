@@ -843,6 +843,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holder: {fileID: 0}
   controlRange: 50
+  lineOfSightLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &741776494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1420,6 +1423,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holder: {fileID: 0}
   controlRange: 50
+  lineOfSightLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &1040189970
 MonoBehaviour:
   m_ObjectHideFlags: 0
