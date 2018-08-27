@@ -31,7 +31,16 @@ public class LogManager : MonoBehaviour
 
         UpdateLogText();
     }
-    
+
+    private void Update()
+    {
+        if (Gameplay.GetKeyDown(KeyCode.F9))
+        {
+            m_Log.Clear();
+            UpdateLogText();
+        }
+    }
+
     public static void LogMessage(string logName, string message, params object[] args)
     {
         var allManagers = FindObjectsOfType<LogManager>();

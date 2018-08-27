@@ -20,14 +20,25 @@ if __ADDITIONAL_CODE then
 end
 
 FirstLoad = false
-setmetatable(_G, {
+local _G_meta = {
 	__index = function(t, key)
 		errorf("Undefined global '%s'", tostring(key))
 	end,
 	__newindex = function(t, key, value)
 		errorf("Assigning undefined global '%s'", tostring(key))
 	end,
-})
+}
+if config.autoLookupObject then
+	_G_meta.__index = function(t, key)
+		local go = GO(key)
+		if go then
+			return go
+		end
+		errorf("Undefined global '%s'", tostring(key))
+	end
+end
+
+setmetatable(_G, _G_meta)
 
 --Prepare for execution
 BuildClasses()

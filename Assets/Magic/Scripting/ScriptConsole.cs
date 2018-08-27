@@ -31,8 +31,8 @@ public class ScriptConsole : MonoBehaviour
 
     public void OnEnable()
     {
-        environment = new ScriptEnvironment();
-
+        environment = new ScriptEnvironment("config.autoLookupObject = true");
+        
         m_Input = GetComponent<InputField>();
         m_Image = GetComponent<Image>();
         
