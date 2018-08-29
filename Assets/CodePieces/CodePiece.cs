@@ -28,10 +28,25 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     [HideInInspector]
     public ElementType[] elementTypes;
 
+    [HideInInspector]
+    public CodeSlot bottomSlot;
+
+    /// <summary>
+    /// Initialize elements.
+    /// </summary>
+    protected virtual void InitElements()
+    {
+        //Initialize bottom slot
+        var bottomSlotObj = new GameObject(name + "BottomSlot");
+        bottomSlotObj.transform.SetParent(transform);
+        bottomSlotObj.transform.SetAsLastSibling();
+        bottomSlot = bottomSlotObj.AddComponent<CodeSlot>();
+    }
+
     /// <summary>
     /// Find all child objects and resolve them as elements.
     /// </summary>
-    private void ResolveElements()
+    protected void ResolveElements()
     {
         var lastType = ElementType.None;
 
@@ -49,7 +64,7 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             if (slot != null)
             {
                 elementTypes[idx] = ElementType.Slot;
-                elem.sizeDelta = slot.hasAttachment ? slot.attachedPiece.sizeDelta : elem.sizeDelta;
+                elem.sizeDelta = slot.hasAttachment ? (slot.attachedPiece.transform as RectTransform).sizeDelta : elem.sizeDelta;
                 slot.index = idx;
             }
             else
@@ -86,11 +101,11 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     /// </summary>
     [HideInInspector]
     public bool isDragged;
-    
+
     /// <summary>
     /// Called when dragging begins.
     /// </summary>
-    public void OnBeginDrag(PointerEventData eventData)
+    public virtual void OnBeginDrag(PointerEventData eventData)
     {
         isDragged = true;
 
@@ -110,7 +125,7 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     /// <summary>
     /// Child while dragging.
     /// </summary>
-    public void OnDrag(PointerEventData eventData)
+    public virtual void OnDrag(PointerEventData eventData)
     {
         transform.position += new Vector3(eventData.delta.x, eventData.delta.y, 0.0f);
 
@@ -135,7 +150,7 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     /// <summary>
     /// Called when dragging ends.
     /// </summary>
-    public void OnEndDrag(PointerEventData eventData)
+    public virtual void OnEndDrag(PointerEventData eventData)
     {
         isDragged = false;
         if (!TryAttach())
@@ -384,8 +399,41 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     /// <summary>
     /// Object that holds all visual elements.
     /// </summary>
-    private CodeVisuals m_Visuals;
+    protected CodeVisuals m_Visuals;
 
+    /// <summary>
+    /// Initialize visuals.
+    /// </summary>
+    protected virtual void InitVisuals()
+    {
+        //initialize visuals object
+        var visualsObj = new GameObject(name + "Visuals");
+        visualsObj.transform.SetParent(transform);
+        visualsObj.transform.SetAsFirstSibling();
+        m_Visuals = visualsObj.AddComponent<CodeVisuals>();
+    }
+
+    /// <summary>
+    /// Clear all visual objects and create new ones.
+    /// Also reposition content and slots.
+    /// </summary>
+    protected void RebuildVisuals()
+    {
+        m_Visuals.RebuildVisuals();
+        
+        //Rebuild visuals for parent code piece
+        if (parentCode != null && parentCode != this)
+        {
+            //First adjust the slot size
+            var slotRectTransform = parentCode.elements[slotIndex].transform as RectTransform;
+            var rectTransform = transform as RectTransform;
+            slotRectTransform.sizeDelta = rectTransform.sizeDelta;
+
+            //Then adjust everything in the parent
+            parentCode.RebuildVisuals();
+        }
+    }
+    
     /// <summary>
     /// Rebuild visuals when a child has been added.
     /// </summary>
@@ -402,57 +450,28 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         RebuildVisuals();
     }
 
-    /// <summary>
-    /// Clear all visual objects and create new ones.
-    /// Also reposition content and slots.
-    /// </summary>
-    private void RebuildVisuals()
-    {
-        m_Visuals.RebuildVisuals();
-        
-        //Rebuild visuals for parent code piece
-        if (parentCode != null)
-        {
-            //First adjust the slot size
-            var slotRectTransform = parentCode.elements[slotIndex].transform as RectTransform;
-            var rectTransform = transform as RectTransform;
-            slotRectTransform.sizeDelta = rectTransform.sizeDelta;
-
-            //Then adjust everything in the parent
-            parentCode.RebuildVisuals();
-        }
-    }
-    
     #endregion
 
     #region Unity Interface
 
-    void Awake()
+    private void Awake()
     {
         Debug.Assert(transform.parent != null, "Puzzle piece without a parent");
         var vec_0_1 = new Vector2(0, 1);
 
-        //Initialize bottom slot
-        var bottomSlot = new GameObject(name + "BottomSlot");
-        bottomSlot.transform.SetParent(transform);
-        bottomSlot.transform.SetAsLastSibling();
-        bottomSlot.AddComponent<CodeSlot>();
+        InitElements();
         ResolveElements();
-
-        //initialize visuals object
-        var visualsObj = new GameObject(name + "Visuals");
-        visualsObj.transform.SetParent(transform);
-        visualsObj.transform.SetAsFirstSibling();
-        m_Visuals = visualsObj.AddComponent<CodeVisuals>();
+        InitVisuals();
         RebuildVisuals();
 
+        //setup own rect transform
         var rectTransform = transform as RectTransform;
         rectTransform.anchorMin = vec_0_1;
         rectTransform.anchorMax = vec_0_1;
         rectTransform.pivot = vec_0_1;
     }
 
-    void Start()
+    protected virtual void Start()
     {
         //Attach to parent
         if (slotIndex != -1)

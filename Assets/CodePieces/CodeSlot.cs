@@ -16,7 +16,7 @@ public class CodeSlot : MonoBehaviour
     /// <summary>
     /// The piece attached to this slot
     /// </summary>
-    public RectTransform attachedPiece { get { return transform.GetChild(0) as RectTransform; } }
+    public CodePiece attachedPiece { get { return hasAttachment ? transform.GetChild(0).GetComponent<CodePiece>() : null; } }
 
     /// <summary>
     /// Owning piece

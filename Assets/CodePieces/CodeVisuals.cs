@@ -27,6 +27,8 @@ public class CodeVisuals : MonoBehaviour
 
     #region Building
 
+    public bool isSeparatePiece = true; //TODO take into account when building visuals in CreateExtended() and CreateNarrow()
+
     private enum VPos { Top, Middle, Bottom }
 
     private Vector2 BuildComplex()
@@ -35,8 +37,10 @@ public class CodeVisuals : MonoBehaviour
         var elementTypes = m_Piece.elementTypes;
         var elementsCount = elements.Length;
 
+        var iMax = elementsCount + ((m_Piece.bottomSlot != null) ? -1 : 0);
+
         int first = 0;
-        int last = (elementsCount - 1) - 1; //-1 to avoid messing with the bottom slot
+        int last = iMax - 1;
 
         //When there are extended parts, narrow parts above/below will compensate for it
         var topCompensation = false;
@@ -44,7 +48,7 @@ public class CodeVisuals : MonoBehaviour
 
         var totalSize = Vector2.zero;
         var currentY = 0.0f;
-        for (int i = 0; i < elementsCount - 1; ++i) //-1 to avoid messing with the bottom slot
+        for (int i = 0; i < iMax; ++i)
         {
             //Read element parameters
             var elem = elements[i];
@@ -272,11 +276,15 @@ public class CodeVisuals : MonoBehaviour
         var totalSize = m_Piece.isContentOnlyPiece ? BuildContentOnly() : BuildComplex();
         
         //Adjust bottom slot
-        var bottomSlot = m_Piece.elements[m_Piece.elements.Length - 1];
-        bottomSlot.localPosition = new Vector3(0.0f, -totalSize.y + bottomIndentHeight, 0.0f);
+        var bottomSlot = m_Piece.bottomSlot;
+        if (bottomSlot != null)
+        {
+            var bottomSlotRT = bottomSlot.transform as RectTransform;
+            bottomSlotRT.localPosition = new Vector3(0.0f, -totalSize.y + bottomIndentHeight, 0.0f);
 
-        //Adjust total size for bottom slot
-        totalSize.y += bottomSlot.GetComponent<CodeSlot>().hasAttachment ? (bottomSlot.sizeDelta.y - bottomIndentHeight) : 0;
+            //Adjust total size for bottom slot
+            totalSize.y += bottomSlot.hasAttachment ? (bottomSlotRT.sizeDelta.y - bottomIndentHeight) : 0;
+        }
 
         //Apply new total size
         rt.sizeDelta = totalSize;
