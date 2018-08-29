@@ -12,6 +12,11 @@
         //Don't detach
     }
 
+    public override void ThrowAway()
+    {
+        //Cannot be thrown away
+    }
+
     protected override void InitElements()
     {
         //No bottom slot :)

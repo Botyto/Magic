@@ -159,9 +159,14 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             var trashCan = FindObjectOfType<CodeTrashCan>();
             if (trashCan.transform.position.DistanceTo(transform.position) < trashCan.destroyDistance)
             {
-                Destroy(gameObject);
+                ThrowAway();
             }
         }
+    }
+
+    public virtual void ThrowAway()
+    {
+        Destroy(gameObject);
     }
 
     #endregion
