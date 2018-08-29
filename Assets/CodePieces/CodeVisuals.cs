@@ -27,10 +27,20 @@ public class CodeVisuals : MonoBehaviour
 
     #region Building
 
-    public bool isSeparatePiece = true; //TODO take into account when building visuals in CreateExtended() and CreateNarrow()
+    /// <summary>
+    /// Separate pieces are that cannot take part in a piece chain (see MainCodePiece)
+    /// </summary>
+    public bool isSeparatePiece = false;
 
+    /// <summary>
+    /// Part vertical position on the piece.
+    /// </summary>
     private enum VPos { Top, Middle, Bottom }
 
+    /// <summary>
+    /// Builds a complex piece (as opposed to BuildContentOnly()).
+    /// </summary>
+    /// <returns>Piece total size</returns>
     private Vector2 BuildComplex()
     {
         var elements = m_Piece.elements;
@@ -126,6 +136,9 @@ public class CodeVisuals : MonoBehaviour
         return totalSize;
     }
     
+    /// <summary>
+    /// Creates a narrow part for a complex piece.
+    /// </summary>
     private GameObject CreateNarrow(VPos vPos, float width, float height)
     {
         //Fix width/height
@@ -137,13 +150,13 @@ public class CodeVisuals : MonoBehaviour
         switch (vPos)
         {
             case VPos.Top:
-                sprite = Resources.Load<Sprite>("CodePieces/NarrowTop");
+                sprite = Resources.Load<Sprite>(isSeparatePiece ? "CodePieces/SepNarrowTop" : "CodePieces/NarrowTop");
                 break;
             case VPos.Middle:
                 sprite = Resources.Load<Sprite>("CodePieces/NarrowMiddle");
                 break;
             case VPos.Bottom:
-                sprite = Resources.Load<Sprite>("CodePieces/NarrowBottom");
+                sprite = Resources.Load<Sprite>(isSeparatePiece ? "CodePieces/SepNarrowBottom" : "CodePieces/NarrowBottom");
                 break;
         }
 
@@ -161,6 +174,9 @@ public class CodeVisuals : MonoBehaviour
         return go;
     }
 
+    /// <summary>
+    /// Creates an extended part for a complex piece.
+    /// </summary>
     private GameObject CreateExtended(VPos vPos, float width, float height)
     {
         //Resolve width and sprites of two halves
@@ -174,7 +190,7 @@ public class CodeVisuals : MonoBehaviour
         switch (vPos)
         {
             case VPos.Top:
-                leftSprite = Resources.Load<Sprite>("CodePieces/ExtendedLTop");
+                leftSprite = Resources.Load<Sprite>(isSeparatePiece ? "CodePieces/SepExtendedLTop" : "CodePieces/ExtendedLTop");
                 rightSprite = Resources.Load<Sprite>("CodePieces/ExtendedRTop");
                 break;
             case VPos.Middle:
@@ -182,7 +198,7 @@ public class CodeVisuals : MonoBehaviour
                 rightSprite = Resources.Load<Sprite>("CodePieces/ExtendedRMiddle");
                 break;
             case VPos.Bottom:
-                leftSprite = Resources.Load<Sprite>("CodePieces/ExtendedLBottom");
+                leftSprite = Resources.Load<Sprite>(isSeparatePiece ? "CodePieces/SepExtendedLBottom" : "CodePieces/ExtendedLBottom");
                 rightSprite = Resources.Load<Sprite>("CodePieces/ExtendedRBottom");
                 break;
         }
@@ -220,6 +236,10 @@ public class CodeVisuals : MonoBehaviour
         return go;
     }
 
+    /// <summary>
+    /// Builds a simple, content-only, piece.
+    /// </summary>
+    /// <returns>Piece total size.</returns>
     private Vector2 BuildContentOnly()
     {
         var elements = m_Piece.elements;
@@ -241,11 +261,14 @@ public class CodeVisuals : MonoBehaviour
 
         rt.localPosition = new Vector3(0, 0, 0);
         rt.sizeDelta = totalSize;
-        img.sprite = Resources.Load<Sprite>("CodePieces/ContentOnly");
+        img.sprite = Resources.Load<Sprite>(isSeparatePiece ? "CodePieces/SepContentOnly" : "CodePieces/ContentOnly");
         
         return totalSize;
     }
 
+    /// <summary>
+    /// For internal use.
+    /// </summary>
     private void SetupPart(GameObject part)
     {
         var img = part.GetComponent<Image>();
@@ -268,6 +291,10 @@ public class CodeVisuals : MonoBehaviour
     
     #region Public interface
 
+    /// <summary>
+    /// Clears all visual parts and builds new ones.
+    /// Also rearragnes piece elements
+    /// </summary>
     public void RebuildVisuals()
     {
         ClearVisuals();
@@ -291,6 +318,9 @@ public class CodeVisuals : MonoBehaviour
         (m_Piece.transform as RectTransform).sizeDelta = totalSize;
     }
 
+    /// <summary>
+    /// Clears all visual parts.
+    /// </summary>
     public void ClearVisuals()
     {
         foreach (Transform child in transform)
@@ -302,7 +332,7 @@ public class CodeVisuals : MonoBehaviour
     #endregion
 
     #region Unity
-
+    
     private CodePiece m_Piece;
     private RectTransform rt;
 
