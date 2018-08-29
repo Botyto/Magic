@@ -1,32 +1,19 @@
-﻿using UnityEngine;
-using UnityEngine.EventSystems;
-
-public class MainCodePiece : CodePiece
+﻿public class MainCodePiece : CodePiece
 {
-    #region Override dragging
+    #region Overrides
 
-    public override void OnBeginDrag(PointerEventData eventData)
+    public override void AttachTo(CodeSlot slot)
     {
-        isDragged = true;
-    }
-    
-    public override void OnDrag(PointerEventData eventData)
-    {
-        transform.position += new Vector3(eventData.delta.x, eventData.delta.y, 0.0f);
-    }
-    
-    public override void OnEndDrag(PointerEventData eventData)
-    {
-        isDragged = false;
+        //Don't attach
     }
 
-    #endregion
-
-    #region Override Setup
+    public override void DetachFromParent()
+    {
+        //Don't detach
+    }
 
     protected override void InitElements()
     {
-        parentCode = this; //TODO fix attaching this piece to another in reverse
         //No bottom slot :)
     }
 
@@ -34,6 +21,12 @@ public class MainCodePiece : CodePiece
     {
         base.InitVisuals();
         m_Visuals.isSeparatePiece = true;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        parentCode = this;
     }
 
     #endregion

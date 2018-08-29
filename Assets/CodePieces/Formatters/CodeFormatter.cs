@@ -140,7 +140,11 @@ public abstract class CodeFormatter : MonoBehaviour, IPointerEnterHandler, IPoin
 
         if (Time.time - m_MouseEnterTime > tooltipTime)
         {
-            ShowTooltip();
+            if (!GetComponent<CodePiece>().isDragged)
+            {
+                ShowTooltip();
+            }
+
             m_MouseOver = false;
         }
     }

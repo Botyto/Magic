@@ -197,7 +197,7 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     /// Attach this code piece to another.
     /// </summary>
     /// <param name="slot">Slot to attach to.</param>
-    public void AttachTo(CodeSlot slot)
+    public virtual void AttachTo(CodeSlot slot)
     {
         Debug.Assert(slot != null, "Piece must be attached to a valid slot", this);
         Debug.Assert(!isAttached, "Piece is already attached", this);
@@ -224,7 +224,7 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     /// <summary>
     /// Detach this code piece from it's parent.
     /// </summary>
-    public void DetachFromParent()
+    public virtual void DetachFromParent()
     {
         Debug.Assert(isAttached, "Piece is already detached", this);
 
@@ -261,39 +261,43 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             if (piece == this || piece.isDragged) { continue; }
 
             //Look for slots to attach to
-            int n = piece.elements.Length;
-            for (int i = 0; i < n; ++i)
+            if (!isAttached)
             {
-                if (piece.elementTypes[i] == ElementType.Content) { continue; }
-
-                var slot = piece.elements[i].GetComponent<CodeSlot>();
-                if (slot.hasAttachment) { continue; }
-
-                var distance = Vector3.Distance(transform.position, slot.transform.position);
-                if (distance < minSlotDistance)
+                var n = piece.elements.Length;
+                for (int i = 0; i < n; ++i)
                 {
-                    minSlotDistance = distance;
-                    closestSlot = slot.GetComponent<CodeSlot>();
+                    if (piece.elementTypes[i] == ElementType.Content) { continue; }
+
+                    var slot = piece.elements[i].GetComponent<CodeSlot>();
+                    if (slot.hasAttachment) { continue; }
+
+                    var distance = Vector3.Distance(transform.position, slot.transform.position);
+                    if (distance < minSlotDistance)
+                    {
+                        minSlotDistance = distance;
+                        closestSlot = slot.GetComponent<CodeSlot>();
+                    }
                 }
             }
 
-            if (piece.isAttached) { continue; }
-
             //Look to attach another piece to this one
-            n = elements.Length;
-            for (int i = 0; i < n; ++i)
+            if (!piece.isAttached)
             {
-                if (elementTypes[i] == ElementType.Content) { continue; }
-
-                var slot = elements[i].GetComponent<CodeSlot>();
-                if (slot.hasAttachment) { continue; }
-
-                var distance = Vector3.Distance(slot.transform.position, piece.transform.position);
-                if (distance < minPieceDistance)
+                var n = elements.Length;
+                for (int i = 0; i < n; ++i)
                 {
-                    minPieceDistance = distance;
-                    closestPiece = piece;
-                    candidateSlot = i;
+                    if (elementTypes[i] == ElementType.Content) { continue; }
+
+                    var slot = elements[i].GetComponent<CodeSlot>();
+                    if (slot.hasAttachment) { continue; }
+
+                    var distance = Vector3.Distance(slot.transform.position, piece.transform.position);
+                    if (distance < minPieceDistance)
+                    {
+                        minPieceDistance = distance;
+                        closestPiece = piece;
+                        candidateSlot = i;
+                    }
                 }
             }
         }
@@ -331,39 +335,43 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             if (piece == this || piece.isDragged) { continue; }
 
             //Look for slots to attach to
-            int n = piece.elements.Length;
-            for (int i = 0; i < n; ++i)
+            if (!isAttached)
             {
-                if (piece.elementTypes[i] == ElementType.Content) { continue; }
-
-                var pieceSlot = piece.elements[i].GetComponent<CodeSlot>();
-                if (pieceSlot.hasAttachment) { continue; }
-
-                var distance = Vector3.Distance(transform.position, pieceSlot.transform.position);
-                if (distance < minSlotDistance)
+                var n = piece.elements.Length;
+                for (int i = 0; i < n; ++i)
                 {
-                    minSlotDistance = distance;
-                    closestSlot = pieceSlot.GetComponent<CodeSlot>();
+                    if (piece.elementTypes[i] == ElementType.Content) { continue; }
+
+                    var pieceSlot = piece.elements[i].GetComponent<CodeSlot>();
+                    if (pieceSlot.hasAttachment) { continue; }
+
+                    var distance = Vector3.Distance(transform.position, pieceSlot.transform.position);
+                    if (distance < minSlotDistance)
+                    {
+                        minSlotDistance = distance;
+                        closestSlot = pieceSlot.GetComponent<CodeSlot>();
+                    }
                 }
             }
 
-            if (piece.isAttached) { continue; }
-
             //Look to attach another piece to this one
-            n = elements.Length;
-            for (int i = 0; i < n; ++i)
+            if (!piece.isAttached)
             {
-                if (elementTypes[i] == ElementType.Content) { continue; }
-
-                var slot = elements[i].GetComponent<CodeSlot>();
-                if (slot.hasAttachment) { continue; }
-
-                var distance = Vector3.Distance(slot.transform.position, piece.transform.position);
-                if (distance < minPieceDistance)
+                var n = elements.Length;
+                for (int i = 0; i < n; ++i)
                 {
-                    minPieceDistance = distance;
-                    closestPiece = piece;
-                    candidateSlot = i;
+                    if (elementTypes[i] == ElementType.Content) { continue; }
+
+                    var slot = elements[i].GetComponent<CodeSlot>();
+                    if (slot.hasAttachment) { continue; }
+
+                    var distance = Vector3.Distance(slot.transform.position, piece.transform.position);
+                    if (distance < minPieceDistance)
+                    {
+                        minPieceDistance = distance;
+                        closestPiece = piece;
+                        candidateSlot = i;
+                    }
                 }
             }
         }
@@ -454,7 +462,7 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     #region Unity Interface
 
-    private void Awake()
+    protected virtual void Awake()
     {
         Debug.Assert(transform.parent != null, "Puzzle piece without a parent");
         var vec_0_1 = new Vector2(0, 1);
