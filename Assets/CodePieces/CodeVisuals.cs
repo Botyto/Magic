@@ -182,7 +182,7 @@ public class CodeVisuals : MonoBehaviour
         //Resolve width and sprites of two halves
         width = Mathf.Max(extendedMinWidth, width);
         height = Mathf.Max(extendedMinHeight, height);
-        var leftWidth = narrowMinWidth;
+        var leftWidth = narrowMinWidth - 1;
         var rightWidth = width - leftWidth;
 
         Sprite leftSprite = null;
