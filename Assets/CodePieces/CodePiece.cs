@@ -430,7 +430,7 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     /// Clear all visual objects and create new ones.
     /// Also reposition content and slots.
     /// </summary>
-    protected void RebuildVisuals()
+    public void RebuildVisuals()
     {
         m_Visuals.RebuildVisuals();
         
