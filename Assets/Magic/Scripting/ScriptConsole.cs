@@ -70,9 +70,16 @@ public class ScriptConsole : MonoBehaviour
             {
                 if (isActive)
                 {
-                    Execute(m_Input.text);
                     ClearPredictions();
                     SetActive(false);
+                    try
+                    {
+                        Execute(m_Input.text);
+                    }
+                    catch (ScriptRuntimeException err)
+                    {
+                        Log("<color=red>" + err.DecoratedMessage + "</color>");
+                    }
                 }
                 else
                 {
