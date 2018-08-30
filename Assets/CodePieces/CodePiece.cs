@@ -432,14 +432,16 @@ public class CodePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     /// </summary>
     public void RebuildVisuals()
     {
+        var rectTransform = transform as RectTransform;
+        var oldSizeDelta = rectTransform.sizeDelta;
+
         m_Visuals.RebuildVisuals();
         
         //Rebuild visuals for parent code piece
-        if (parentCode != null && parentCode != this)
+        if (parentCode != null && parentCode != this && oldSizeDelta != rectTransform.sizeDelta)
         {
             //First adjust the slot size
             var slotRectTransform = parentCode.elements[slotIndex].transform as RectTransform;
-            var rectTransform = transform as RectTransform;
             slotRectTransform.sizeDelta = rectTransform.sizeDelta;
 
             //Then adjust everything in the parent
