@@ -56,11 +56,39 @@ public class UIValueInspector : Dialog, IDragHandler
         m_History.Add(newValue);
         value = newValue;
 
+        Refresh();
+    }
+
+    public void Refresh()
+    {
         foreach (Transform child in content)
         {
             Gameplay.Destroy(child.gameObject);
         }
         SpawnValues();
+    }
+
+    public void Back()
+    {
+        var n = m_History.Count;
+        if (n > 1)
+        {
+            var previousValue = m_History[n - 2];
+            m_History.RemoveAt(n - 1);
+            m_History.RemoveAt(n - 2);
+            SetValue(previousValue);
+        }
+    }
+
+    public void LuaAssign_o1()
+    {
+        LuaAssign("o1");
+    }
+
+    public void LuaAssign(string global)
+    {
+        var console = FindObjectOfType<ScriptConsole>();
+        console.environment.L.Globals[global] = value;
     }
 
     public void SpawnValues()
@@ -220,19 +248,7 @@ public class UIValueInspector : Dialog, IDragHandler
 
         return obj;
     }
-
-    public void Back()
-    {
-        var n = m_History.Count;
-        if (n > 1)
-        {
-            var previousValue = m_History[n - 2];
-            m_History.RemoveAt(n - 1);
-            m_History.RemoveAt(n - 2);
-            SetValue(previousValue);
-        }
-    }
-
+    
     public static UIValueInspector Inspect(object value)
     {
         if (value is DynValue)
