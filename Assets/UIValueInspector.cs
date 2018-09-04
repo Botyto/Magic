@@ -37,7 +37,7 @@ public class UIValueInspector : Dialog, IDragHandler
     
     public object value;
     public GameObject unityGameObject { get { return value as GameObject; } }
-    public MonoBehaviour unityComponent { get { return value as MonoBehaviour; } }
+    public Component unityComponent { get { return value as Component; } }
 
     private List<object> m_History = new List<object>();
 
@@ -131,15 +131,12 @@ public class UIValueInspector : Dialog, IDragHandler
         if (unityGameObject != null)
         {
             AddCategory("GameObject");
-
-            var transformTypeName = transform.GetType().Name;
-            AddObject(transformTypeName, "<i>[MonoBehaviour]</i> " + transformTypeName, transform);
-
-            var comps = unityGameObject.GetComponents<MonoBehaviour>();
+            
+            var comps = unityGameObject.GetComponents<Component>();
             foreach (var comp in comps)
             {
                 var compTypeName = comp.GetType().Name;
-                AddObject(compTypeName, "<i>[MonoBehaviour]</i> " + compTypeName, comp);
+                AddObject(compTypeName, "<i>[Component]</i> " + compTypeName, comp);
             }
             return;
         }
@@ -327,7 +324,20 @@ public class UIValueInspector : Dialog, IDragHandler
             name == "gameObject" ||
             name == "transform" ||
             name == "isStatic" ||
-            name == "scene";
+            name == "scene" || 
+            name == "eulerAngles" ||
+            name == "right" ||
+            name == "up" ||
+            name == "forward" ||
+            name == "rotation" ||
+            name == "localRotation" ||
+            name == "worldToLocalMatrix" ||
+            name == "localToWorldMatrix" ||
+            name == "root" ||
+            name == "lossyScale" ||
+            name == "hasChanged" ||
+            name == "hierarchyCapacity" ||
+            name == "hierarchyCount";
     }
 
     public static bool IgnoreMember(MemberInfo member)
