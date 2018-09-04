@@ -15,17 +15,21 @@ public class SpellDescriptor : ScriptableObject
     public enum SpellTargetType
     {
         /// <summary>
-        /// Works with any or no target
+        /// Works with any or no target.
         /// </summary>
         None,
         /// <summary>
-        /// Requires a Unit as a target
+        /// Requires a Unit as a target.
         /// </summary>
         Unit,
         /// <summary>
-        /// Requires an EnergyManifestation as a target
+        /// Requires an EnergyManifestation as a target.
         /// </summary>
         Manifestation,
+        /// <summary>
+        /// Requires an inanimate object as a target.
+        /// </summary>
+        Inanimate,
     }
 
     public enum SpellCastResult
@@ -188,6 +192,9 @@ public class SpellDescriptor : ScriptableObject
 
             case SpellTargetType.Manifestation:
                 return target.GetComponent<EnergyManifestation>() != null || !targetRequired;
+
+            case SpellTargetType.Inanimate:
+                return target.GetComponent<Unit>() == null || !targetRequired;
         }
 
         //Invalid requirement? Fail...

@@ -13,6 +13,7 @@ public interface IEnergyCost
     int ChangeShape(EnergyController user, EnergyManifestation target, Energy.Shape newShape);
     int Deform(EnergyController user, EnergyManifestation target, Vector3 stress);
     int CreateElasticConnection(EnergyController user, EnergyManifestation target, EnergyManifestation other, int connectionCharge);
+    int CreateElasticConnection(EnergyController user, EnergyManifestation target, GameObject other, int connectionCharge);
     int ApplyForce(EnergyController user, EnergyManifestation target, Vector3 force, ForceMode mode);
     int ApplyTorque(EnergyController user, EnergyManifestation target, Vector3 torque, ForceMode mode);
     int OrientTowards(EnergyController user, EnergyManifestation target, Vector3 lookat);

@@ -53,6 +53,14 @@ public class EnergyController : EnergyUser
     /// <summary>
     /// Check if a target is reachable (thus energy can be controlled there)
     /// </summary>
+    public bool IsWithinRange(GameObject target)
+    {
+        return IsWithinRange(target.transform.position);
+    }
+
+    /// <summary>
+    /// Check if a target is reachable (thus energy can be controlled there)
+    /// </summary>
     public bool IsWithinRange<T>(T target) where T : MonoBehaviour
     {
         return IsWithinRange(target.transform.position);
@@ -540,6 +548,53 @@ public class EnergyController : EnergyUser
         if (joint != null)
         {
             return (joint.connectedBody == other.rigidbody) ? EnergyActionResult.RedundantAction : EnergyActionResult.ForbiddenAction;
+        }
+
+        //Check range.
+        if (!IsWithinRange(target) || !IsWithinRange(other))
+        {
+            return EnergyActionResult.OutsideRange;
+        }
+
+        //Check energy cost
+        var totalCost = connectionCharge + cost.CreateElasticConnection(this, target, other, connectionCharge);
+        if (totalCost > GetEnergy())
+        {
+            return EnergyActionResult.NotEnoughEnergy;
+        }
+
+        //Actual implementation.
+        target.CreateElasticConnection(other, connectionCharge);
+
+        //Consume energy.
+        DecreaseEnergy(totalCost);
+
+        //Success.
+        return EnergyActionResult.Success;
+    }
+
+    /// <summary>
+    /// Create an elastic joint between this and another object.
+    /// </summary>
+    public EnergyActionResult CreateElasticConnection(EnergyManifestation target, GameObject other, int connectionCharge)
+    {
+        //Check validity.
+        if (target == null || other == null)
+        {
+            return EnergyActionResult.InvalidManifestation;
+        }
+
+        //If there is a joint already, it's either a redundant or a forbidden action (Only one joint is allowed per manifestation).
+        var joint = target.GetComponent<SpringJoint>();
+        if (joint != null)
+        {
+            return (joint.connectedBody == other.GetComponent<Rigidbody>()) ? EnergyActionResult.RedundantAction : EnergyActionResult.ForbiddenAction;
+        }
+        
+        //Check that the object is inanimate.
+        if (other.GetComponent<Unit>())
+        {
+            return EnergyActionResult.ForbiddenAction;
         }
 
         //Check range.

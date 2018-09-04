@@ -59,6 +59,11 @@ public class FreeEnergyCost : IEnergyCost
         return 0;
     }
 
+    public int CreateElasticConnection(EnergyController user, EnergyManifestation target, GameObject other, int connectionCharge)
+    {
+        return 0;
+    }
+
     public int ApplyForce(EnergyController user, EnergyManifestation target, Vector3 force, ForceMode mode)
     {
         return 0;

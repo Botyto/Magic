@@ -220,10 +220,19 @@ public partial class EnergyManifestation
     /// </summary>
     public void CreateElasticConnection(EnergyManifestation other, int connectionCharge)
     {
+        CreateElasticConnection(other.gameObject, connectionCharge);
+    }
+
+    /// <summary>
+    /// Create an elastic joint between this and another manifestation.
+    /// </summary>
+    public void CreateElasticConnection(GameObject other, int connectionCharge)
+    {
         var distance = transform.position.DistanceTo(other.transform.position);
 
         var joint = gameObject.AddComponent<SpringJoint>();
-        joint.connectedBody = other.rigidbody;
+        joint.connectedBody = other.GetComponent<Rigidbody>();
+        joint.enableCollision = true;
 
         //TODO properly setup spring joint
         joint.minDistance = 1.0f;

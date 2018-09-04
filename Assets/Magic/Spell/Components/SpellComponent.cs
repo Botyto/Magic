@@ -247,6 +247,14 @@ public class SpellComponent : SpellComponentBase
     }
 
     /// <summary>
+    /// Create an elastic joint between this and another inanimate object.
+    /// </summary>
+    public EnergyActionResult CreateElasticConnection(int focusHandle, GameObject target, int connectionCharge)
+    {
+        return controller.CreateElasticConnection(GetFocus(focusHandle), target, connectionCharge);
+    }
+
+    /// <summary>
     /// Apply physical force to manifestation (at center of mass). Force vector is relaive to the controller's transform.
     /// </summary>
     public EnergyActionResult ApplyForceRelative(int focusHandle, Vector3 relativeForce, ForceMode mode)

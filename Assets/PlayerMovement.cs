@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
         HandleMouseZoom();
         var ray = new Ray(cameraPivot.transform.position, -cameraPivot.transform.forward);
         RaycastHit hitInfo;
-        if (Physics.Raycast(ray, out hitInfo, cameraDistance))
+        if (Physics.Raycast(ray, out hitInfo, cameraDistance, LayerMask.NameToLayer("SolidEnvironment")))
         {
             var cameraPos = targetCamera.localPosition;
             cameraPos.z = -hitInfo.distance + 1.0f;
@@ -111,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         var pivotRot = cameraPivot.localRotation.eulerAngles;
         var pivotRotX = pivotRot.x;
         if (pivotRotX > 180.0f) pivotRotX -= 360.0f;
-        pivotRotX = Mathf.Clamp(pivotRotX - mouseY * mouseSensitivity, -10.0f, 90.0f);
+        pivotRotX = Mathf.Clamp(pivotRotX - mouseY * mouseSensitivity, -30.0f, 90.0f);
         cameraPivot.localRotation = Quaternion.Euler(pivotRotX, 0.0f, 0.0f);
 
         //Horizontal look

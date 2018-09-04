@@ -27,6 +27,12 @@ public class SpellButton : Dialog
 
     private void Update()
     {
+        if (wizard == null)
+        {
+            Close();
+            return;
+        }
+
         bool active = wizard.IsSpellActive(id);
         if (m_isToggleSpell)
         {
