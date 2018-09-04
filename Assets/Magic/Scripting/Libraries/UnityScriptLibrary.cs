@@ -165,6 +165,27 @@ public static class UnityScriptLibrary
         return DynValue.FromObject(ctx.OwnerScript, obj);
     }
 
+    public static DynValue GameObject__Index(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        //TODO bind properly
+
+        var obj = args.AsUserData<GameObject>(0, "GameObject.__index", true);
+        if (obj == null)
+        {
+            return DynValue.Nil;
+        }
+
+        var key = args.AsStringUsingMeta(ctx, 1, "GameObject.__index");
+        if (key == null)
+        {
+            return DynValue.Nil;
+        }
+
+        var component = obj.GetComponent(key);
+
+        return DynValue.FromObject(ctx.OwnerScript, component);
+    }
+
     public static DynValue GameObjectFind(ScriptExecutionContext ctx, CallbackArguments args)
     {
         var name = args.AsStringUsingMeta(ctx, 0, "GameObject.Find");

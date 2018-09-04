@@ -282,6 +282,13 @@ public class ScriptConsole : MonoBehaviour
         }
         m_HistoryIdx = -1;
 
+        bool inspect = false;
+        if (code.StartsWith("~"))
+        {
+            inspect = true;
+            code = code.Substring(1);
+        }
+
         //execute the code
         var loadedCode = LoadCode(code);
         if (loadedCode.IsNil())
@@ -291,26 +298,35 @@ public class ScriptConsole : MonoBehaviour
         }
         var result = loadedCode.Function.Call();
 
-        //format the result
-        string resultText;
-        if (result.IsNil())
+        //Inspect the result
+        if (inspect)
         {
-            resultText = "> " + code;
+            UIValueInspector.Inspect(result);
         }
         else
         {
-            var resultStr = FormatValue(result);
-            resultText = "> " + code + "\n" + resultStr;
-        }
+            //Log the result
+            //Format the result
+            string resultText;
+            if (result.IsNil())
+            {
+                resultText = "> " + code;
+            }
+            else
+            {
+                var resultStr = FormatValue(result);
+                resultText = "> " + code + "\n" + resultStr;
+            }
 
-        //print the result
-        if (m_Log != null)
-        {
-            Log(resultText);
-        }
-        else
-        {
-            MagicLog.LogFormat("[Script] {0}", resultText);
+            //print the result
+            if (m_Log != null)
+            {
+                Log(resultText);
+            }
+            else
+            {
+                MagicLog.LogFormat("[Script] {0}", resultText);
+            }
         }
     }
 
