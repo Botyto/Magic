@@ -94,32 +94,39 @@ public class UIValueInspector : Dialog, IDragHandler
 
     public void SpawnCustomValues()
     {
+        if (value.GetType().IsPrimitive || value is string || value is Decimal)
+        {
+            AddLine("Primitive", value.ToString());
+            return;
+        }
+
         if (unityGameObject != null)
         {
+            AddCategory("GameObject");
+
             var transformTypeName = transform.GetType().Name;
-            var obj = AddLine(transformTypeName, "<i>[MonoBehaviour]</i> " + transformTypeName);
-            var btn = obj.AddComponent<Button>();
-            btn.onClick.AddListener(() => SetValue(transform));
+            AddObject(transformTypeName, "<i>[MonoBehaviour]</i> " + transformTypeName, transform);
 
             var comps = unityGameObject.GetComponents<MonoBehaviour>();
             foreach (var comp in comps)
             {
                 var compTypeName = comp.GetType().Name;
-                obj = AddLine(compTypeName, "<i>[MonoBehaviour]</i> " + compTypeName);
-                btn = obj.AddComponent<Button>();
-                btn.onClick.AddListener(() => SetValue(comp));
+                AddObject(compTypeName, "<i>[MonoBehaviour]</i> " + compTypeName, comp);
             }
+            return;
         }
 
         if (typeof(IEnumerable).IsAssignableFrom(value.GetType()))
         {
+            AddCategory("IEnumerable");
             var enumerable = value as IEnumerable;
+            int i = 0;
             foreach (var subValue in enumerable)
             {
-                var obj = AddLine(subValue.GetType().Name, subValue.ToString());
-                var btn = obj.AddComponent<Button>();
-                btn.onClick.AddListener(() => SetValue(subValue));
+                AddObject("Subvalue" + i.ToString(), subValue.ToString(), subValue);
+                ++i;
             }
+            return;
         }
     }
 
@@ -148,10 +155,7 @@ public class UIValueInspector : Dialog, IDragHandler
             if (iv.category != category)
             {
                 category = iv.category;
-                var categoryObj = AddLine(category, "<color=blue>--- " + category + " ---</color>");
-                var categoryTxt = categoryObj.GetComponent<Text>();
-                categoryTxt.alignment = TextAnchor.MiddleCenter;
-                categoryTxt.fontSize = 16;
+                AddCategory(category);
             }
 
             try
@@ -171,18 +175,37 @@ public class UIValueInspector : Dialog, IDragHandler
                 }
 
                 displayedString += " = " + displayedValue.ToString();
-
-                var obj = AddLine(iv.name, displayedString);
-                var btn = obj.AddComponent<Button>();
-                btn.onClick.AddListener(() => SetValue(displayedValue));
+                AddObject(iv.name, displayedString, displayedValue);
             }
             catch (Exception) { }
         }
     }
+
+    public GameObject AddCategory(string category)
+    {
+        var obj = AddLine(category + "Category", "<color=blue>--- " + category + " ---</color>");
+        var categoryTxt = obj.GetComponent<Text>();
+        categoryTxt.alignment = TextAnchor.MiddleCenter;
+        categoryTxt.fontSize = 16;
+
+        return obj;
+    }
+
+    public GameObject AddObject(string title, string text, object value)
+    {
+        var obj = AddLine(title + "Inspector", text);
+        if (IsInspectable(value))
+        {
+            var btn = obj.AddComponent<Button>();
+            btn.onClick.AddListener(() => SetValue(value));
+        }
+
+        return obj;
+    }
     
     public GameObject AddLine(string title, string text)
     {
-        var obj = new GameObject(title + "Inspector");
+        var obj = new GameObject(title);
 
         var txt = obj.AddComponent<Text>();
         txt.text = text;
@@ -311,6 +334,11 @@ public class UIValueInspector : Dialog, IDragHandler
             return false;
         }
 
+        return true;
+    }
+
+    public static bool IsInspectable(object value)
+    {
         return true;
     }
 }
