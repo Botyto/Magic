@@ -28,17 +28,17 @@ public class EnergyElement : ScriptableObject
     /// <summary>
     /// Mass (kg) per unit.
     /// </summary>
-    public float mass = 1.0f;
+    public float mass = 1.0f; //TODO balance energy
 
     /// <summary>
     /// How much volume this element takeks up initially (not taking into account energy held).
     /// </summary>
-    public float baseVolume = 0.0f;
+    public float baseVolume = 0.0f; //TODO balance energy
 
     /// <summary>
     /// Volume (m^3) per unit.
     /// </summary>
-    public float volume = 1.0f;
+    public float volume = 1.0f; //TODO balance energy
 
     /// <summary>
     /// If the manifestation is affected by gravity.
@@ -53,28 +53,28 @@ public class EnergyElement : ScriptableObject
     /// <summary>
     /// Maximum impluse that can be applied to a solid manifestation (with unit mass) before it smashes violently
     /// </summary>
-    public float smashImpulse = 10.0f;
+    public float smashImpulse = 10.0f; //TODO balance energy
 
     /// <summary>
     /// Normal temeprature.
     /// </summary>
-    public int temperature = 25;
+    public int temperature = 25; //TODO balance energy
 
     /// <summary>
     /// Constant that affects the relation between density change and temperature change.
     /// </summary>
-    public float temperatureConstant = 1.0f;
+    public float temperatureConstant = 1.0f; //TODO balance energy
 
     /// <summary>
     /// Get physical elasticity of an element.
     /// Elasticity dictates how easily it is to deform a manifestation.
     /// </summary>
-    public float elasticity = 1.0f;
+    public float elasticity = 1.0f; //TODO balance energy
 
     /// <summary>
     /// Base damage per unit.
     /// </summary>
-    public float damage = 1.0f;
+    public float damage = 1.0f; //TODO balance gameplay //TODO balance energy ?
 
     /// <summary>
     /// If the element seals the energy from manipulation.

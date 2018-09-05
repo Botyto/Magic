@@ -1,6 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// This recipe can be used in a summon spell.
+/// </summary>
 [Serializable]
 [CreateAssetMenu(fileName = "New Recipe", menuName = "Magic/Summon Recipe")]
 public class SummonRecipe : ScriptableObject

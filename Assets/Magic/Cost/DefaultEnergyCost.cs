@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class DefaultEnergyCost : IEnergyCost
+public class DefaultEnergyCost : IEnergyCost //TODO balance energy
 {
     public int ManifestEnergy(EnergyController user, int amount, Vector3 relativePosition)
     {

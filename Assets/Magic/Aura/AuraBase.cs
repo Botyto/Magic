@@ -67,7 +67,7 @@ public abstract class AuraBase : EnergyUser
     /// <summary>
     /// Inflict damage to a unit
     /// </summary>
-    public EnergyActionResult InflictDamage(int damage, Energy.Element element)
+    public EnergyActionResult InflictDamage(int damage, Energy.Element element) //TODO decide if it should be replaced by a status effect //TODO balance energy
     {
         //Check cost
         int totalCost = cost.InflictDamage(this, unit, damage, element);

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class DefaultAuraCost : IAuraCost
+public class DefaultAuraCost : IAuraCost //TODO balance energy
 {
     public int StatusEffectCharge(AuraBase aura, Unit target, StatusEffect.Type effectType, int intensity, int amount)
     {

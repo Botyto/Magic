@@ -7,38 +7,43 @@ public class Wizard : MonoBehaviour
     /// </summary>
     public const float TargetSearchDistance = 20.0f;
 
+    #region Members
+
     /// <summary>
-    /// List of spells this wizard knows
+    /// List of spells this wizard knows.
     /// </summary>
     public SpellDescriptor[] spells;
 
     /// <summary>
-    /// 
+    /// Amount of energy regenerated each frame.
     /// </summary>
     public float energyRegenerationPerFrame = 0.5f;
 
     /// <summary>
-    /// In case 'energyRegenerationSpeed' is too small to add at least 1 energy per frame, this accumulator fixes that case
+    /// Maximum energy.
     /// </summary>
-    [HideInInspector]
-    private float m_EnergyRegenerationAccumulator = 0.0f;
-
+    public int maxEnergy;
+    
     /// <summary>
-    /// UI ordering of the spells
+    /// UI ordering of the spells.
     /// </summary>
     [HideInInspector]
     public int[] spellOrdering;
     
     /// <summary>
-    /// Wizard's energy holder
+    /// Wizard's energy holder.
     /// </summary>
     [HideInInspector]
     public EnergyHolder holder;
 
     /// <summary>
-    /// Maximum energy
+    /// In case 'energyRegenerationSpeed' is too small to add at least 1 energy per frame, this accumulator fixes that case.
     /// </summary>
-    public int maxEnergy;
+    private float m_EnergyRegenerationAccumulator = 0.0f;
+
+    #endregion
+    
+    #region Spell casting
 
     public SpellDescriptor FindSpellDescriptor(string id)
     {
@@ -52,6 +57,108 @@ public class Wizard : MonoBehaviour
 
         return null;
     }
+
+    /// <summary>
+    /// Cancels a currently active spell.
+    /// </summary>
+    /// <returns>If the spell has been interrupted.</returns>
+    public bool CancelSpell(string id)
+    {
+        //Try finding spell descriptor
+        var descriptor = FindSpellDescriptor(id);
+        if (descriptor == null)
+        {
+            return false;
+        }
+
+        //Spell already executing
+        var spell = GetComponent(descriptor.spellType) as SpellComponent;
+        if (spell == null)
+        {
+            return false;
+        }
+
+        //Cancel the spell
+        Gameplay.Destroy(spell);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Cast a spell.
+    /// </summary>
+    /// <returns>The casted spell or null.</returns>
+    public SpellComponent CastSpell(string id, GameObject target)
+    {
+        //Try finding spell descriptor
+        var descriptor = FindSpellDescriptor(id);
+        if (descriptor == null)
+        {
+            return null;
+        }
+
+        //Spell already executing
+        var oldSpell = GetComponent(descriptor.spellType) as SpellComponent;
+        if (oldSpell != null)
+        {
+            //Deactivate toggle spells
+            if (oldSpell is ToggleSpellComponent)
+            {
+                //Destroying a toggle spell will internally call its OnToggle()
+                Gameplay.Destroy(oldSpell);
+            }
+
+            return null;
+        }
+
+        //Cast the spell
+        SpellComponent spell;
+        var result = descriptor.Cast(this, target, out spell);
+        if (result == SpellDescriptor.SpellCastResult.Success)
+        {
+            if (spell.target)
+            {
+                LogManager.LogMessage(LogManager.Combat, "'{0}' casted '{1}' at '{2}'", name, descriptor.displayName, spell.target.name);
+            }
+            else
+            {
+                LogManager.LogMessage(LogManager.Combat, "'{0}' casted '{1}'", name, descriptor.displayName);
+            }
+
+            return spell;
+        }
+        else //error casting the spell
+        {
+            LogManager.LogMessage(LogManager.Combat, "'{0}' failed to cast '{1}': {2}", name, descriptor.displayName, result.ToString());
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Returns true if the spell is currently active.
+    /// </summary>
+    public bool IsSpellActive(string id)
+    {
+        //Try to find the spell descriptor
+        var descriptor = FindSpellDescriptor(id);
+        if (descriptor == null)
+        {
+            return false;
+        }
+
+        //Get the currently active spell component
+        var spell = GetComponent(descriptor.spellType) as SpellComponent;
+        if (spell == null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    #endregion
+
+    #region Unity internals
 
     private void OnEnable()
     {
@@ -86,6 +193,7 @@ public class Wizard : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //Regenerate energy
         if (holder.GetEnergy() < maxEnergy)
         {
             m_EnergyRegenerationAccumulator += energyRegenerationPerFrame;
@@ -100,6 +208,7 @@ public class Wizard : MonoBehaviour
 
     private void OnDestroy()
     {
+        //Cancel all spells and disown all focused energies
         var spells = GetComponents<SpellComponent>();
         foreach (var spell in spells)
         {
@@ -107,86 +216,5 @@ public class Wizard : MonoBehaviour
         }
     }
 
-    public bool CancelSpell(string id)
-    {
-        //Try finding spell descriptor
-        var descriptor = FindSpellDescriptor(id);
-        if (descriptor == null)
-        {
-            return false;
-        }
-
-        //Spell already executing
-        var spell = GetComponent(descriptor.spellType) as SpellComponent;
-        if (spell == null)
-        {
-            return false;
-        }
-
-        Gameplay.Destroy(spell);
-        return true;
-    }
-
-    public SpellComponent CastSpell(string id, GameObject target)
-    {
-        //Try finding spell descriptor
-        var descriptor = FindSpellDescriptor(id);
-        if (descriptor == null)
-        {
-            return null;
-        }
-
-        //Spell already executing
-        var oldSpell = GetComponent(descriptor.spellType) as SpellComponent;
-        if (oldSpell != null)
-        {
-            //Deactivate toggle spells
-            if ((oldSpell as ToggleSpellComponent) != null)
-            {
-                Gameplay.Destroy(oldSpell);
-            }
-            return null;
-        }
-
-        //Cast the spell
-        SpellComponent spell;
-        var result = descriptor.Cast(this, target, out spell);
-        if (result == SpellDescriptor.SpellCastResult.Success)
-        {
-            if (spell.target)
-            {
-                LogManager.LogMessage(LogManager.Combat, "'{0}' casted '{1}' at '{2}'", name, descriptor.displayName, spell.target.name);
-            }
-            else
-            {
-                LogManager.LogMessage(LogManager.Combat, "'{0}' casted '{1}'", name, descriptor.displayName);
-            }
-
-            return spell;
-        }
-        else //error casting the spell :)
-        {
-            LogManager.LogMessage(LogManager.Combat, "'{0}' failed casting '{1}': {2}", name, descriptor.displayName, result.ToString());
-            return null;
-        }
-    }
-    
-    public bool IsSpellActive(string id)
-    {
-        //Try finding spell descriptor
-        var descriptor = FindSpellDescriptor(id);
-        if (descriptor == null)
-        {
-            return false;
-        }
-
-        //Spell already executing
-        var spell = GetComponent(descriptor.spellType) as SpellComponent;
-        if (spell == null)
-        {
-            return false;
-        }
-
-        return true;
-    }
+    #endregion
 }
