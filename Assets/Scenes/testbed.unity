@@ -1849,9 +1849,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c68e2ae92ab191e44bd23be1e5278387, type: 2}
   - {fileID: 11400000, guid: 8a2c06b727e956444a928bc2d1e326cd, type: 2}
   energyRegenerationPerFrame: 0.5
+  maxEnergy: 20000
   spellOrdering: 
   holder: {fileID: 0}
-  maxEnergy: 20000
 --- !u!114 &741776493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3582,6 +3582,12 @@ Prefab:
     - target: {fileID: 114155510847531562, guid: 822f94491ec7885479be99e24b1c5430,
         type: 2}
       propertyPath: spells.Array.data[13]
+      value: 
+      objectReference: {fileID: 11400000, guid: d7ed739e555e7d241b235ae0e496780c,
+        type: 2}
+    - target: {fileID: 114155510847531562, guid: 822f94491ec7885479be99e24b1c5430,
+        type: 2}
+      propertyPath: spells.Array.data[4]
       value: 
       objectReference: {fileID: 11400000, guid: eba9306fb9d4f4c4a855085ca0869708,
         type: 2}

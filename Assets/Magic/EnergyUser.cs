@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// Base class for anything that manipulates the energy of the same object
+/// Base class for using the energy held by this object.
 /// </summary>
+/// <article>Energy</article>
+/// <seealso cref="EnergyHolder"/>
+/// <seealso cref="EnergyController"/>
 [RequireComponent(typeof(EnergyHolder))]
 public class EnergyUser : MonoBehaviour
 {

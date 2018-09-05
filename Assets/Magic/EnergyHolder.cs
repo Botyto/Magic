@@ -1,33 +1,56 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-// Energy holder
+/// <summary>
+/// Hold energy withing the object.
+/// </summary>
+/// <article>Energy</article>
+/// <seealso cref="EnergyUser"/>
 public class EnergyHolder : MonoBehaviour
 {
     #region Members
 
     /// <summary>
-    /// Currently held energy
+    /// Currently held energy.
     /// </summary>
     public int energy = 1;
 
     /// <summary>
-    /// Energy owner (parent)
+    /// Energy owner (parent).
     /// </summary>
     public EnergyHolder owner;
 
     /// <summary>
-    /// Owned energies (children)
+    /// Owned energies (children).
     /// </summary>
     public List<EnergyHolder> ownedEnergies = new List<EnergyHolder>();
 
     #endregion
-    
+
     #region Ownership
 
     /// <summary>
-    /// Resolve the absolute (top-most) owner of some energy holder
+    /// Resolve the absolute (top-most) owner of this energy holder.
     /// </summary>
+    /// <returns>The absolute (top-most) owner of the energy holder.</returns>
+    /// <example>
+    /// var holder = manifestation.holder;
+    /// holder.energy = amount;
+    /// holder.SetOwner(this.holder.ResolveOwner());
+    /// </example>
+    /// <seealso cref="SetOwner"/>
+    /// <seealso cref="AddChild"/>
+    /// <seealso cref="RemoveChild"/>
+    public EnergyHolder ResolveOwner()
+    {
+        return ResolveOwner(this);
+    }
+
+    /// <summary>
+    /// Resolve the absolute (top-most) owner of some energy holder.
+    /// </summary>
+    /// <param name="target">Resolution target.</param>
+    /// <returns>The absolute (top-most) owner of the energy holder.</returns>
     public static EnergyHolder ResolveOwner(EnergyHolder target)
     {
         while (target.owner != null)
@@ -37,17 +60,9 @@ public class EnergyHolder : MonoBehaviour
 
         return target;
     }
-
+    
     /// <summary>
-    /// Resolve the absolute (top-most) owner of this energy holder
-    /// </summary>
-    public EnergyHolder ResolveOwner()
-    {
-        return ResolveOwner(this);
-    }
-
-    /// <summary>
-    /// Change the owner (parent)
+    /// Change the owner (parent).
     /// </summary>
     public void SetOwner(EnergyHolder newOwner, bool keepObject = false)
     {
@@ -71,6 +86,9 @@ public class EnergyHolder : MonoBehaviour
         {
             owner = newOwner.ResolveOwner();
             owner.ownedEnergies.Add(this);
+            /// <summary>
+            /// Sent whenever the owner of this energy holder changes.
+            /// </summary>
             SendMessage("OwnerChanged", SendMessageOptions.DontRequireReceiver);
         }
         else
@@ -86,7 +104,7 @@ public class EnergyHolder : MonoBehaviour
     }
 
     /// <summary>
-    /// Add child energy (owned)
+    /// Add child energy (owned).
     /// </summary>
     public void AddChild(EnergyHolder newChild)
     {
@@ -94,7 +112,7 @@ public class EnergyHolder : MonoBehaviour
     }
 
     /// <summary>
-    /// Remove child energy (owned)
+    /// Remove child energy (owned).
     /// </summary>
     /// <param name="child"></param>
     public void RemoveChild(EnergyHolder child)
@@ -107,7 +125,7 @@ public class EnergyHolder : MonoBehaviour
     #region Energy manipulation
 
     /// <summary>
-    /// Currently held energy (unscaled)
+    /// Currently held energy (unscaled).
     /// </summary>
     public int GetEnergy()
     {
@@ -115,7 +133,7 @@ public class EnergyHolder : MonoBehaviour
     }
 
     /// <summary>
-    /// Currently held energy (scaled, as integer)
+    /// Currently held energy (scaled, as integer).
     /// </summary>
     public int GetEnergyScaled()
     {
@@ -123,7 +141,7 @@ public class EnergyHolder : MonoBehaviour
     }
 
     /// <summary>
-    /// Currently held energy (scaled, as float)
+    /// Currently held energy (scaled, as float).
     /// </summary>
     public float GetEnergyScaledf()
     {
@@ -131,7 +149,7 @@ public class EnergyHolder : MonoBehaviour
     }
 
     /// <summary>
-    /// Increase the energy held (grant/gain)
+    /// Increase the energy held (grant/gain).
     /// </summary>
     /// <returns>Actual increase</returns>
     public int Increase(int amount)
@@ -146,6 +164,9 @@ public class EnergyHolder : MonoBehaviour
         if (amount > 0)
         {
             energy += amount;
+            /// <summary>
+            /// Send whenever the energy held by this holder changes.
+            /// </summary>
             SendMessage("EnergyChanged", amount, SendMessageOptions.DontRequireReceiver);
         }
 
@@ -153,7 +174,7 @@ public class EnergyHolder : MonoBehaviour
     }
 
     /// <summary>
-    /// Decrease the energy held (consume)
+    /// Decrease the energy held (consume).
     /// </summary>
     /// <returns>Actual decrease</returns>
     public int Decrease(int amount)

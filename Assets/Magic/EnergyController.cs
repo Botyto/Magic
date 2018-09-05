@@ -2,9 +2,14 @@
 using UnityEngine;
 
 /// <summary>
-/// This component is used to manipulate on a physically manifested energy
-/// For adding new manipulation procedures see comments in IEnergyCost
+/// Manipulates physically manifested energy.
 /// </summary>
+/// <remarks>
+/// For adding new manipulation procedures see comments in IEnergyCost.
+/// </remarks>
+/// <article>Energy</article>
+/// <seealso cref="EnergyHolder"/>
+/// <seealso cref="EnergyUser"/>
 public class EnergyController : EnergyUser
 {
     #region Members
