@@ -22,8 +22,6 @@ public class HideFromIngameDebuggerAttribute : Attribute
 
 public class UIValueInspector : Dialog, IDragHandler
 {
-    public const string generalCategory = "General";
-
     public struct InspectedValue
     {
         public string name;
@@ -36,11 +34,9 @@ public class UIValueInspector : Dialog, IDragHandler
     public RectTransform content;
     
     public object value;
-    public GameObject unityGameObject { get { return value as GameObject; } }
-    public Component unityComponent { get { return value as Component; } }
 
     private List<object> m_History = new List<object>();
-
+    
     void Start()
     {
         SetValue(value);
@@ -50,6 +46,19 @@ public class UIValueInspector : Dialog, IDragHandler
     {
         transform.localPosition += new Vector3(eventData.delta.x, eventData.delta.y);
     }
+
+    public static UIValueInspector Inspect(object value)
+    {
+        value = LuaRemapValue(value);
+
+        if (value == null) { return null; }
+
+        var dlg = Spawn<UIValueInspector>();
+        dlg.value = value;
+        return dlg;
+    }
+
+    #region Callbacks
 
     public void SetValue(object newValue)
     {
@@ -65,7 +74,8 @@ public class UIValueInspector : Dialog, IDragHandler
         {
             Gameplay.Destroy(child.gameObject);
         }
-        SpawnValues();
+
+        SpawnValues(value);
     }
 
     public void Back()
@@ -80,64 +90,35 @@ public class UIValueInspector : Dialog, IDragHandler
         }
     }
 
-    public void LuaAssign_o1()
-    {
-        LuaAssign("o1");
-    }
+    #endregion
 
-    public void LuaAssign(string global)
-    {
-        var console = FindObjectOfType<ScriptConsole>();
-        console.environment.L.Globals[global] = value;
-    }
-
-    public void SpawnValues()
+    #region Generation
+    
+    public void SpawnValues(object value)
     {
         if (value == null)
         {
             title.text = "Null";
             return;
         }
-        
-        if (unityGameObject != null)
-        {
-            title.text = "[GameObject] " + unityGameObject.name;
-        }
-        else if (unityComponent != null)
-        {
-            title.text = string.Format("[{0}] {1}", unityComponent.GetType().Name, unityComponent.name);
-        }
-        else if (value is UnityEngine.Object)
-        {
-            title.text = "[Unity] " + (value as UnityEngine.Object).name;
-        }
-        else
-        {
-            title.text = string.Format("[{0}]", value.GetType().Name);
-        }
 
-        SpawnCustomValues();
-        SpawnGeneralValues();
+        title.text = string.Format("[{0}]", value.GetType().Name);
+        UnityAssignTitle(value);
+
+        SpawnCustomValues(value);
+        SpawnGeneralValues(value);
     }
 
-    public void SpawnCustomValues()
+    public void SpawnCustomValues(object value)
     {
         if (value.GetType().IsPrimitive || value is string || value is Decimal)
         {
-            AddLine("Primitive", value.ToString());
+            AddLine("Primitive", SerializeValue(value));
             return;
         }
 
-        if (unityGameObject != null)
+        if (UnityAddCustomValues(value))
         {
-            AddCategory("GameObject");
-            
-            var comps = unityGameObject.GetComponents<Component>();
-            foreach (var comp in comps)
-            {
-                var compTypeName = comp.GetType().Name;
-                AddObject(compTypeName, "<i>[Component]</i> " + compTypeName, comp);
-            }
             return;
         }
 
@@ -148,18 +129,19 @@ public class UIValueInspector : Dialog, IDragHandler
             int i = 0;
             foreach (var subValue in enumerable)
             {
-                AddObject("Subvalue" + i.ToString(), subValue.ToString(), subValue);
+                AddObject("Subvalue" + i.ToString(), SerializeValue(subValue), subValue);
                 ++i;
             }
             return;
         }
     }
 
-    public void SpawnGeneralValues()
+    public void SpawnGeneralValues(object value)
     {
         var ty = value.GetType();
         var inspectedValues = new List<InspectedValue>();
 
+        //Extract members
         var members = ty.GetMembers();
         foreach (var member in members)
         {
@@ -172,8 +154,10 @@ public class UIValueInspector : Dialog, IDragHandler
             inspectedValues.Add(iv);
         }
 
+        //Sort them
         inspectedValues.Sort(CompareInspectedValues);
 
+        //And generate inspectors for each one
         string category = null;
         foreach (var iv in inspectedValues)
         {
@@ -199,13 +183,13 @@ public class UIValueInspector : Dialog, IDragHandler
                     displayedValue = (iv.info as PropertyInfo).GetGetMethod().Invoke(value, null);
                 }
 
-                displayedString += " = " + displayedValue.ToString();
+                displayedString += " = " + SerializeValue(displayedValue);
                 AddObject(iv.name, displayedString, displayedValue);
             }
             catch (Exception) { }
         }
     }
-
+    
     public GameObject AddCategory(string category)
     {
         var obj = AddLine(category + "Category", "<color=blue>--- " + category + " ---</color>");
@@ -245,31 +229,23 @@ public class UIValueInspector : Dialog, IDragHandler
 
         return obj;
     }
-    
-    public static UIValueInspector Inspect(object value)
+
+    #endregion
+
+    #region Helpers
+
+    public const string generalCategory = "General";
+
+    public static string SerializeValue(object value)
     {
-        if (value is DynValue)
+        var str = value.ToString();
+
+        if (str.StartsWith("System."))
         {
-            var dynValue = value as DynValue;
-            switch (dynValue.Type)
-            {
-                case DataType.Boolean: value = dynValue.Boolean; break;
-                case DataType.ClrFunction:
-                case DataType.Function: value = dynValue.Function; break;
-                case DataType.Nil: value = null; break;
-                case DataType.Number: value = dynValue.Number; break;
-                case DataType.String: value = dynValue.String; break;
-                case DataType.Table: value = dynValue.Table; break;
-                case DataType.UserData: value = dynValue.UserData.Object; break;
-                default: value = string.Format("LuaValue({0})", dynValue.Type.ToString()); break;
-            }
+            str = str.Substring(("System.").Length);
         }
 
-        if (value == null) { return null; }
-
-        var dlg = Spawn<UIValueInspector>();
-        dlg.value = value;
-        return dlg;
+        return str;
     }
 
     public static string DetermineCategory(MemberInfo member)
@@ -324,7 +300,7 @@ public class UIValueInspector : Dialog, IDragHandler
             name == "gameObject" ||
             name == "transform" ||
             name == "isStatic" ||
-            name == "scene" || 
+            name == "scene" ||
             name == "eulerAngles" ||
             name == "right" ||
             name == "up" ||
@@ -337,7 +313,8 @@ public class UIValueInspector : Dialog, IDragHandler
             name == "lossyScale" ||
             name == "hasChanged" ||
             name == "hierarchyCapacity" ||
-            name == "hierarchyCount";
+            name == "hierarchyCount" ||
+            name == "ReferenceID";
     }
 
     public static bool IgnoreMember(MemberInfo member)
@@ -365,6 +342,85 @@ public class UIValueInspector : Dialog, IDragHandler
 
     public static bool IsInspectable(object value)
     {
-        return true;
+        return !(value.GetType().IsPrimitive || value is string || value is Decimal);
     }
+
+    #endregion
+
+    #region Lua library
+
+    public void LuaAssign_o1()
+    {
+        LuaAssign("o1");
+    }
+
+    public void LuaAssign(string global)
+    {
+        var console = FindObjectOfType<ScriptConsole>();
+        console.environment.L.Globals[global] = value;
+    }
+
+    public static object LuaRemapValue(object value)
+    {
+        if (value is DynValue)
+        {
+            var dynValue = value as DynValue;
+            switch (dynValue.Type)
+            {
+                case DataType.Boolean: return dynValue.Boolean;
+                case DataType.ClrFunction:
+                case DataType.Function: return dynValue.Function;
+                case DataType.Nil: return null;
+                case DataType.Number: return dynValue.Number;
+                case DataType.String: return dynValue.String;
+                case DataType.Table: return dynValue.Table;
+                case DataType.UserData: return dynValue.UserData.Object;
+                default: return string.Format("LuaValue({0})", dynValue.Type.ToString());
+            }
+        }
+
+        return value;
+    }
+
+    #endregion
+
+    #region Unity library
+
+    public bool UnityAddCustomValues(object value)
+    {
+        var unityGameObject = value as GameObject;
+        if (unityGameObject != null)
+        {
+            AddCategory("GameObject");
+
+            var comps = unityGameObject.GetComponents<Component>();
+            foreach (var comp in comps)
+            {
+                var compTypeName = comp.GetType().Name;
+                AddObject(compTypeName, "<i>[Component]</i> " + compTypeName, comp);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    public void UnityAssignTitle(object value)
+    {
+        if (value is GameObject)
+        {
+            title.text = "[GameObject] " + (value as GameObject).name;
+        }
+        else if (value is Component)
+        {
+            var unityComponent = value as Component;
+            title.text = string.Format("[{0}] {1}", unityComponent.GetType().Name, unityComponent.name);
+        }
+        else if (value is UnityEngine.Object)
+        {
+            title.text = "[Unity] " + (value as UnityEngine.Object).name;
+        }
+    }
+
+    #endregion
 }
