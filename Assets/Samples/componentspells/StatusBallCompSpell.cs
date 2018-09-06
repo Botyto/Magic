@@ -55,6 +55,7 @@ public class StatusBallCompSpell : ContinuousSpellComponent
             return;
         }
 
+        aura.sign = param.integer;
         aura.type = param.statusEffect;
     }
 }

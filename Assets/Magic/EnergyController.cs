@@ -786,7 +786,7 @@ public class EnergyController : EnergyUser
         if (target.@sealed)
         {
             aura = default(T);
-            return EnergyActionResult.ExtractingTooMuch;
+            return EnergyActionResult.ForbiddenAction;
         }
 
         //Check if extracting too much
@@ -813,6 +813,32 @@ public class EnergyController : EnergyUser
 
         //Consume energy
         DecreaseEnergy(totalCost);
+
+        return EnergyActionResult.Success;
+    }
+
+    /// <summary>
+    /// Apply a status effect to some object.
+    /// </summary>
+    public EnergyActionResult ApplyStatusEffect(EnergyManifestation target, GameObject obj, int extractedEnergy, StatusEffect.Type type, int intensity)
+    {
+        //The object must be a unit
+        if (obj == null || obj.GetComponent<Unit>() == null)
+        {
+            return EnergyActionResult.InvalidObject;
+        }
+
+        //Apply the status effect aura
+        StatusEffectAura effectAura;
+        var result = ApplyAura(target, obj, extractedEnergy, out effectAura);
+        if (!Try(result))
+        {
+            return result;
+        }
+
+        //Setup the aura
+        effectAura.effect = type;
+        effectAura.intensitySign = intensity;
 
         return EnergyActionResult.Success;
     }

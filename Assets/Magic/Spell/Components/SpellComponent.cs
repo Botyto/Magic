@@ -305,6 +305,14 @@ public class SpellComponent : SpellComponentBase
     }
 
     /// <summary>
+    /// Apply a status effect to some object.
+    /// </summary>
+    public EnergyActionResult ApplyStatusEffect(int focusHandle, GameObject obj, int extractedEnergy, StatusEffect.Type type, int intensity)
+    {
+        return controller.ApplyStatusEffect(GetFocus(focusHandle), obj, extractedEnergy, type, intensity);
+    }
+
+    /// <summary>
     /// Substitute self with an object
     /// </summary>
     public EnergyActionResult Substitute(int focusHandle, GameObject obj)

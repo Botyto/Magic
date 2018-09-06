@@ -66,6 +66,12 @@ public class Unit : MonoBehaviour
     /// </summary>
     public void Heal(int amount)
     {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        amount = Mathf.Min(amount, maxHealth - health);
         health += amount;
         SendMessage("HealthChanged", amount, SendMessageOptions.DontRequireReceiver);
     }
@@ -99,6 +105,7 @@ public class Unit : MonoBehaviour
         //Death...
         if (health <= 0)
         {
+            health = 0;
             SendMessage("HealthDepleted", SendMessageOptions.DontRequireReceiver);
             LogManager.LogMessage(LogManager.Combat, "'{0}' died.", name);
             Gameplay.Destroy(gameObject, "no health");
@@ -222,7 +229,7 @@ public class Unit : MonoBehaviour
 
         if (healthEffect.intensity < 0)
         {
-            DealDamage(Mathf.Abs(healthEffect.intensity) * energyAmountUsed, gameObject); //TODO balance energy
+            DealDamage(Mathf.Abs(healthEffect.intensity) * energyAmountUsed, "Health Status Effect"); //TODO balance energy
         }
         else
         {

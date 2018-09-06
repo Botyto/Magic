@@ -3545,7 +3545,7 @@ Prefab:
     - target: {fileID: 114155510847531562, guid: 822f94491ec7885479be99e24b1c5430,
         type: 2}
       propertyPath: spells.Array.size
-      value: 14
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 4239035176064528, guid: 822f94491ec7885479be99e24b1c5430, type: 2}
       propertyPath: m_LocalPosition.x
@@ -3590,6 +3590,12 @@ Prefab:
       propertyPath: spells.Array.data[4]
       value: 
       objectReference: {fileID: 11400000, guid: eba9306fb9d4f4c4a855085ca0869708,
+        type: 2}
+    - target: {fileID: 114155510847531562, guid: 822f94491ec7885479be99e24b1c5430,
+        type: 2}
+      propertyPath: spells.Array.data[14]
+      value: 
+      objectReference: {fileID: 11400000, guid: 478cbe89a831e664282a88104e7bf8c7,
         type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 822f94491ec7885479be99e24b1c5430, type: 2}

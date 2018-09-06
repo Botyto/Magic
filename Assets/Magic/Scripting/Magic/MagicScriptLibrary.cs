@@ -482,15 +482,27 @@ public static class MagicScriptLibrary
         var result = spell.OrientTowards(handle, lookat);
         return DynValue.NewNumber((int)result);
     }
-    
-    /*public static DynValue Spell_ApplyAura<T>(ScriptExecutionContext ctx, CallbackArguments args) //int focusHandle, GameObject obj, int extractedEnergy, out T aura
+
+    /*public static DynValue Spell_ApplyAura<T>(ScriptExecutionContext ctx, CallbackArguments args)
     {
         var spell = GetSpell<SpellComponent>(args);
         var handle = args.AsInt(1, "SpellComponent.ApplyAura<T>");
         var result = spell.ApplyAura<T>(handle, GameObject obj, int extractedEnergy, out T aura);
         return DynValue.NewNumber((int)result);
     }*/
- 
+
+    public static DynValue Spell_ApplyStatusEffect(ScriptExecutionContext ctx, CallbackArguments args)
+    {
+        var spell = GetSpell<SpellComponent>(args);
+        var handle = args.AsInt(1, "SpellComponent.ApplyStatusEffect");
+        var obj = args.AsUserData<GameObject>(2, "SpellComponent.ApplyStatusEffect", true);
+        var extractedEnergy = args.AsInt(3, "SpellComponent.ApplyStatusEffect");
+        var type = (StatusEffect.Type)args.AsInt(4, "SpellComponent.ApplyStatusEffect");
+        var intensity = args.AsInt(5, "SpellComponent.ApplyStatusEffect");
+        var result = spell.ApplyStatusEffect(handle, obj, extractedEnergy, type, intensity);
+        return DynValue.NewNumber((int)result);
+    }
+
     public static DynValue Spell_Substitute(ScriptExecutionContext ctx, CallbackArguments args)
     {
         var spell = GetSpell<SpellComponent>(args);

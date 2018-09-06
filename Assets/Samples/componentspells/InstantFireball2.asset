@@ -21,7 +21,7 @@ MonoBehaviour:
     shape: 0
     obj: {fileID: 0}
     statusEffect: 0
-    integer: 0
+    integer: 1
     real: 0
   displayName: Fireball
   icon: {fileID: 21300002, guid: 91c6ddd978cbffa48ae2a1dc32fe3368, type: 3}

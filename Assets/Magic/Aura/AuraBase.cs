@@ -103,7 +103,7 @@ public abstract class AuraBase : EnergyUser
     public EnergyActionResult StatusEffectCharge(StatusEffect.Type effectType, int intensity, int amount)
     {
         //Check cost
-        int totalCost = cost.StatusEffectCharge(this, unit, effectType, intensity, amount);
+        int totalCost = cost.StatusEffectCharge(this, unit, effectType, intensity, amount); //TODO balance energy
         if (totalCost > GetEnergy())
         {
             return EnergyActionResult.NotEnoughEnergy;

@@ -33,7 +33,7 @@ public static class Energy //TODO organize/spearate into classes
         /// </summary>
         Electricity,
         /// <summary>
-        /// Dirt (natural) energy (beats water, loses to electricity)
+        /// Dirt (nature) energy (beats water, loses to electricity)
         /// </summary>
         Earth,
         /// <summary>
