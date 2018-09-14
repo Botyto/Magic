@@ -13,7 +13,7 @@ setmetatable(Class, {
 
 --Utilty functions
 function IsKindOf(obj, class)
-	return obj and obj.__ancestors and obj.__ancestors[class]
+	return type(obj) == "table" and obj.__ancestors and obj.__ancestors[class]
 end
 
 --Building classes

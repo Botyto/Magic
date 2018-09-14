@@ -145,15 +145,29 @@ local function ParseMethodParameter(param)
 end
 
 local function PraseMethodDefinition(line)
+	local public_first, public_last = string.find(line, "public ")
+	local private_first, private_last = string.find(line, "private ")
 	local accessibility = "private"
-	if string.find(line, "public") then accessibility = "public" end
-	if string.find(line, "private") then accessibility = "private" end
+	if public_first then accessibility = "public" end
+	if private_first then accessibility = "private" end
 
-	local static = not not string.find(line, "static")
-	local virtual = not not string.find(line, "virutal")
-	local abstract = not not string.find(line, "abstract")
+	local static_first, static_last = string.find(line, "static ")
+	local virtual_first, virtual_last = string.find(line, "virutal ")
+	local abstract_first, abstract_last = string.find(line, "abstract ")
 
-	local name = name
+	local static = not not static_first
+	local virutal = not not virtual_first
+	local abstract = not not abstract_first
+
+	local before_type = math.max(static_last or 1, virutal_last or 1, abstract_last or 1, public_last or 1, private_last or 1)
+	local type_last = string.find(line, " ", before_type + 1)
+	local result_type = string.sub(line, before_type + 1, type_last - 1)
+	local only_result = ParameterNode:new()
+	only_result.value_type = result_type
+	local results = { only_result }
+
+	local name_end = string.find(line, "%(", type_last)
+	local name = string.trim_spaces(string.sub(line, type_last + 1, name_end - 1))
 
 	local bracket_open = string.find(line, "%(")
 	local bracket_close = string.find(line, ")")
@@ -162,8 +176,6 @@ local function PraseMethodDefinition(line)
 	for i=1,#parameters do
 		parameters[i] = ParseMethodParameter(parameters[i])
 	end
-
-	local results = { }
 
 	return accessibility, static, name, parameters, results
 end
@@ -215,7 +227,6 @@ function CSharpParser:ParseBlock(block)
 			node.accessibility = accessibility
 			node.static = static
 			node.variants = { elements.method.content }
-			node.title = elements.method.content
 			node.parameters = { parameters }
 			node.results = { results }
 		elseif elements.property then --node is property
@@ -226,7 +237,6 @@ function CSharpParser:ParseBlock(block)
 			node.accessibility = accessibility
 			node.static = static
 			node.variants = { elements.property.content }
-			node.title = elements.property.content
 			node.value_type = value_type
 			node.default = default
 		end
@@ -242,6 +252,7 @@ function CSharpParser:ParseBlock(block)
 			end
 
 			if IsKindOf(node, "CodeNode") then
+				node.attributes = { }
 				node.language = "csharp"
 
 				node.examples = { }

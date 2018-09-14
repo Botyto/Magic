@@ -40,3 +40,6 @@ function Node:TryUpdateConnectionMember(member, other)
 		return true
 	end
 end
+
+function Node:TryMergeNode(other)
+end

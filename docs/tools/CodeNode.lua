@@ -37,6 +37,8 @@ function CodeNode:GenerateExamples(writer)
 
 	local examples = { }
 
+	table.insert(examples, writer:GenerateSection("Examples"))
+
 	writer:ResetOrderedList()
 	for i,example in ipairs(self.examples or empty_table) do
 		table.insert(examples, writer:GenerateOrderedListLine("Example"))

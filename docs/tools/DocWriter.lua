@@ -8,8 +8,8 @@ end
 function DocWriter:Output(graph, folder)
 	for i,node in ipairs(graph.nodes) do
 		if IsKindOf(node, "PageNode") then
-			local content = node:GenerateContent(self)
 			local header = self:GenerateFileHeader(node)
+			local content = node:GenerateContent(self)
 			local footer = self:GenerateFileFooter(node)
 			local page = string.format("%s\n%s\n%s", header, content, footer)
 			self:SaveFile(page, folder .. node.file_path)

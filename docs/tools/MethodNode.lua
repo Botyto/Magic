@@ -26,7 +26,7 @@ function MethodNode:GeneratePageContent(writer)
 
 		if next(results or empty_table) then
 			table.insert(page, writer:GenerateOrderedListLine("Results")) --3. results
-			table.insert(page, self:GenerateParametersTable(writer, results))
+			table.insert(page, writer:GenerateTable(results))
 		end
 
 		writer:ResetOrderedList()
@@ -39,10 +39,44 @@ function MethodNode:GenerateParametersTable(writer, list)
 	local columns = { "Type", "Name", "Summary" }
 	local t = { }
 	for i,param in ipairs(list) do
-		table.insert(t, { param.value_type, param.title, param.summary or "..." })
+		local type_text = IsKindOf(param.value_type, "PageNode") and param.value_type:GenerateLink(writer) or param.value_type
+		table.insert(t, { type_text, param.title, param.summary or param.title })
 	end
 
 	return writer:GenerateTable(t, columns)
+end
+
+function MethodNode:TryMergeNode(other)
+	if not IsKindOf(other, "MethodNode") then return end
+	if other.parent ~= self.parent then return end
+	if other.title ~= self.title then return end
+
+	table.append(self.variants, other.variants)
+	table.append(self.attributes, other.variants)
+	table.append(self.parameters, other.parameters)
+	table.append(self.results, other.results)
+	table.append(self.examples, other.examples)
+
+	return true
+end
+
+function MethodNode:UpdateConnectionsWithNode(other)
+	CodeNode.UpdateConnectionsWithNode(self, other)
+
+	for i,param_list in ipairs(self.parameters or empty_table) do
+		for j,param in ipairs(param_list) do
+			if IsKindOf(param, "Node") then
+				param:UpdateConnectionsWithNode(other)
+			end
+		end
+	end
+	for i,result_list in ipairs(self.results or empty_table) do
+		for j,result in ipairs(result_list) do
+			if IsKindOf(result, "Node") then
+				result:UpdateConnectionsWithNode(other)
+			end
+		end
+	end
 end
 
 ----------------------------
@@ -56,4 +90,8 @@ Class.ParameterNode = {
 
 function ParameterNode:GenerateContent(writer)
 	return ""
+end
+
+function ParameterNode:UpdateConnectionsWithNode(other)
+	self:TryUpdateConnectionMember("value_type", other)
 end
