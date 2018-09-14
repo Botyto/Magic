@@ -18,3 +18,9 @@ end
 function BaseParser:ParseFile(file)
 	return { }
 end
+
+function BaseParser:SetupNode(node)
+	if IsKindOf(node, "PageNode") then
+		node.file_path = node.title .. ".md.html"
+	end
+end

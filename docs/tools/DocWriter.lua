@@ -9,22 +9,37 @@ function DocWriter:Output(graph, folder)
 	for i,node in ipairs(graph.nodes) do
 		if IsKindOf(node, "PageNode") then
 			local content = node:GenerateContent(self)
-			print(node.file_path)
-			print(content)
-			--self:SaveFile(content, folder .. node.content)
+			local header = self:GenerateFileHeader(node)
+			local footer = self:GenerateFileFooter(node)
+			local page = string.format("%s\n%s\n%s", header, content, footer)
+			self:SaveFile(page, folder .. node.file_path)
 		end
 	end
 end
 
 function DocWriter:SaveFile(content, file)
-	local f = io.open(file, "w")
+	if string.find(file, "[%*%?\"',=+\\&^%$#@!{}%[%]<>%(%)]") then
+		print("Failed to save " .. file)
+		return
+	end
+
+	local f, err = io.open(file, "w")
 	if f then
 		f:write(content)
 		f:close()
 		print("Saved " .. file)
+		return true
 	else
-		print("Failed to save " .. file)
+		print("Failed to save " .. file .. ": " .. err)
 	end
+end
+
+function DocWriter:GenerateFileHeader(node)
+	return ""
+end
+
+function DocWriter:GenerateFileFooter(node)
+	return ""
 end
 
 -------------------------------------------------

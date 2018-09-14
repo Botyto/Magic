@@ -10,6 +10,7 @@ Class.CodeNode = {
 	variants = false, --signatures
 	attributes = false, --attributes associated with this node
 	accessibility = "public", --"private" or "public"
+	static = false,
 	examples = false, --example code pieces
 
 	--code reference

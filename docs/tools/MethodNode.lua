@@ -19,15 +19,30 @@ function MethodNode:GeneratePageContent(writer)
 		table.insert(page, writer:GenerateOrderedListLine("Syntax")) --1. syntax
 		table.insert(page, writer:GenerateSnippet(variant, self.language, self.summary))
 
-		table.insert(page, writer:GenerateOrderedListLine("Parameters")) --2. parameters
-		table.insert(page, writer:GenerateParametersTable(writer))
+		if next(parameters or empty_table) then --2. parameters
+			table.insert(page, writer:GenerateOrderedListLine("Parameters"))
+			table.insert(page, self:GenerateParametersTable(writer, parameters))
+		end
 
-		table.insert(page, writer:GenerateOrderedListLine("Results")) --3. results
+		if next(results or empty_table) then
+			table.insert(page, writer:GenerateOrderedListLine("Results")) --3. results
+			table.insert(page, self:GenerateParametersTable(writer, results))
+		end
 
 		writer:ResetOrderedList()
 	end
 
 	return page
+end
+
+function MethodNode:GenerateParametersTable(writer, list)
+	local columns = { "Type", "Name", "Summary" }
+	local t = { }
+	for i,param in ipairs(list) do
+		table.insert(t, { param.value_type, param.title, param.summary or "..." })
+	end
+
+	return writer:GenerateTable(t, columns)
 end
 
 ----------------------------
@@ -36,6 +51,7 @@ Class.ParameterNode = {
 	__inherit = "Node",
 
 	value_type = false, --value type (node, string or `false`)
+	default = false, --default value (string or `false`)
 }
 
 function ParameterNode:GenerateContent(writer)

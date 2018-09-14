@@ -4,10 +4,8 @@ Class.MarkdeepWriter = {
 	__inherit = "DocWriter",
 }
 
-function MarkdeepWriter:SaveHTML(content, file)
-	local footer = "<!-- Markdeep: --><style class=\"fallback\">body{visibility:hidden;white-space:pre;font-family:monospace}</style>\n<script src=\"markdeep.min.js\"></script>\n<script src=\"https://casual-effects.com/markdeep/latest/markdeep.min.js\"></script>\n<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility=\"visible\")</script>"
-	content = content .. "\n" .. footer
-	DocWriter.SaveHTML(self, content, file)
+function MarkdeepWriter:GenerateFileFooter(node)
+	return "<!-- Markdeep: --><style class=\"fallback\">body{visibility:hidden;white-space:pre;font-family:monospace}</style>\n<script src=\"markdeep.min.js\"></script>\n<script src=\"https://casual-effects.com/markdeep/latest/markdeep.min.js\"></script>\n<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility=\"visible\")</script>"
 end
 
 function MarkdeepWriter:GenerateList(list)
@@ -20,7 +18,7 @@ function MarkdeepWriter:GenerateList(list)
 end
 
 function MarkdeepWriter:GenerateCaption(caption)
-	return string.format("** %s **", tostring(caption))
+	return string.format("**%s**", tostring(caption))
 end
 
 function MarkdeepWriter:GenerateSection(section)

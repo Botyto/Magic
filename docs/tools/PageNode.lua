@@ -22,7 +22,6 @@ function PageNode:GenerateCaption(writer)
 end
 
 function PageNode:GenerateFooter(writer)
-	local section = writer:GenerateSection("See also")
 	local references = { }
 
 	if IsKindOf(self.article, "PageNode") then
@@ -37,7 +36,12 @@ function PageNode:GenerateFooter(writer)
 		end
 	end
 
+	if not next(references) then
+		return ""
+	end
+
 	--TODO remove duplicates from `references`
+	local section = writer:GenerateSection("See also")
 	local links = writer:GenerateList(references)
 
 	return { section, links }

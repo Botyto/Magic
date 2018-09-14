@@ -31,14 +31,20 @@ function ClassNode:GeneratePageContent(writer)
 		table.insert(page, writer:GenerateSnippet(variant, self.language, self.summary))
 	end
 
-	table.insert(page, writer:GenerateSection("Members"))
-	table.insert(page, writer:GenerateTable(self:GeneratePropertiesTable(writer)))
+	if next(self.properties or empty_table) then
+		table.insert(page, writer:GenerateSection("Members"))
+		table.insert(page, writer:GenerateTable(self:GeneratePropertiesTable(writer)))
+	end
 
-	table.insert(page, writer:GenerateSection("Methods"))
-	table.insert(page, writer:GenerateTable(self:GenerateMethodsTable(writer)))
+	if next(self.methods or empty_table) then
+		table.insert(page, writer:GenerateSection("Methods"))
+		table.insert(page, writer:GenerateTable(self:GenerateMethodsTable(writer)))
+	end
 
-	table.insert(page, writer:GenerateSection("Messages"))
-	table.insert(page, writer:GenerateTable(self:GenerateMessagesTable(writer)))
+	if next(self.messages or empty_table) then
+		table.insert(page, writer:GenerateSection("Messages"))
+		table.insert(page, writer:GenerateTable(self:GenerateMessagesTable(writer)))
+	end
 
 	return page
 end
@@ -46,15 +52,15 @@ end
 -------------------------------
 
 function ClassNode:GeneratePropertiesTable(writer)
-	return self:GenerateTable(self.properties)
+	return self:GenerateTable(writer, self.properties)
 end
 
 function ClassNode:GenerateMethodsTable(writer)
-	return self:GenerateTable(self.methods)
+	return self:GenerateTable(writer, self.methods)
 end
 
 function ClassNode:GenerateMessagesTable(writer)
-	return self:GenerateTable(self.messages)
+	return self:GenerateTable(writer, self.messages)
 end
 
 function ClassNode:GenerateTable(writer, t)
