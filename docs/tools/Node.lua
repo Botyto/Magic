@@ -2,6 +2,7 @@ require "Class"
 
 Class.Node = {
 	--main content
+	graph = false,
 	title = false, --main title for this node
 	summary = false, --summary of this node
 
@@ -28,4 +29,14 @@ end
 
 function Node:GenerateContent(writer)
 	return ""
+end
+
+function Node:UpdateConnectionsWithNode(other)
+end
+
+function Node:TryUpdateConnectionMember(member, other)
+	if self[member] == other.title then
+		self[member] = other
+		return true
+	end
 end

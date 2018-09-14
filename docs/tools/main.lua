@@ -8,10 +8,10 @@ local folders = { "../../Assets/" }
 local output_folder = "../output/"
 
 local parser = CSharpParser:new()
-local graph = DocGraph:new(parser)
+local graph = DocGraph:new()
 local writer = MarkdeepWriter:new()
 
 --graph:AddFolders(folders)
-graph:AddFile("../../Assets/Magic/EnergyHolder.cs")
+graph:AddFile(parser, "../../Assets/Magic/EnergyHolder.cs")
 writer:ClearOutput(output_folder)
 writer:Output(graph, output_folder)

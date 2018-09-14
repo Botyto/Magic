@@ -71,3 +71,14 @@ function ClassNode:GenerateTable(writer, t)
 
 	return result
 end
+
+function ClassNode:UpdateConnectionsWithNode(other)
+	for i=1,#self.inherits do
+		if self.inherits[i] == other.title then
+			self.inherits[i] = other
+		end
+	end
+
+	--methods, properties, messages should be set up during parsing
+end
+

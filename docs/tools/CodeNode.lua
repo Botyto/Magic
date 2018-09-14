@@ -51,3 +51,7 @@ function CodeNode:GenerateFooter(writer)
 
 	return { examples, references }
 end
+
+function CodeNode:UpdateConnectionsWithNode(other)
+	self:TryUpdateConnectionMember("parent", other)
+end

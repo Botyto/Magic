@@ -1,12 +1,9 @@
 
 Class.DocGraph = {
-	parser = false,
 	nodes = false,
-	links = false,
 }
 
-function DocGraph:__ctor(parser)
-	self.parser = parser
+function DocGraph:__ctor()
 	self.nodes = { }
 end
 
@@ -23,11 +20,29 @@ function DocGraph:AddFolder(folder)
 	end
 end
 
-function DocGraph:AddFile(file)
-	local new_nodes = self.parser:ParseFile(file)
+function DocGraph:AddFile(parser, file)
+	local new_nodes = parser:ParseFile(file)
+
+	for i,node in ipairs(new_nodes) do
+		node.graph = self
+	end
+
+	for i,node in ipairs(self.nodes) do
+		for i,new_node in ipairs(new_nodes) do
+			node:UpdateConnectionsWithNode(new_node)
+			new_node:UpdateConnectionsWithNode(node)
+		end
+	end
+
 	for i,node in ipairs(new_nodes) do
 		table.insert(self.nodes, node)
 	end
+end
 
-	--TODO update links
+function DocGraph:FindNode(title)
+	for i,node in ipairs(self.nodes) do
+		if node.title == title then
+			return node
+		end
+	end
 end

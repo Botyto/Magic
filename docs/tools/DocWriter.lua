@@ -1,14 +1,11 @@
 Class.DocWriter = {
 	list_num = 0,
-
-	current_graph = false,
 }
 
 function DocWriter:ClearOutput(folder)
 end
 
 function DocWriter:Output(graph, folder)
-	self.current_graph = graph
 	for i,node in ipairs(graph.nodes) do
 		if IsKindOf(node, "PageNode") then
 			local content = node:GenerateContent(self)
@@ -17,7 +14,6 @@ function DocWriter:Output(graph, folder)
 			--self:SaveFile(content, folder .. node.content)
 		end
 	end
-	self.current_graph = false
 end
 
 function DocWriter:SaveFile(content, file)

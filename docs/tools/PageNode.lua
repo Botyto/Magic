@@ -58,3 +58,13 @@ end
 function PageNode:GeneratePageContent()
 	return { }
 end
+
+function PageNode:UpdateConnectionsWithNode(other)
+	for i=1,#self.links do
+		if self.links[i] == other.title then
+			self.links[i] = other
+		end
+	end
+
+	self:TryUpdateConnectionMember("article", other)
+end
