@@ -64,6 +64,8 @@ function ClassNode:GenerateMessagesTable(writer)
 end
 
 function ClassNode:GenerateTable(writer, t)
+	t = table.removed_duplicates(t)
+
 	local result = { { "Name", "Description" } }
 	for i,entry in ipairs(t or empty_table) do
 		if IsKindOf(entry, "PageNode") then
@@ -85,6 +87,14 @@ function ClassNode:UpdateConnectionsWithNode(other)
 		end
 	end
 
-	--methods, properties, messages should be set up during parsing
+	if other.parent == self then
+		if IsKindOf(other, "MethodNode") then
+			table.insert_unique(self.methods, other)
+		elseif IsKindOf(other, "PropertyNode") then
+			table.insert_unique(self.properties, other)
+		elseif IsKindOf(other, "MessageNode") then
+			table.insert_unique(self.messges, other)
+		end
+	end
 end
 

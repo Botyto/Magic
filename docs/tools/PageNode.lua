@@ -40,7 +40,7 @@ function PageNode:GenerateFooter(writer)
 		return ""
 	end
 
-	--TODO remove duplicates from `references`
+	references = table.removed_duplicates(references)
 	local section = writer:GenerateSection("See also")
 	local links = writer:GenerateList(references)
 

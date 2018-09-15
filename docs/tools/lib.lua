@@ -25,6 +25,37 @@ function table.append(t1, t2) --appends t2 to end of t1
 	end
 end
 
+function table.find(t, v)
+	for key,value in pairs(t) do
+		if v == value then
+			return key
+		end
+	end
+end
+
+function table.insert_unique(t, v)
+	if table.find(t, v) then
+		return
+	end
+
+	table.insert(t, v)
+end
+
+function table.removed_duplicates(t)
+	local keys = { }
+
+	for i,v in ipairs(t) do
+		keys[v] = true
+	end
+
+	local result = { }
+	for v in pairs(keys) do
+		table.insert(result, v)
+	end
+
+	return result
+end
+
 function string.gfind(str, pattern)
 	local t = { }
 	for entry in string.gmatch(str, pattern) do

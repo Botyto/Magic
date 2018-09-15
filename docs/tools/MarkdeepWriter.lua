@@ -18,11 +18,11 @@ function MarkdeepWriter:GenerateList(list)
 end
 
 function MarkdeepWriter:GenerateCaption(caption)
-	return string.format("**%s**", tostring(caption))
+	return string.format("**%s**\n", tostring(caption))
 end
 
 function MarkdeepWriter:GenerateSection(section)
-	return section .. "\n" .. string.rep("=", #section)
+	return string.format("\n%s\n%s\n", section, string.rep("=", #section))
 end
 
 function MarkdeepWriter:GenerateSnippet(code, language, description)
@@ -92,5 +92,5 @@ end
 
 function MarkdeepWriter:GenerateOrderedListLine(text)
 	local line = DocWriter.GenerateOrderedListLine(self, text)
-	return string.format("%d. %s", self.list_num, line)
+	return string.format("\n%d. %s\n", self.list_num, line)
 end

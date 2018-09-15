@@ -49,13 +49,6 @@ function CSharpParser:ParseFile(file)
 					last_class = node
 				elseif IsKindOf(node, "CodeNode") then
 					node.parent = last_class
-					if IsKindOf(node, "MethodNode") then
-						table.insert(last_class.methods, node)
-					elseif IsKindOf(node, "PropertyNode") then
-						table.insert(last_class.properties, node)
-					elseif IsKindOf(node, "MessageNode") then
-						table.insert(last_class.messages, node)
-					end
 				end
 				table.insert(nodes, node)
 			end
@@ -154,7 +147,6 @@ local function PraseMethodDefinition(line)
 	local static_first, static_last = string.find(line, "static ")
 	local virtual_first, virtual_last = string.find(line, "virutal ")
 	local abstract_first, abstract_last = string.find(line, "abstract ")
-
 	local static = not not static_first
 	local virutal = not not virtual_first
 	local abstract = not not abstract_first
@@ -164,9 +156,10 @@ local function PraseMethodDefinition(line)
 	local result_type = string.sub(line, before_type + 1, type_last - 1)
 	local only_result = ParameterNode:new()
 	only_result.value_type = result_type
+	only_result.title = result_type
 	local results = { only_result }
 
-	local name_end = string.find(line, "%(", type_last)
+	local name_end = string.find(line, "%(", type_last) or string.find(line, " ", type_last)
 	local name = string.trim_spaces(string.sub(line, type_last + 1, name_end - 1))
 
 	local bracket_open = string.find(line, "%(")
@@ -181,16 +174,33 @@ local function PraseMethodDefinition(line)
 end
 
 local function PrasePropertyDefinition(line)
+	local public_first, public_last = string.find(line, "public ")
+	local private_first, private_last = string.find(line, "private ")
 	local accessibility = "private"
-	if string.find(line, "public") then accessibility = "public" end
-	if string.find(line, "private") then accessibility = "private" end
+	if public_first then accessibility = "public" end
+	if private_first then accessibility = "private" end
 
-	local static = not not string.find(line, "static")
+	local static_first, static_last = string.find(line, "static ")
+	local static = not not static_first
 
-	local name = line
+	local before_type = math.max(static_last or 1, public_last or 1, private_last or 1)
+	local type_last = string.find(line, " ", before_type + 1)
+	local type_name = string.sub(line, before_type + 1, type_last - 1)
+	local value_type = ParameterNode:new()
+	value_type.value_type = type_name
 
-	local value_type = "int"
-	local default = "0"
+	local name, default
+	local end_of_name = string.find(line, " ", type_last + 1) or string.find(line, "=", type_last + 1)
+	if end_of_name then
+		name = string.sub(line, type_last + 1, end_of_name - 1)
+	else
+		name = string.sub(line, type_last + 1)
+	end
+
+	local equals = string.find(line, "=", type_last + 1)
+	if equals then
+		default = string.trim_spaces(string.sub(line, equals + 1))
+	end
 
 	return accessibility, static, name, value_type, default
 end

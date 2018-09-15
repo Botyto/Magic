@@ -10,7 +10,7 @@ Class.MethodNode = {
 function MethodNode:GeneratePageContent(writer)
 	local page = { }
 
-	for i = 1, #self.variants do
+	for i=1,#self.variants do
 		local variant = self.variants[i]
 		local parameters = self.parameters[i]
 		local results = self.results[i]
@@ -26,7 +26,7 @@ function MethodNode:GeneratePageContent(writer)
 
 		if next(results or empty_table) then
 			table.insert(page, writer:GenerateOrderedListLine("Results")) --3. results
-			table.insert(page, writer:GenerateTable(results))
+			table.insert(page, self:GenerateParametersTable(writer, results))
 		end
 
 		writer:ResetOrderedList()
@@ -70,6 +70,7 @@ function MethodNode:UpdateConnectionsWithNode(other)
 			end
 		end
 	end
+
 	for i,result_list in ipairs(self.results or empty_table) do
 		for j,result in ipairs(result_list) do
 			if IsKindOf(result, "Node") then

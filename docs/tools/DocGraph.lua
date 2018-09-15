@@ -23,25 +23,6 @@ end
 function DocGraph:AddFile(parser, file)
 	local new_nodes = parser:ParseFile(file)
 
-	--update connections between new nodes
-	for i,new_node_1 in ipairs(new_nodes) do
-		for j,new_node_2 in ipairs(new_nodes) do
-			if new_node_1 ~= new_node_2 then
-				new_node_1:UpdateConnectionsWithNode(new_node_2)
-				new_node_2:UpdateConnectionsWithNode(new_node_1)
-			end
-		end
-	end
-
-	--update connncetions between new nodes and old nodes
-	for i,new_node in ipairs(new_nodes) do
-		new_node.graph = self
-		for j,old_node in ipairs(self.nodes) do
-			old_node:UpdateConnectionsWithNode(new_node)
-			new_node:UpdateConnectionsWithNode(old_node)
-		end
-	end
-
 	--try merge with an old node or just add it
 	for i,new_node in ipairs(new_nodes) do
 		local merge_success
@@ -52,6 +33,19 @@ function DocGraph:AddFile(parser, file)
 
 		if not merge_success then
 			table.insert(self.nodes, new_node)
+		end
+	end
+
+	self:UpdateConnections()
+end
+
+function DocGraph:UpdateConnections()
+	for i,node_1 in ipairs(self.nodes) do
+		for j,node_2 in ipairs(self.nodes) do
+			if node_1 ~= node_2 then
+				node_1:UpdateConnectionsWithNode(node_2)
+				node_2:UpdateConnectionsWithNode(node_1)
+			end
 		end
 	end
 end
