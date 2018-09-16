@@ -249,6 +249,9 @@ function CSharpParser:ParseBlock(block)
 			node.variants = { elements.property.content }
 			node.value_type = value_type
 			node.default = default
+		elseif elements.article then
+			node = ArticleNode:new()
+			node.title = elements.article.content
 		end
 
 		if node then
@@ -271,6 +274,11 @@ function CSharpParser:ParseBlock(block)
 						table.insert(node.examples, elem.content)
 					end
 				end
+			end
+
+			if IsKindOf(node, "PageNode") then
+				node.article = elements.article and elements.article.content
+				print(node, node.class, node.article)
 			end
 		end
 	end

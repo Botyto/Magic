@@ -56,5 +56,6 @@ function CodeNode:GenerateFooter(writer)
 end
 
 function CodeNode:UpdateConnectionsWithNode(other)
+	PageNode.UpdateConnectionsWithNode(self, other)
 	self:TryUpdateConnectionMember("parent", other)
 end

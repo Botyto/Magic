@@ -7,6 +7,10 @@ Class.PropertyNode = {
 	default = false, --default value for this node
 }
 
+function PropertyNode:GetFilePrefix()
+	return "property"
+end
+
 function PropertyNode:GeneratePageContent(writer)
 	local page = { }
 

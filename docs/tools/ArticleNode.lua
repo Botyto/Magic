@@ -7,6 +7,10 @@ Class.ArticleNode = {
 	members = false,
 }
 
+function ArticleNode:GetFilePrefix()
+	return "article"
+end
+
 function ArticleNode:__ctor()
 	self.body = { }
 	self.members = { }
@@ -14,15 +18,18 @@ end
 
 function ArticleNode:GenerateSeeAlsoLinks(writer)
 	local result = { }
-	for i,node in ipairs(self.members) then
+	for i,node in ipairs(self.members) do
 		table.insert(result, node:GenerateLink(writer))
 	end
 
 	return result
 end
 
-function ArticleNode:GeneratePageContent()
-	return body
+function ArticleNode:GeneratePageContent(writer)
+	return {
+		writer:GenerateSection("Article"),
+		body,
+	}
 end
 
 function ArticleNode:UpdateConnectionsWithNode(other)

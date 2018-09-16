@@ -27,6 +27,10 @@ function Node:ToString(v)
 	end
 end
 
+function Node:GetCaption()
+	return self.title
+end
+
 function Node:GenerateContent(writer)
 	return ""
 end

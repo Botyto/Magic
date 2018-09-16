@@ -9,6 +9,10 @@ Class.ClassNode = {
 	messages = false, --messages nodes
 }
 
+function ClassNode:GetFilePrefix()
+	return "class"
+end
+
 function ClassNode:GenerateSeeAlsoLinks(writer)
 	local references = { }
 
@@ -81,13 +85,15 @@ function ClassNode:GenerateTable(writer, t)
 end
 
 function ClassNode:UpdateConnectionsWithNode(other)
+	CodeNode.UpdateConnectionsWithNode(self, other)
+
 	for i=1,#self.inherits do
 		if self.inherits[i] == other.title then
 			self.inherits[i] = other
 		end
 	end
 
-	if other.parent == self then
+	if IsKindOf(other, "CodeNode") and other.parent == self then
 		if IsKindOf(other, "MethodNode") then
 			table.insert_unique(self.methods, other)
 		elseif IsKindOf(other, "PropertyNode") then

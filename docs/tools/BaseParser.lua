@@ -3,6 +3,7 @@ require "Class"
 require "ClassNode"
 require "MethodNode"
 require "PropertyNode"
+require "ArticleNode"
 
 Class.BaseParser = {
 }
@@ -21,6 +22,11 @@ end
 
 function BaseParser:SetupNode(node)
 	if IsKindOf(node, "PageNode") then
-		node.file_path = node.title .. ".md.html"
+		local prefix = node:GetFilePrefix()
+		if prefix and prefix ~= "" then
+			node.file_path = string.format("%s-%s.md.html", node:GetFilePrefix(), node.title)
+		else
+			node.file_path = string.format("%s.md.html", node.title)
+		end
 	end
 end

@@ -9,6 +9,10 @@ Class.PageNode = {
 	file_path = false, --where the file will be saved
 }
 
+function PageNode:GetFilePrefix()
+	return ""
+end
+
 function PageNode:GenerateLink(writer, text)
 	if self.file_path then
 		return writer:GenerateLink(self.file_path, text or self.title)
@@ -64,7 +68,7 @@ function PageNode:GeneratePageContent()
 end
 
 function PageNode:UpdateConnectionsWithNode(other)
-	for i=1,#self.links do
+	for i=1,#(self.links or empty_table) do
 		if self.links[i] == other.title then
 			self.links[i] = other
 		end

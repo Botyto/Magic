@@ -7,6 +7,10 @@ Class.MethodNode = {
 	results = false, --returned values (per variant)
 }
 
+function MethodNode:GetFilePrefix()
+	return "method"
+end
+
 function MethodNode:GeneratePageContent(writer)
 	local page = { }
 
