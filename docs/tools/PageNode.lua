@@ -7,18 +7,20 @@ Class.PageNode = {
 	article = false, --article this node belongs to
 
 	file_path = false, --where the file will be saved
+	root_path = false, --where the root is relative to `self.file_path`
 }
 
 function PageNode:GetFilePrefix()
 	return ""
 end
 
-function PageNode:GenerateLink(writer, text)
-	if self.file_path then
-		return writer:GenerateLink(self.file_path, text or self.title)
-	else
-		return text
-	end
+function PageNode:GenerateLinkTo(writer, node)
+	assert(IsKindOf(node, "PageNode"))
+
+	local to_root = self.root_path or ""
+	local url = to_root .. node.file_path
+
+	return writer:GenerateLink(url, node.title)
 end
 
 function PageNode:GenerateCaption(writer)
@@ -29,14 +31,14 @@ function PageNode:GenerateFooter(writer)
 	local references = { }
 
 	if IsKindOf(self.article, "PageNode") then
-		table.insert(references, self.article:GenerateLink(writer))
+		table.insert(references, self:GenerateLinkTo(writer, self.article))
 	end
 
 	table.append(references, self:GenerateSeeAlsoLinks(writer))
 
 	for i,link in ipairs(self.links or empty_table) do
 		if IsKindOf(link, "PageNode") then
-			table.insert(references, link:GenerateLink(writer))
+		table.insert(references, self:GenerateLinkTo(writer, link))
 		end
 	end
 

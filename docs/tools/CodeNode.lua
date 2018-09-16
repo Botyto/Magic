@@ -22,7 +22,7 @@ function CodeNode:GenerateSeeAlsoLinks(writer)
 	local references = { }
 
 	if IsKindOf(self.parent, "PageNode") then
-		table.insert(references, self.parent:GenerateLink(writer))
+		table.insert(references, self:GenerateLinkTo(writer, self.parent))
 	end
 
 	table.append(references, PageNode.GenerateSeeAlsoLinks(self, writer))

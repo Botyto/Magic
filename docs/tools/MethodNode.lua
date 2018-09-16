@@ -43,7 +43,7 @@ function MethodNode:GenerateParametersTable(writer, list)
 	local columns = { "Type", "Name", "Summary" }
 	local t = { }
 	for i,param in ipairs(list) do
-		local type_text = IsKindOf(param.value_type, "PageNode") and param.value_type:GenerateLink(writer) or param.value_type
+		local type_text = IsKindOf(param.value_type, "PageNode") and self:GenerateLinkTo(writer, param.value_type) or param.value_type
 		table.insert(t, { type_text, param.title, param.summary or param.title })
 	end
 

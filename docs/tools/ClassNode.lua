@@ -20,7 +20,7 @@ function ClassNode:GenerateSeeAlsoLinks(writer)
 
 	for i,parent in ipairs(self.inherits or empty_table) do
 		if IsKindOf(parent, "PageNode") then
-			table.insert(references, parent:GenerateLink(writer))
+			table.insert(references, self:GenerateLinkTo(writer, parent))
 		end
 	end
 
@@ -73,7 +73,7 @@ function ClassNode:GenerateTable(writer, t)
 	local result = { { "Name", "Description" } }
 	for i,entry in ipairs(t or empty_table) do
 		if IsKindOf(entry, "PageNode") then
-			table.insert(result, { entry:GenerateLink(writer), entry.summary })
+			table.insert(result, { self:GenerateLinkTo(writer, entry), entry.summary })
 		elseif IsKindOf(entry, "Node") then
 			table.insert(result, { entry.title, entry.summary })
 		elseif type(entry) == "string" then

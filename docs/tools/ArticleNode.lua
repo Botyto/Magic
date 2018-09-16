@@ -19,7 +19,7 @@ end
 function ArticleNode:GenerateSeeAlsoLinks(writer)
 	local result = { }
 	for i,node in ipairs(self.members) do
-		table.insert(result, node:GenerateLink(writer))
+		table.insert(result, self:GenerateLinkTo(writer, node))
 	end
 
 	return result

@@ -40,7 +40,6 @@ function CSharpParser:ParseFile(file)
 
 			local node = self:ParseBlock(block)
 			if node then
-				self:SetupNode(node)
 				if IsKindOf(node, "CodeNode") then
 					node.file = file
 					node.lines = { first = first, last = last }
@@ -50,6 +49,7 @@ function CSharpParser:ParseFile(file)
 				elseif IsKindOf(node, "CodeNode") then
 					node.parent = last_class
 				end
+				self:SetupNode(node)
 				table.insert(nodes, node)
 			end
 		end
@@ -278,7 +278,6 @@ function CSharpParser:ParseBlock(block)
 
 			if IsKindOf(node, "PageNode") then
 				node.article = elements.article and elements.article.content
-				print(node, node.class, node.article)
 			end
 		end
 	end
