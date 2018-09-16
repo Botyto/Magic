@@ -13,5 +13,10 @@ local writer = MarkdeepWriter:new()
 
 --graph:AddFolders(folders)
 graph:AddFile(parser, "../../Assets/Magic/EnergyHolder.cs")
+local class_map = graph:GenerateMapNode(function(n) return IsKindOf(n, "ClassNode") end)
+class_map.title = "Classes"
+class_map.summary = "All classes."
+class_map.file_path = "map-Classes.md.html"
+
 writer:ClearOutput(output_folder)
 writer:Output(graph, output_folder)

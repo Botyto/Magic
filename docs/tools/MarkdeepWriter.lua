@@ -22,18 +22,25 @@ function MarkdeepWriter:GenerateCaption(caption)
 end
 
 function MarkdeepWriter:GenerateSection(section)
-	return string.format("\n%s\n%s\n", section, string.rep("=", #section))
+	return string.format("\n%s\n%s\n", section, string.rep("=", math.max(#section, 3)))
 end
 
 function MarkdeepWriter:GenerateSnippet(code, language, description)
-	local result = "~~~"
+	local longest_line = 0
+	local code_lines = string.split(code, "\n")
+	for i,line in ipairs(code_lines) do
+		longest_line = math.max(longest_line, #line)
+	end
+	local tildes = string.rep("~", math.max(longest_line, 3))
+
+	local result = tildes
 	if language then
 		result = result .. " " .. language
 	end
 
 	result = result .. "\n"
 	result = result .. code .. "\n"
-	result = result .. "~~~"
+	result = result .. tildes
 
 	if description then
 		result = result .. "\n" .. description

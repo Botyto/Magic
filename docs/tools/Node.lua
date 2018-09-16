@@ -2,7 +2,6 @@ require "Class"
 
 Class.Node = {
 	--main content
-	graph = false,
 	title = false, --main title for this node
 	summary = false, --summary of this node
 

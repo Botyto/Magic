@@ -1,3 +1,4 @@
+require "DocsMapNode"
 
 Class.DocGraph = {
 	nodes = false,
@@ -37,6 +38,17 @@ function DocGraph:AddFile(parser, file)
 	end
 
 	self:UpdateConnections()
+end
+
+function DocGraph:GenerateMapNode(filter)
+	local map = DocsMapNode:new()
+	for i,node in ipairs(self.nodes) do
+		if filter(node) then
+			table.insert(map.elements, node)
+		end
+	end
+	table.insert(self.nodes, map)
+	return map
 end
 
 function DocGraph:UpdateConnections()
