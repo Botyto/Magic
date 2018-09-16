@@ -3,7 +3,6 @@ require "PageNode"
 Class.ArticleNode = {
 	__inherit = "PageNode",
 
-	body = false,
 	members = false,
 }
 
@@ -12,7 +11,6 @@ function ArticleNode:GetFilePrefix()
 end
 
 function ArticleNode:__ctor()
-	self.body = { }
 	self.members = { }
 end
 
@@ -28,7 +26,7 @@ end
 function ArticleNode:GeneratePageContent(writer)
 	return {
 		writer:GenerateSection("Article"),
-		body,
+		self.summary,
 	}
 end
 
