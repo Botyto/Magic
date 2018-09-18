@@ -17,14 +17,22 @@ end
 function PageNode:GenerateLinkTo(writer, node)
 	assert(IsKindOf(node, "PageNode"))
 
+	if not writer:ShouldOutputNode(node) then
+		return
+	end
+
 	local to_root = self.root_path or ""
 	local url = to_root .. node.file_path
 
 	return writer:GenerateLink(url, node.title)
 end
 
+function Node:GetCaption(writer)
+	return self.title
+end
+
 function PageNode:GenerateCaption(writer)
-	return { writer:GenerateCaption(self.title) }
+	return { writer:GenerateCaption(self:GetCaption(writer)) }
 end
 
 function PageNode:GenerateFooter(writer)
@@ -58,7 +66,7 @@ function PageNode:GenerateContent(writer)
 	local content = self:GeneratePageContent(writer)
 	local footer = self:GenerateFooter(writer)
 
-	return self:ToString({ caption, content, footer })
+	return self:ToString(writer, { caption, content, footer })
 end
 
 function PageNode:GenerateSeeAlsoLinks(writer)

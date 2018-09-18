@@ -8,7 +8,7 @@ Class.Node = {
 	tags = false, --tags like 'private' or 'public' - used for file generation
 }
 
-function Node:ToString(v)
+function Node:ToString(writer, v)
 	local ty = type(v)
 	if ty == "table" then
 		if not next(v) then
@@ -16,7 +16,7 @@ function Node:ToString(v)
 		end
 		local serialized = { }
 		for i,entry in ipairs(v) do
-			table.insert(serialized, self:ToString(entry))
+			table.insert(serialized, self:ToString(writer, entry))
 		end
 		return table.concat(serialized, "\n")
 	elseif ty == "string" then
@@ -26,8 +26,20 @@ function Node:ToString(v)
 	end
 end
 
-function Node:GetCaption()
-	return self.title
+function Node:__ctor()
+	self.tags = { private = true, public = true }
+end
+
+function Node:SetTag(tag, value)
+	if tag == "public" and value then
+		self.tags["public"] = true
+		self.tags["private"] = true
+	elseif tag == "private" and value then
+		self.tags["public"] = nil
+		self.tags["private"] = true
+	else
+		self.tags[tag] = value
+	end
 end
 
 function Node:GenerateContent(writer)

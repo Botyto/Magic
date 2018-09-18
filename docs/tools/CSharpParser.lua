@@ -257,10 +257,9 @@ function CSharpParser:ParseBlock(block)
 		if node then
 			node.summary = elements.summary and elements.summary.content
 
-			node.tags = { }
 			for i,elem in ipairs(elements) do
 				if elem.tag == "tag" then
-					table.insert(node.tags, elem.content)
+					node:SetTag(elem.content, true)
 				end
 			end
 

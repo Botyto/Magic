@@ -1,13 +1,18 @@
 Class.DocWriter = {
 	list_num = 0,
+	required_tags = false,
 }
+
+function DocWriter:__ctor()
+	self.required_tags = { }
+end
 
 function DocWriter:ClearOutput(folder)
 end
 
 function DocWriter:Output(graph, folder)
 	for i,node in ipairs(graph.nodes) do
-		if IsKindOf(node, "PageNode") then
+		if self:ShouldOutputNode(node) and IsKindOf(node, "PageNode") then
 			local header = self:GenerateFileHeader(node)
 			local content = node:GenerateContent(self)
 			local footer = self:GenerateFileFooter(node)
@@ -15,6 +20,16 @@ function DocWriter:Output(graph, folder)
 			self:SaveFile(page, folder .. node.file_path)
 		end
 	end
+end
+
+function DocWriter:ShouldOutputNode(node)
+	for tag,required in pairs(self.required_tags) do
+		if node.tags and node.tags[tag] ~= required then
+			return false
+		end
+	end
+
+	return true
 end
 
 function DocWriter:SaveFile(content, file)

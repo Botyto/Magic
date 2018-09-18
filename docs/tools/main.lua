@@ -5,7 +5,6 @@ require "MarkdeepWriter"
 BuildClasses()
 
 local folders = { "../../Assets/" }
-local output_folder = "../output/"
 
 local parser = CSharpParser:new()
 local graph = DocGraph:new()
@@ -17,6 +16,16 @@ local class_map = graph:GenerateMapNode(function(n) return IsKindOf(n, "ClassNod
 class_map.title = "Classes"
 class_map.summary = "All classes."
 class_map.file_path = "map-Classes.md.html"
+local main_page = graph:GenerateMainPage()
 
+--save public
+local output_folder = "../output/public/"
+writer.required_tags = { public = true }
+writer:ClearOutput(output_folder)
+writer:Output(graph, output_folder)
+
+--save private
+local output_folder = "../output/private/"
+writer.required_tags = { private = true }
 writer:ClearOutput(output_folder)
 writer:Output(graph, output_folder)

@@ -1,7 +1,10 @@
 require "DocsMapNode"
+require "MainPageNode"
 
 Class.DocGraph = {
 	nodes = false,
+
+	stage = false,
 }
 
 function DocGraph:__ctor()
@@ -22,8 +25,49 @@ function DocGraph:AddFolder(folder)
 end
 
 function DocGraph:AddFile(parser, file)
-	local new_nodes = parser:ParseFile(file)
+	if self.stage then
+		print("!WARNING! Map/Main nodes have been generated and adding new files is not suggested!")
+	end
 
+	local new_nodes = parser:ParseFile(file)
+	self:AddNodes(new_nodes)
+end
+
+function DocGraph:GenerateMapNode(filter)
+	if self.stage == "Main" then
+		print("!WARNING! Main node has been generated and adding new maps is not suggested")
+	end
+	self.stage = "Map"
+
+	local map = DocsMapNode:new()
+	for i,node in ipairs(self.nodes) do
+		if filter(node) then
+			table.insert(map.elements, node)
+		end
+	end
+	self:AddNodes({ map })
+	return map
+end
+
+function DocGraph:GenerateMainPage()
+	if self.stage == "Main" then
+		print("!WARNING! Main node has already been generated")
+	end
+	self.stage = "Main"
+
+	local main_page = MainPageNode:new()
+	main_page.maps = { }
+	for i,node in ipairs(self.nodes) do
+		if IsKindOf(node, "DocsMapNode") then
+			table.insert(main_page.maps, node)
+		end
+	end
+
+	self:AddNodes({ main_page })
+	return main_page
+end
+
+function DocGraph:AddNodes(new_nodes)
 	--try merge with an old node or just add it
 	for i,new_node in ipairs(new_nodes) do
 		local merge_success
@@ -38,17 +82,6 @@ function DocGraph:AddFile(parser, file)
 	end
 
 	self:UpdateConnections()
-end
-
-function DocGraph:GenerateMapNode(filter)
-	local map = DocsMapNode:new()
-	for i,node in ipairs(self.nodes) do
-		if filter(node) then
-			table.insert(map.elements, node)
-		end
-	end
-	table.insert(self.nodes, map)
-	return map
 end
 
 function DocGraph:UpdateConnections()
