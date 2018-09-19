@@ -8,9 +8,16 @@ function DocWriter:__ctor()
 end
 
 function DocWriter:ClearOutput(folder)
+	print("Clearing output folder: " .. folder)
 end
 
 function DocWriter:Output(graph, folder)
+	local tag_names = { }
+	for tag,required in pairs(self.required_tags) do
+		table.insert(tag_names, required and tag or ("-" .. tag))
+	end
+	print("Output to folder: " .. folder .. " with tags: " .. table.concat(tag_names, ", "))
+
 	for i,node in ipairs(graph.nodes) do
 		if self:ShouldOutputNode(node) and IsKindOf(node, "PageNode") then
 			local header = self:GenerateFileHeader(node)

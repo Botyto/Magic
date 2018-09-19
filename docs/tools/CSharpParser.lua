@@ -60,44 +60,22 @@ function CSharpParser:ParseFile(file)
 	return nodes
 end
 
-local function SkipWhitespaces(line, first)
-	local i = first
-	local len = #line
-
-	while true do
-		if i > len then return i end
-		local chr = string.sub(line, i, i)
-		if not IsWhitespace(chr) then break end
-
-		i = i + 1
-	end
-
-	return i
-end
-
-local function ParseWord(line, word, first)
-	local i = first
-	local len = #line
-
-	i = SkipWhitespaces(line, i)
-	if i > len then return false, first end
-
-	local ffirst, flast = string.find(line, word)
-	if ffirst ~= i then
-		return false, first
-	end
-
-	return true, flast + 1
-end
-
 local function PraseClassDefinition(line)
 	local accessibility = "public"
 	if string.find(line, "public") then accessibility = "public" end
 	if string.find(line, "private") then accessibility = "private" end
 
 	local class_first, class_last = string.find(line, "class ")
+	if not class_first then return end --check syntax
+
+	local name
 	local whitespace_pos = string.find(line, "%s", class_last + 1)
-	local name = string.sub(line, class_last + 1, whitespace_pos - 1)
+	if whitespace_pos then
+		name = string.sub(line, class_last + 1, whitespace_pos - 1)
+	else
+		name = string.sub(line, class_last + 1)
+	end
+	if not name or name == "" then return end --check syntax
 
 	local inherits
 	local colon = string.find(line, ":")
@@ -107,6 +85,7 @@ local function PraseClassDefinition(line)
 		for i=1,#inherits do
 			inherits[i] = string.trim_spaces(inherits[i])
 		end
+		if not next(inherits) then return end --check syntax
 	else
 		inherits = { }
 	end
@@ -116,24 +95,32 @@ end
 
 local function ParseMethodParameter(param)
 	param = string.trim_spaces(param)
-	if param == "" then return end
+	if param == "" then return end --check syntax
 
-	local node = ParameterNode:new()
+	local value_type, name, default
 
 	local space = string.find(param, " ")
+	value_type = string.sub(param, 1, space - 1)
+	if not value_type or value_type == "" then return end --check syntax
+
 	local end_of_name = string.find(param, " ", space + 1) or string.find(param, "=", space + 1)
-	node.value_type = string.sub(param, 1, space - 1)
 	if end_of_name then
-		node.title = string.sub(param, space + 1, end_of_name - 1)
+		name = string.sub(param, space + 1, end_of_name - 1)
 	else
-		node.title = string.sub(param, space + 1)
+		name = string.sub(param, space + 1)
 	end
+	if not name or name == "" then return end --check syntax
 
 	local equals = string.find(param, "=", space + 1)
 	if equals then
-		node.default = string.trim_spaces(string.sub(param, equals + 1))
+		default = string.trim_spaces(string.sub(param, equals + 1))
+		if not default or default == "" then return end --check syntax
 	end
 
+	local node = ParameterNode:new()
+	node.value_type = value_type
+	node.title = name
+	node.default = default
 	return node
 end
 
@@ -153,17 +140,21 @@ local function PraseMethodDefinition(line)
 
 	local before_type = math.max(static_last or 1, virutal_last or 1, abstract_last or 1, public_last or 1, private_last or 1)
 	local type_last = string.find(line, " ", before_type + 1)
+	if not type_last then return end --check syntax
 	local result_type = string.sub(line, before_type + 1, type_last - 1)
+	if not result_type or result_type == "" then return end --check syntax
 	local only_result = ParameterNode:new()
 	only_result.value_type = result_type
 	only_result.title = result_type
 	local results = { only_result }
 
 	local name_end = string.find(line, "%(", type_last) or string.find(line, " ", type_last)
+	if not name_end then return end --check syntax
 	local name = string.trim_spaces(string.sub(line, type_last + 1, name_end - 1))
 
 	local bracket_open = string.find(line, "%(")
 	local bracket_close = string.find(line, ")")
+	if not bracket_open or not bracket_close then return end --check syntax
 	local params_line = string.sub(line, bracket_open + 1, bracket_close - 1)
 	local parameters = string.split(params_line, ",")
 	for i=1,#parameters do
@@ -185,7 +176,9 @@ local function PrasePropertyDefinition(line)
 
 	local before_type = math.max(static_last or 1, public_last or 1, private_last or 1)
 	local type_last = string.find(line, " ", before_type + 1)
+	if not type_last then return end --check syntax
 	local type_name = string.sub(line, before_type + 1, type_last - 1)
+	if not type_name or type_name == "" then return end --check syntax
 	local value_type = ParameterNode:new()
 	value_type.value_type = type_name
 
@@ -196,10 +189,12 @@ local function PrasePropertyDefinition(line)
 	else
 		name = string.sub(line, type_last + 1)
 	end
+	if not name or name == "" then return end --check syntax
 
 	local equals = string.find(line, "=", type_last + 1)
 	if equals then
 		default = string.trim_spaces(string.sub(line, equals + 1))
+		if not default or default == "" then return end --check syntax
 	end
 
 	return accessibility, static, name, value_type, default

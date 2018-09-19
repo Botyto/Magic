@@ -23,9 +23,11 @@ local output_folder = "../output/public/"
 writer.required_tags = { public = true }
 writer:ClearOutput(output_folder)
 writer:Output(graph, output_folder)
+print("")
 
 --save private
 local output_folder = "../output/private/"
 writer.required_tags = { private = true }
 writer:ClearOutput(output_folder)
 writer:Output(graph, output_folder)
+print("")
