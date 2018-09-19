@@ -159,6 +159,7 @@ local function PraseMethodDefinition(line)
 	local parameters = string.split(params_line, ",")
 	for i=1,#parameters do
 		parameters[i] = ParseMethodParameter(parameters[i])
+		if not parameters[i] then return end --check syntax
 	end
 
 	return accessibility, static, name, parameters, results
