@@ -33,4 +33,4 @@ It is then oriented towards the target and a force is applied sending it in the 
 Since the spike will no longer be manipulated, it is then defocused and the next one is spawned.
 
 The spell can expanded to be parameterized to use different shapes, elements, force sizes and number of attacks, to achieve different results, or provide different "levels" of the same spell.
-If the player is capable of focusing on more than one manifestation at a time, each spike could try and track the target as they try to escape.
+It could also be expanded, if the player is capable of focusing on more than one manifestation at a time, such that each spike tries to track the target as they try to escape.
