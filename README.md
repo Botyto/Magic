@@ -1,4 +1,3 @@
-![Screenshots](screenshots.png)
 ![Hail spell](hail.webp)
 
 # Magic
@@ -24,3 +23,13 @@ The game imposes some constraints in the players to avoid making them overpowere
 ## Physics
 
 The game's physics, although fantastical, are still based on realistic physics principles, which lays down a level playing field and makes the learning curve much flatter. Theae are simulations of conservation of energy, pressure, temperature, element interactions, speed limits (a limitation of the physics engine, thus much lower than the speed of light) and more. 
+
+## Example spell
+
+An example can be seen in the GIF attached above - a spell named "Hail" which bombards the enemy with ice spikes.
+It works by manifesting energy above the target with a preset shape (cone) and element (ice).
+This manifestation is automatically added to the "focused" manifestations, of which there cannot be too many.
+It is then oriented towards the target and a force is applied sending in in the correct direction.
+Since the spike will no longer be used, it is then defocused and the next one is spawned.
+
+The spell can be parameterized to use different shapes, elements, force sizes and number of attacks, to achieve different results.
